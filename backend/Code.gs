@@ -166,11 +166,8 @@ function getPreferredProvider() {
  */
 function analyzeImageWithVisionAI(base64Image, documentType, provider) {
   try {
-    // Remove data:image/...;base64, prefix if present and clean whitespace
-    let base64Data = base64Image.includes(',') ? base64Image.split(',')[1] : base64Image;
-    // Remove all whitespace characters (spaces, newlines, tabs, etc.)
-    base64Data = base64Data.replace(/\s/g, '');
-
+    // Sanitize and validate base64 data
+    const base64Data = sanitizeBase64(base64Image);
     const mediaType = getMediaTypeFromBase64(base64Image);
 
     Logger.log(`Using ${provider} Vision API for image analysis`);
@@ -190,9 +187,7 @@ function analyzeImageWithVisionAI(base64Image, documentType, provider) {
 
     try {
       if (fallbackProvider === 'claude') {
-        let base64Data = base64Image.includes(',') ? base64Image.split(',')[1] : base64Image;
-        // Remove all whitespace characters (spaces, newlines, tabs, etc.)
-        base64Data = base64Data.replace(/\s/g, '');
+        const base64Data = sanitizeBase64(base64Image);
         const mediaType = getMediaTypeFromBase64(base64Image);
         return analyzeImageWithClaude(base64Data, mediaType, documentType);
       } else {
@@ -217,6 +212,35 @@ function analyzeImageWithClaude(base64Data, mediaType, documentType) {
 
   const prompt = buildVisionPrompt(documentType);
 
+  // Log payload details for debugging
+  Logger.log('Preparing Claude Vision API request');
+  Logger.log('Media type: ' + mediaType);
+  Logger.log('Base64 data length: ' + base64Data.length);
+  Logger.log('Base64 starts with: ' + base64Data.substring(0, 50));
+  Logger.log('Base64 ends with: ' + base64Data.substring(base64Data.length - 20));
+
+  const requestPayload = {
+    model: CONFIG.CLAUDE_MODEL,
+    max_tokens: CONFIG.MAX_TOKENS,
+    messages: [{
+      role: 'user',
+      content: [
+        {
+          type: 'image',
+          source: {
+            type: 'base64',
+            media_type: mediaType,
+            data: base64Data
+          }
+        },
+        {
+          type: 'text',
+          text: prompt
+        }
+      ]
+    }]
+  };
+
   const response = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
     method: 'post',
     headers: {
@@ -224,35 +248,18 @@ function analyzeImageWithClaude(base64Data, mediaType, documentType) {
       'anthropic-version': '2023-06-01',
       'content-type': 'application/json'
     },
-    payload: JSON.stringify({
-      model: CONFIG.CLAUDE_MODEL,
-      max_tokens: CONFIG.MAX_TOKENS,
-      messages: [{
-        role: 'user',
-        content: [
-          {
-            type: 'image',
-            source: {
-              type: 'base64',
-              media_type: mediaType,
-              data: base64Data
-            }
-          },
-          {
-            type: 'text',
-            text: prompt
-          }
-        ]
-      }]
-    }),
+    payload: JSON.stringify(requestPayload),
     muteHttpExceptions: true
   });
 
   const result = JSON.parse(response.getContentText());
 
   if (result.error) {
+    Logger.log('Claude API returned error: ' + JSON.stringify(result.error));
     throw new Error('Claude API Error: ' + JSON.stringify(result.error));
   }
+
+  Logger.log('Claude Vision API request successful');
 
   // Extract the text content from Claude's response
   const extractedText = result.content[0].text;
@@ -370,6 +377,40 @@ function getMediaTypeFromBase64(base64String) {
   }
   // Default to common medical image formats
   return 'image/png';
+}
+
+/**
+ * Sanitize and validate base64 string for Claude API
+ */
+function sanitizeBase64(base64String) {
+  if (!base64String) {
+    throw new Error('Base64 string is empty or null');
+  }
+
+  // Remove data URL prefix if present
+  let cleanBase64 = base64String.includes(',') ? base64String.split(',')[1] : base64String;
+
+  // Remove all whitespace characters (spaces, newlines, tabs, carriage returns)
+  cleanBase64 = cleanBase64.replace(/\s+/g, '');
+
+  // Remove any URL encoding artifacts
+  cleanBase64 = cleanBase64.replace(/%20/g, '');
+
+  // Validate base64 format - should only contain A-Z, a-z, 0-9, +, /, and = for padding
+  const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/;
+  if (!base64Regex.test(cleanBase64)) {
+    Logger.log('Invalid base64 characters detected. Length: ' + cleanBase64.length);
+    Logger.log('First 100 chars: ' + cleanBase64.substring(0, 100));
+    throw new Error('Base64 string contains invalid characters');
+  }
+
+  // Validate minimum length
+  if (cleanBase64.length < 100) {
+    throw new Error('Base64 string too short - possible corruption');
+  }
+
+  Logger.log('Base64 validation passed. Length: ' + cleanBase64.length);
+  return cleanBase64;
 }
 
 /**
