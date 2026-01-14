@@ -3,257 +3,234 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="MedWard Master - AI-Powered Medical Report Interpretation">
-  <meta name="keywords" content="medical reports, AI interpretation, healthcare, clinical analysis">
-  <title>MedWard Master - AI Medical Report Interpretation</title>
+  <meta name="description" content="MedWard Master - Professional AI-Powered Medical Report Analysis">
+  <title>MedWard Master | AI Medical Analysis Platform</title>
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- Header -->
-  <header class="header">
-    <div class="container">
-      <div class="header-content">
-        <div class="logo-section">
-          <h1 class="logo">🏥 MedWard Master</h1>
-          <p class="tagline">AI-Powered Medical Report Interpretation</p>
-        </div>
-        <div class="user-section" id="user-section" style="display: none;">
-          <span id="username-display"></span>
-          <button id="logout-btn" class="btn-secondary">Logout</button>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <div class="brand-icon">🏥</div>
+        <div class="brand-info">
+          <h1 class="brand-name">MedWard Master</h1>
+          <span class="brand-tagline">AI Medical Analysis</span>
         </div>
       </div>
+      <div class="nav-user" id="nav-user" style="display: none;">
+        <div class="user-avatar">
+          <span id="user-initial">U</span>
+        </div>
+        <span class="user-name" id="user-name">User</span>
+        <button class="btn-logout" id="logout-btn">Sign Out</button>
+      </div>
     </div>
-  </header>
+  </nav>
 
-  <!-- Main Content -->
-  <main class="main-content">
-    <div class="container">
+  <!-- Main Container -->
+  <main class="main-container">
 
-      <!-- Login Section -->
-      <section id="login-section" class="section card">
-        <h2>Welcome to MedWard Master</h2>
-        <p>Please sign in to access medical report interpretation</p>
-        <div class="login-form">
-          <input
-            type="text"
-            id="username-input"
-            placeholder="Enter your username"
-            class="input-field"
-          >
-          <button id="login-btn" class="btn-primary">Sign In</button>
-        </div>
-      </section>
-
-      <!-- Input Section -->
-      <section id="input-section" class="section card" style="display: none;">
-        <h2>Upload Medical Report</h2>
-
-        <div class="input-method-selector">
-          <button class="method-btn active" data-method="text">
-            📝 Paste Text
-          </button>
-          <button class="method-btn" data-method="image">
-            📷 Upload Image
-          </button>
-        </div>
-
-        <!-- Text Input -->
-        <div id="text-input-area" class="input-area">
-          <textarea
-            id="medical-text"
-            class="textarea-field"
-            placeholder="Paste your medical report text here...&#10;&#10;Example:&#10;Hemoglobin: 12.5 g/dL&#10;WBC: 7.2 K/uL&#10;Platelets: 250 K/uL&#10;..."
-            rows="10"
-          ></textarea>
-        </div>
-
-        <!-- Image Input -->
-        <div id="image-input-area" class="input-area" style="display: none;">
-          <div class="file-upload-wrapper">
-            <input
-              type="file"
-              id="image-upload"
-              accept="image/*"
-              multiple
-              class="file-input"
-            >
-            <label for="image-upload" class="file-label">
-              <div class="upload-icon-wrapper">
-                <span class="upload-icon">📷</span>
-                <div class="upload-pulse"></div>
-              </div>
-              <span id="file-name" class="file-name-text">Choose images or drag and drop here</span>
-              <span class="file-hint">Supports multiple images • JPG, PNG, PDF</span>
-            </label>
-            <div id="image-gallery" class="image-gallery"></div>
+    <!-- Login Screen -->
+    <section id="login-screen" class="screen active">
+      <div class="login-wrapper">
+        <div class="login-card">
+          <div class="login-header">
+            <div class="login-icon">🏥</div>
+            <h2>Welcome to MedWard Master</h2>
+            <p>Professional AI-Powered Medical Report Analysis</p>
+          </div>
+          <div class="login-form">
+            <div class="form-field">
+              <label>Username</label>
+              <input type="text" id="username-input" placeholder="Enter your username" autocomplete="off">
+            </div>
+            <button class="btn-primary btn-block" id="login-btn">
+              <span>Sign In</span>
+              <svg class="btn-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <div class="login-footer">
+            <p>🔒 Secure • 🤖 AI-Powered • ⚡ Fast Analysis</p>
           </div>
         </div>
+      </div>
+    </section>
 
-        <!-- Document Type Selector -->
-        <div class="form-group">
-          <label for="doc-type">Report Type:</label>
-          <select id="doc-type" class="select-field">
-            <option value="lab">🧪 Laboratory Results</option>
-            <option value="imaging">🔬 Imaging Report (X-ray, CT, MRI)</option>
-            <option value="pathology">🦠 Pathology Report</option>
-            <option value="general">📋 General Medical Report</option>
-          </select>
-        </div>
+    <!-- Analysis Dashboard -->
+    <section id="dashboard-screen" class="screen">
+      <div class="dashboard-container">
 
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-          <button id="analyze-btn" class="btn-primary btn-large">
-            <span class="btn-icon">🔍</span>
-            Analyze Report
-          </button>
-          <button id="clear-btn" class="btn-secondary">Clear</button>
-        </div>
+        <!-- Upload Panel -->
+        <div class="dashboard-panel upload-panel">
+          <div class="panel-header">
+            <h3>📊 New Analysis</h3>
+            <p>Upload medical reports for AI-powered interpretation</p>
+          </div>
 
-        <!-- Loading Indicator -->
-        <div id="loading-indicator" class="loading" style="display: none;">
-          <div class="loading-content">
-            <div class="spinner-container">
-              <div class="spinner"></div>
-              <div class="spinner-ring"></div>
+          <div class="upload-tabs">
+            <button class="upload-tab active" data-tab="image">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M2.5 13.75L6.25 10L9.375 13.125L13.75 8.75L17.5 12.5" stroke="currentColor" stroke-width="1.5"/>
+                <rect x="2.5" y="2.5" width="15" height="15" rx="2" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+              <span>Image Upload</span>
+            </button>
+            <button class="upload-tab" data-tab="text">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M5 7.5H15M5 10H15M5 12.5H11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              <span>Text Input</span>
+            </button>
+          </div>
+
+          <!-- Image Upload Tab -->
+          <div class="upload-content active" data-content="image">
+            <div class="dropzone" id="dropzone">
+              <input type="file" id="file-input" multiple accept="image/*,.pdf" hidden>
+              <div class="dropzone-icon">📷</div>
+              <h4>Drop images here or click to browse</h4>
+              <p>Supports JPG, PNG, PDF • Max 10MB per file</p>
+              <button class="btn-secondary btn-browse">Browse Files</button>
             </div>
-            <h3 id="loading-title" class="loading-title">Processing Medical Report</h3>
-            <p id="loading-message" class="loading-message">Analyzing with AI Vision...</p>
-            <div class="progress-bar">
-              <div id="progress-fill" class="progress-fill"></div>
-            </div>
-            <div id="loading-steps" class="loading-steps">
-              <div class="step-item" data-step="upload">
-                <span class="step-icon">📤</span>
-                <span class="step-text">Uploading images...</span>
-              </div>
-              <div class="step-item" data-step="ocr">
-                <span class="step-icon">👁️</span>
-                <span class="step-text">Extracting text with OCR...</span>
-              </div>
-              <div class="step-item" data-step="analyze">
-                <span class="step-icon">🧠</span>
-                <span class="step-text">Analyzing medical content...</span>
-              </div>
-              <div class="step-item" data-step="results">
-                <span class="step-icon">✨</span>
-                <span class="step-text">Generating insights...</span>
+
+            <div class="file-list" id="file-list"></div>
+
+            <div class="form-field">
+              <label>Report Type</label>
+              <div class="select-wrapper">
+                <select id="report-type" class="form-select">
+                  <option value="lab">🧪 Laboratory Results</option>
+                  <option value="imaging">🔬 Imaging Report (X-ray, CT, MRI)</option>
+                  <option value="pathology">🦠 Pathology Report</option>
+                  <option value="general">📋 General Medical Report</option>
+                </select>
               </div>
             </div>
+
+            <button class="btn-primary btn-block btn-analyze" id="analyze-btn" disabled>
+              <span>Analyze with AI</span>
+              <svg class="btn-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M17.5 17.5L13.875 13.875M15.8333 9.16667C15.8333 12.8486 12.8486 15.8333 9.16667 15.8333C5.48477 15.8333 2.5 12.8486 2.5 9.16667C2.5 5.48477 5.48477 2.5 9.16667 2.5C12.8486 2.5 15.8333 5.48477 15.8333 9.16667Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Text Input Tab -->
+          <div class="upload-content" data-content="text">
+            <div class="form-field">
+              <label>Paste Medical Report Text</label>
+              <textarea id="text-input" class="form-textarea" placeholder="Paste your medical report text here...
+
+Example:
+Hemoglobin: 12.5 g/dL
+WBC: 7.2 K/uL
+Platelets: 250 K/uL
+..." rows="12"></textarea>
+            </div>
+
+            <div class="form-field">
+              <label>Report Type</label>
+              <div class="select-wrapper">
+                <select id="report-type-text" class="form-select">
+                  <option value="lab">🧪 Laboratory Results</option>
+                  <option value="imaging">🔬 Imaging Report</option>
+                  <option value="pathology">🦠 Pathology Report</option>
+                  <option value="general">📋 General Medical Report</option>
+                </select>
+              </div>
+            </div>
+
+            <button class="btn-primary btn-block btn-analyze" id="analyze-text-btn" disabled>
+              <span>Analyze Text</span>
+              <svg class="btn-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M17.5 17.5L13.875 13.875M15.8333 9.16667C15.8333 12.8486 12.8486 15.8333 9.16667 15.8333C5.48477 15.8333 2.5 12.8486 2.5 9.16667C2.5 5.48477 5.48477 2.5 9.16667 2.5C12.8486 2.5 15.8333 5.48477 15.8333 9.16667Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </button>
           </div>
         </div>
-      </section>
 
-      <!-- Results Section -->
-      <section id="results-section" class="section" style="display: none;">
+        <!-- Processing Overlay -->
+        <div class="processing-overlay" id="processing-overlay">
+          <div class="processing-card">
+            <div class="processing-spinner"></div>
+            <h3 id="processing-title">Processing Report</h3>
+            <p id="processing-message">Initializing AI analysis...</p>
 
-        <!-- Summary Card -->
-        <div class="card result-card">
-          <div class="card-header">
-            <h3>📊 Summary</h3>
-            <button class="btn-icon-only" id="copy-summary-btn" title="Copy to clipboard">📋</button>
+            <div class="progress-container">
+              <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+              </div>
+              <span class="progress-text" id="progress-text">0%</span>
+            </div>
+
+            <div class="processing-steps">
+              <div class="process-step" data-step="compress">
+                <div class="step-indicator"></div>
+                <div class="step-content">
+                  <div class="step-label">Compressing Images</div>
+                  <div class="step-status">Pending</div>
+                </div>
+              </div>
+              <div class="process-step" data-step="upload">
+                <div class="step-indicator"></div>
+                <div class="step-content">
+                  <div class="step-label">Uploading to Cloud</div>
+                  <div class="step-status">Pending</div>
+                </div>
+              </div>
+              <div class="process-step" data-step="ocr">
+                <div class="step-indicator"></div>
+                <div class="step-content">
+                  <div class="step-label">OCR Text Extraction</div>
+                  <div class="step-status">Pending</div>
+                </div>
+              </div>
+              <div class="process-step" data-step="analyze">
+                <div class="step-indicator"></div>
+                <div class="step-content">
+                  <div class="step-label">AI Analysis</div>
+                  <div class="step-status">Pending</div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div id="summary-content" class="card-content"></div>
         </div>
 
-        <!-- Key Findings -->
-        <div class="card result-card">
-          <div class="card-header">
-            <h3>🔍 Key Findings</h3>
+        <!-- Results Panel -->
+        <div class="dashboard-panel results-panel" id="results-panel">
+          <div class="panel-header">
+            <div>
+              <h3>🎯 Analysis Results</h3>
+              <p id="analysis-timestamp">Completed at --:--</p>
+            </div>
+            <div class="panel-actions">
+              <button class="btn-icon" id="print-btn" title="Print Report">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M5 7.5V2.5H15V7.5M5 15H3.75C3.05964 15 2.5 14.4404 2.5 13.75V9.375C2.5 8.68464 3.05964 8.125 3.75 8.125H16.25C16.9404 8.125 17.5 8.68464 17.5 9.375V13.75C17.5 14.4404 16.9404 15 16.25 15H15M5 12.5H15V17.5H5V12.5Z" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+              </button>
+              <button class="btn-secondary" id="new-analysis-btn">New Analysis</button>
+            </div>
           </div>
-          <div id="findings-content" class="card-content"></div>
-        </div>
 
-        <!-- Abnormalities & Alerts -->
-        <div class="card result-card alert-card">
-          <div class="card-header">
-            <h3>⚠️ Abnormalities & Alerts</h3>
-          </div>
-          <div id="alerts-content" class="card-content"></div>
+          <div class="results-grid" id="results-content"></div>
         </div>
+      </div>
+    </section>
 
-        <!-- Normal Findings -->
-        <div class="card result-card success-card">
-          <div class="card-header">
-            <h3>✅ Normal Findings</h3>
-          </div>
-          <div id="normal-content" class="card-content"></div>
-        </div>
-
-        <!-- Clinical Pearls -->
-        <div class="card result-card">
-          <div class="card-header">
-            <h3>💡 Clinical Pearls</h3>
-          </div>
-          <div id="pearls-content" class="card-content"></div>
-        </div>
-
-        <!-- Patient Discussion Points -->
-        <div class="card result-card">
-          <div class="card-header">
-            <h3>💬 Discussion Points for Patient</h3>
-          </div>
-          <div id="questions-content" class="card-content"></div>
-        </div>
-
-        <!-- Patient-Friendly Explanation -->
-        <div class="card result-card info-card">
-          <div class="card-header">
-            <h3>👤 Patient-Friendly Explanation</h3>
-          </div>
-          <div id="patient-explanation-content" class="card-content"></div>
-        </div>
-
-        <!-- Recommendations -->
-        <div class="card result-card">
-          <div class="card-header">
-            <h3>📝 Recommendations</h3>
-          </div>
-          <div id="recommendations-content" class="card-content"></div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="results-actions">
-          <button id="new-analysis-btn" class="btn-primary">
-            New Analysis
-          </button>
-          <button id="print-btn" class="btn-secondary">
-            🖨️ Print Report
-          </button>
-        </div>
-      </section>
-
-    </div>
   </main>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <p>&copy; 2026 MedWard Master. AI-Powered Medical Interpretation.</p>
-      <p class="disclaimer">
-        <strong>Disclaimer:</strong> This tool is for educational and informational purposes only.
-        Always consult with qualified healthcare professionals for medical decisions.
-      </p>
-    </div>
-  </footer>
-
   <!-- Toast Notification -->
-  <div id="toast" class="toast"></div>
+  <div class="toast" id="toast"></div>
 
-  <!-- Debug Panel for Mobile -->
-  <div id="debug-panel" style="position: fixed; bottom: 0; left: 0; right: 0; background: #000; color: #0f0; font-family: monospace; font-size: 11px; max-height: 40vh; overflow-y: auto; z-index: 10000; border-top: 2px solid #0f0; display: none;">
-    <div style="position: sticky; top: 0; background: #222; padding: 8px; border-bottom: 1px solid #0f0; display: flex; justify-content: space-between; align-items: center;">
-      <strong>DEBUG LOG</strong>
-      <button onclick="document.getElementById('debug-panel').style.display='none'" style="background: #f00; color: #fff; border: none; padding: 4px 12px; border-radius: 4px; cursor: pointer;">Close</button>
-    </div>
-    <div id="debug-content" style="padding: 8px; white-space: pre-wrap; word-break: break-all;"></div>
-  </div>
-
-  <!-- Debug Toggle Button -->
-  <button id="debug-toggle" onclick="document.getElementById('debug-panel').style.display='block'" style="position: fixed; bottom: 20px; right: 20px; background: #0f0; color: #000; border: none; padding: 20px; border-radius: 50%; font-weight: bold; z-index: 9999; cursor: pointer; box-shadow: 0 4px 12px rgba(0,255,0,0.5); font-size: 32px; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center;">
-    🐛
-  </button>
-
-  <!-- JavaScript -->
+  <!-- Scripts -->
   <script src="js/app.js"></script>
 </body>
 </html>
