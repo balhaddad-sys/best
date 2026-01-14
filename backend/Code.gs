@@ -162,15 +162,51 @@ function getPreferredProvider() {
 }
 
 /**
+ * Clean and validate base64 image data
+ */
+function cleanBase64Data(base64String) {
+  try {
+    let cleanData = base64String;
+
+    // Remove data URL prefix if present (data:image/...;base64,)
+    if (cleanData.includes(',')) {
+      cleanData = cleanData.split(',')[1];
+    }
+
+    // Remove all whitespace, newlines, and other non-base64 characters
+    cleanData = cleanData.replace(/[\s\n\r]/g, '');
+
+    // Validate it's proper base64 (contains only valid base64 characters)
+    const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/;
+    if (!base64Regex.test(cleanData)) {
+      throw new Error('Invalid base64 characters detected');
+    }
+
+    // Check minimum length (should be at least a few hundred characters for an image)
+    if (cleanData.length < 100) {
+      throw new Error('Base64 data too short to be a valid image');
+    }
+
+    Logger.log(`Base64 data cleaned: ${cleanData.length} characters`);
+    return cleanData;
+
+  } catch (error) {
+    Logger.log('Base64 cleaning error: ' + error.toString());
+    throw error;
+  }
+}
+
+/**
  * Analyze medical image using Vision AI (Claude or GPT-4 Vision)
  */
 function analyzeImageWithVisionAI(base64Image, documentType, provider) {
   try {
-    // Remove data:image/...;base64, prefix if present
-    const base64Data = base64Image.includes(',') ? base64Image.split(',')[1] : base64Image;
+    // Clean and validate base64 data
+    const base64Data = cleanBase64Data(base64Image);
     const mediaType = getMediaTypeFromBase64(base64Image);
 
     Logger.log(`Using ${provider} Vision API for image analysis`);
+    Logger.log(`Media type: ${mediaType}`);
 
     if (provider === 'claude') {
       return analyzeImageWithClaude(base64Data, mediaType, documentType);
@@ -187,7 +223,7 @@ function analyzeImageWithVisionAI(base64Image, documentType, provider) {
 
     try {
       if (fallbackProvider === 'claude') {
-        const base64Data = base64Image.includes(',') ? base64Image.split(',')[1] : base64Image;
+        const base64Data = cleanBase64Data(base64Image);
         const mediaType = getMediaTypeFromBase64(base64Image);
         return analyzeImageWithClaude(base64Data, mediaType, documentType);
       } else {
@@ -195,7 +231,7 @@ function analyzeImageWithVisionAI(base64Image, documentType, provider) {
       }
     } catch (fallbackError) {
       Logger.log('Fallback also failed: ' + fallbackError.toString());
-      throw new Error('Both vision providers failed');
+      throw new Error('Both vision providers failed: ' + error.toString() + ' | Fallback: ' + fallbackError.toString());
     }
   }
 }
@@ -210,53 +246,83 @@ function analyzeImageWithClaude(base64Data, mediaType, documentType) {
     throw new Error('Anthropic API key not configured in Script Properties');
   }
 
-  const prompt = buildVisionPrompt(documentType);
-
-  const response = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
-    method: 'post',
-    headers: {
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json'
-    },
-    payload: JSON.stringify({
-      model: CONFIG.CLAUDE_MODEL,
-      max_tokens: CONFIG.MAX_TOKENS,
-      messages: [{
-        role: 'user',
-        content: [
-          {
-            type: 'image',
-            source: {
-              type: 'base64',
-              media_type: mediaType,
-              data: base64Data
-            }
-          },
-          {
-            type: 'text',
-            text: prompt
-          }
-        ]
-      }]
-    }),
-    muteHttpExceptions: true
-  });
-
-  const result = JSON.parse(response.getContentText());
-
-  if (result.error) {
-    throw new Error('Claude API Error: ' + JSON.stringify(result.error));
+  // Validate inputs
+  if (!base64Data || base64Data.length < 100) {
+    throw new Error('Invalid or empty base64 data provided');
   }
 
-  // Extract the text content from Claude's response
-  const extractedText = result.content[0].text;
+  Logger.log(`Claude Vision request - Media type: ${mediaType}, Data length: ${base64Data.length}, Doc type: ${documentType}`);
 
-  return {
-    extractedText: extractedText,
-    initialInsights: `Analyzed with Claude Vision (${CONFIG.CLAUDE_MODEL})`,
-    provider: 'claude'
+  const prompt = buildVisionPrompt(documentType);
+
+  const requestPayload = {
+    model: CONFIG.CLAUDE_MODEL,
+    max_tokens: CONFIG.MAX_TOKENS,
+    messages: [{
+      role: 'user',
+      content: [
+        {
+          type: 'image',
+          source: {
+            type: 'base64',
+            media_type: mediaType,
+            data: base64Data
+          }
+        },
+        {
+          type: 'text',
+          text: prompt
+        }
+      ]
+    }]
   };
+
+  try {
+    const response = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
+      method: 'post',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json'
+      },
+      payload: JSON.stringify(requestPayload),
+      muteHttpExceptions: true
+    });
+
+    const responseCode = response.getResponseCode();
+    const responseText = response.getContentText();
+
+    Logger.log(`Claude API response code: ${responseCode}`);
+
+    if (responseCode !== 200) {
+      Logger.log(`Claude API error response: ${responseText}`);
+      throw new Error(`Claude API HTTP ${responseCode}: ${responseText}`);
+    }
+
+    const result = JSON.parse(responseText);
+
+    if (result.error) {
+      throw new Error('Claude API Error: ' + JSON.stringify(result.error));
+    }
+
+    if (!result.content || !result.content[0] || !result.content[0].text) {
+      throw new Error('Invalid response format from Claude API');
+    }
+
+    // Extract the text content from Claude's response
+    const extractedText = result.content[0].text;
+    Logger.log(`Successfully extracted ${extractedText.length} characters from image`);
+
+    return {
+      extractedText: extractedText,
+      initialInsights: `Analyzed with Claude Vision (${CONFIG.CLAUDE_MODEL})`,
+      provider: 'claude'
+    };
+
+  } catch (error) {
+    Logger.log('Claude Vision detailed error: ' + error.toString());
+    throw error;
+  }
 }
 
 /**
@@ -359,12 +425,47 @@ Please provide the complete extracted text now. Be thorough and accurate.`;
  * Get media type from base64 string
  */
 function getMediaTypeFromBase64(base64String) {
-  if (base64String.startsWith('data:')) {
-    const match = base64String.match(/data:([^;]+);/);
-    return match ? match[1] : 'image/png';
+  try {
+    if (base64String.startsWith('data:')) {
+      const match = base64String.match(/data:([^;,]+)/);
+      if (match && match[1]) {
+        const mediaType = match[1].trim().toLowerCase();
+
+        // Validate it's a supported image format for Claude
+        const supportedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (supportedTypes.includes(mediaType)) {
+          return mediaType;
+        }
+
+        // Handle jpg/jpeg variations
+        if (mediaType.includes('jpg') || mediaType.includes('jpeg')) {
+          return 'image/jpeg';
+        }
+      }
+    }
+
+    // Try to detect from magic numbers if we have the data
+    // PNG starts with iVBOR, JPEG with /9j/, GIF with R0lG
+    if (base64String.includes(',')) {
+      const dataStart = base64String.split(',')[1].substring(0, 10);
+      if (dataStart.startsWith('iVBOR')) return 'image/png';
+      if (dataStart.startsWith('/9j/')) return 'image/jpeg';
+      if (dataStart.startsWith('R0lG')) return 'image/gif';
+    } else {
+      // Check cleaned base64 data
+      if (base64String.startsWith('iVBOR')) return 'image/png';
+      if (base64String.startsWith('/9j/')) return 'image/jpeg';
+      if (base64String.startsWith('R0lG')) return 'image/gif';
+    }
+
+    // Default to JPEG for medical images (most common)
+    Logger.log('Could not detect media type, defaulting to image/jpeg');
+    return 'image/jpeg';
+
+  } catch (error) {
+    Logger.log('Media type detection error: ' + error.toString());
+    return 'image/jpeg';
   }
-  // Default to common medical image formats
-  return 'image/png';
 }
 
 /**
