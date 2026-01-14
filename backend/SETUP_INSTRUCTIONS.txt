@@ -1,0 +1,150 @@
+================================================================================
+MedWard Master - Google Apps Script Setup Instructions
+================================================================================
+
+STEP 1: CREATE APPS SCRIPT PROJECT
+-----------------------------------
+1. Go to: https://script.google.com
+2. Sign in with your Google account
+3. Click "New Project"
+4. Rename project to: MedWard-Backend
+
+
+STEP 2: COPY THE CODE
+-----------------------------------
+1. Delete the default function myFunction() { } code
+2. Open Code.gs from this repository
+3. Copy the ENTIRE file content
+4. Paste into the Apps Script editor
+
+
+STEP 3: CONFIGURE API KEY (CRITICAL!)
+-----------------------------------
+⚠️ NEVER put your API key directly in the code!
+
+1. Click the gear icon (⚙️) for Project Settings
+2. Scroll down to "Script Properties"
+3. Click "Add script property"
+4. Enter:
+   - Property: OPENAI_API_KEY
+   - Value: sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   (paste your actual OpenAI API key here)
+5. Click "Save script properties"
+
+
+STEP 4: ENABLE DRIVE API
+-----------------------------------
+1. In the left sidebar, look for "Services" with a + icon
+2. Click the + icon next to "Services"
+3. Find "Drive API" in the list
+4. Click "Add"
+5. Keep default settings (Drive API v2)
+
+
+STEP 5: DEPLOY AS WEB APP
+-----------------------------------
+1. Click "Deploy" button (top right)
+2. Select "New deployment"
+3. Click the settings icon (⚙️) next to "Select type"
+4. Choose "Web app"
+5. Configure deployment:
+
+   Description: MedWard Backend v1.0
+   Execute as: Me (your-email@gmail.com)
+   Who has access: Anyone
+
+6. Click "Deploy"
+7. Authorize the app if prompted:
+   - Click "Authorize access"
+   - Choose your Google account
+   - Click "Advanced" > "Go to MedWard-Backend (unsafe)"
+   - Click "Allow"
+
+8. COPY THE WEB APP URL
+   It looks like:
+   https://script.google.com/macros/s/ABC123xyz.../exec
+
+   ⚠️ SAVE THIS URL! You need it for the frontend!
+
+
+STEP 6: TEST THE BACKEND (Optional but Recommended)
+-----------------------------------
+1. In the Apps Script editor, find the function dropdown
+2. Select "testInterpret" from the dropdown
+3. Click the Run button (▶️)
+4. Check the "Execution log" at the bottom
+5. Should see JSON output with interpretation results
+
+
+COMMON ISSUES & FIXES
+================================================================================
+
+Issue: "OpenAI API key not configured"
+Fix: Make sure you added OPENAI_API_KEY in Script Properties (not in code!)
+
+Issue: "Drive API not found"
+Fix: Enable Drive API in Services (see Step 4)
+
+Issue: Authorization errors
+Fix: Run the testInterpret function first to trigger authorization
+
+Issue: CORS errors from frontend
+Fix: Make sure deployment has "Who has access: Anyone"
+
+Issue: 404 or deployment not found
+Fix: Use the /exec URL, not the /dev URL
+
+
+UPDATING THE CODE
+================================================================================
+
+When you need to update the backend code:
+
+1. Edit the code in Apps Script editor
+2. Click "Deploy" > "Manage deployments"
+3. Click the pencil (edit) icon next to your active deployment
+4. Under "Version", select "New version"
+5. Add description (optional)
+6. Click "Deploy"
+
+The URL stays the same - no need to update the frontend!
+
+
+SECURITY NOTES
+================================================================================
+
+✅ DO:
+- Store API key in Script Properties
+- Use "Execute as: Me" for deployments
+- Monitor API usage on OpenAI dashboard
+- Keep API keys secure and private
+
+❌ DON'T:
+- Put API keys directly in code
+- Share your Apps Script project publicly
+- Commit API keys to Git
+- Use production patient data without HIPAA compliance
+
+
+NEXT STEPS
+================================================================================
+
+After completing backend setup:
+
+1. Copy the Web App URL from Step 5
+2. Go to the frontend code (js/app.js)
+3. Update CONFIG.BACKEND_URL with your URL
+4. Commit and push to GitHub
+5. Enable GitHub Pages
+6. Test the full application!
+
+
+For detailed deployment instructions, see:
+- README.md (full documentation)
+- DEPLOYMENT_GUIDE.md (quick checklist)
+
+
+================================================================================
+Support: Open an issue in the GitHub repository
+Last Updated: January 2026
+================================================================================
