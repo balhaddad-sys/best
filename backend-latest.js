@@ -241,10 +241,11 @@ function handleInterpret(data) {
       Logger.log('Image data length: ' + data.image.length + ' characters');
       Logger.log('Image data starts with: ' + data.image.substring(0, 100));
 
-      // Validate the image data is not truncated
-      if (data.image.length < 100) {
+      // Validate the image data is not truncated (data URL includes prefix, so threshold is higher)
+      const MIN_DATA_URL_LENGTH = 75; // Accounts for 'data:image/png;base64,' prefix + minimal base64
+      if (data.image.length < MIN_DATA_URL_LENGTH) {
         const errorMsg = 'Image data appears to be truncated or invalid. ' +
-          'Length: ' + data.image.length + ' characters. ' +
+          'Length: ' + data.image.length + ' characters (expected at least ' + MIN_DATA_URL_LENGTH + '). ' +
           'Use the Drive API workflow (upload image first, then pass fileId) for reliable operation.';
         Logger.log('ERROR: ' + errorMsg);
         return { success: false, error: errorMsg };
@@ -573,13 +574,14 @@ function sanitizeBase64(base64String) {
     throw new Error('Base64 string contains invalid characters. Use Drive API workflow to avoid encoding issues.');
   }
 
-  // Validate minimum length (a 1x1 PNG is ~80 chars, so 100 is a reasonable minimum)
-  if (cleanBase64.length < 100) {
+  // Validate minimum length (a 1x1 PNG is ~96 chars, set threshold to 50 to catch truncation)
+  const MIN_BASE64_LENGTH = 50;
+  if (cleanBase64.length < MIN_BASE64_LENGTH) {
     Logger.log('❌ Base64 string too short: ' + cleanBase64.length + ' characters');
     Logger.log('This usually indicates truncated or placeholder data');
     throw new Error(
       'Base64 string too short (' + cleanBase64.length + ' chars). ' +
-      'Expected at least 100 characters for a valid image. ' +
+      'Expected at least ' + MIN_BASE64_LENGTH + ' characters for a valid image. ' +
       'Ensure you are using the Drive API workflow (upload → fileId → interpret).'
     );
   }
