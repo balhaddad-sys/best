@@ -778,32 +778,101 @@ function buildUserPrompt(medicalText, documentType, presentationFormat) {
 }
 
 /**
- * Build detailed presentation prompt (original format)
+ * Build detailed presentation prompt (clinical decision support format)
  */
 function buildDetailedPrompt(medicalText, documentType) {
-  return `Please analyze this ${documentType} report and provide a structured interpretation in JSON format with the following sections:
+  return `You are an expert clinical decision support system. Analyze this ${documentType} report and generate a structured medical analysis that mirrors how an experienced consultant would present a case during ward rounds.
+
+Return JSON in this EXACT structure:
 
 {
-  "interpretation": {
-    "summary": "Brief clinical overview in 2-3 sentences highlighting the most important findings",
-    "keyFindings": ["Finding 1 with clinical significance", "Finding 2 with clinical significance", "..."],
-    "abnormalities": ["Abnormality 1 with values, severity, and clinical implications", "..."],
-    "normalFindings": ["Normal finding 1", "Normal finding 2", "..."]
+  "clinicalSynopsis": "This is a [age]-year-old [relevant history] presenting with [primary problem], complicated by [key comorbidities affecting management]. Current status and trajectory.",
+
+  "problemList": {
+    "immediatePriorities": [
+      {
+        "problem": "Problem name",
+        "whyNow": "Why it matters NOW",
+        "action": "Specific action required"
+      }
+    ],
+    "activeIssues": [
+      {
+        "problem": "Problem name",
+        "status": "Current status with trend",
+        "target": "Target/threshold for intervention"
+      }
+    ],
+    "backgroundConditions": [
+      {
+        "condition": "Condition name",
+        "impact": "How it affects current care"
+      }
+    ]
   },
-  "clinicalPearls": ["Clinical pearl 1 relevant to these findings", "Pearl 2", "..."],
-  "potentialQuestions": ["Question 1 to ask the patient", "Question 2 about symptoms or history", "..."],
-  "presentation": {
-    "patientFriendly": "Clear explanation in simple, non-medical terms that a patient can understand",
-    "recommendations": ["Recommendation 1 for follow-up or further testing", "Recommendation 2", "..."]
-  }
+
+  "systemsAssessment": [
+    {
+      "system": "System name (e.g., Cardiovascular, Respiratory, Renal, Hematology, etc.)",
+      "status": "stable|improving|deteriorating",
+      "keyParameters": [
+        {
+          "parameter": "Parameter name",
+          "current": "Current value with units",
+          "previous": "Previous value for trend",
+          "reference": "Reference range",
+          "interpretation": "Clinical context and significance"
+        }
+      ]
+    }
+  ],
+
+  "medicationReview": [
+    {
+      "medication": "Drug name",
+      "dose": "Dose, route, frequency",
+      "indication": "Why prescribed",
+      "concern": "Adjustment needed|Monitoring required|Interaction|Duration review",
+      "action": "Specific recommendation with rationale"
+    }
+  ],
+
+  "todaysPlan": {
+    "urgent": [
+      {"task": "Task description", "rationale": "Why urgent (complete within 4 hours)"}
+    ],
+    "routine": [
+      {"task": "Task description", "rationale": "Why needed (complete today)"}
+    ],
+    "pending": [
+      {"item": "What's pending", "timeframe": "Expected timeframe"}
+    ]
+  },
+
+  "anticipatoryGuidance": {
+    "watchFor": [
+      "Early warning sign 1 specific to this patient",
+      "Early warning sign 2 with clinical implication"
+    ],
+    "escalationTriggers": [
+      "Specific parameter 1 that should prompt senior review",
+      "Specific parameter 2 with threshold"
+    ],
+    "goalsOfCare": "Goals of care considerations if applicable, or 'Standard ICU/Ward goals' if not relevant"
+  },
+
+  "patientExplanation": "Clear explanation in simple, non-medical terms that a patient/family can understand"
 }
 
-Important:
-- Be precise with numerical values and reference ranges
-- Highlight any critical or urgent findings
-- Consider differential diagnoses where appropriate
-- Provide actionable clinical recommendations
-- Use evidence-based clinical reasoning
+CRITICAL FORMATTING RULES:
+1. Always contextualize values: "Creatinine 250 µmol/L, up from 180 yesterday" NOT just "Creatinine 250"
+2. Include specific numbers, not just "elevated" or "low"
+3. For medications, state: drug, dose, route, day of therapy, planned duration, indication
+4. Show clinical reasoning: "Given [finding A] + [finding B], consider [diagnosis/complication]"
+5. Flag drug-bug mismatches or coverage gaps explicitly
+6. Each issue mentioned once in most relevant section
+7. Be precise with numerical values and reference ranges
+8. Use evidence-based clinical reasoning
 
 Medical Report:
 ${medicalText}`;
@@ -813,44 +882,51 @@ ${medicalText}`;
  * Build ward presentation prompt (concise format for rounds)
  */
 function buildWardPresentationPrompt(medicalText, documentType) {
-  return `Generate a ward presentation summary in JSON format for morning rounds. Be CONCISE, SCANNABLE, and ACTIONABLE.
+  return `Generate a clinical decision support ward presentation for morning rounds. Be CONCISE, SCANNABLE, and ACTIONABLE.
 
 Return JSON in this EXACT structure:
 
 {
   "wardPresentation": {
-    "header": "Age Sex | Primary Diagnosis | POD/Day# | Key Comorbidities",
-    "status": [
-      {"domain": "Hemodynamics", "indicator": "green|yellow|red", "value": "Brief status"},
-      {"domain": "Respiratory", "indicator": "green|yellow|red", "value": "Brief status"},
-      {"domain": "Renal", "indicator": "green|yellow|red", "value": "Brief status"},
-      {"domain": "Infection", "indicator": "green|yellow|red", "value": "Brief status"}
+    "synopsis": "Age Sex | Primary problem | Day# | Key comorbidities. One-line status.",
+
+    "immediatePriorities": [
+      {"problem": "Issue", "whyNow": "Why urgent", "action": "Do what"}
     ],
-    "activeIssues": [
-      {"issue": "Issue name", "status": "Current status", "action": "What to do"},
-      "Maximum 5 issues, prioritized by urgency"
+
+    "systemsStatus": [
+      {"system": "CVS|Resp|Renal|GI|Heme|ID|Endo|Neuro", "status": "stable|improving|deteriorating", "key": "Key parameter with value and trend"}
     ],
-    "todaysPlan": [
-      "Checkbox item 1 - specific actionable task",
-      "Checkbox item 2 - specific actionable task",
-      "Maximum 6 tasks"
+
+    "medications": [
+      {"drug": "Name (dose, route)", "day": "Day #", "concern": "Issue if any", "action": "Adjust/Monitor/Continue"}
     ],
+
+    "urgent": [
+      {"task": "Task", "why": "Rationale (within 4h)"}
+    ],
+
+    "routine": [
+      "Task 1 - brief rationale (complete today)",
+      "Task 2 - brief rationale"
+    ],
+
     "watchFor": [
-      "Red flag 1 with → clinical implication",
-      "Red flag 2 with → clinical implication",
-      "Maximum 4 red flags"
+      "Red flag 1 → clinical implication",
+      "Red flag 2 → escalation trigger"
     ]
   }
 }
 
-FORMATTING RULES:
-1. Use standard medical abbreviations (DM, HTN, CKD, POD, UO, Cr, Hb, BP, SpO2)
-2. Quantify everything with numbers, not descriptions
-3. Front-load critical info - most urgent first
-4. Each issue needs "issue → status → action" format
-5. No prose, use bullet points
-6. Maximum one page when printed
-7. Traffic light indicators: green (stable), yellow (watch), red (urgent)
+CRITICAL WARD PRESENTATION RULES:
+1. ABBREVIATE: Use standard medical abbreviations (DM, HTN, CKD, AKI, POD, HD, UO, Cr, Hb, WBC, BP, HR, SpO2, RR, Temp)
+2. QUANTIFY: Always include numbers with units and trends (Cr 250↑ from 180, not "elevated Cr")
+3. CONTEXTUALIZE: Show baseline vs current (Hb 8.5, baseline 10.2 pre-op)
+4. PRIORITIZE: Most urgent first, limit to 3-5 items per section
+5. ACTIONABLE: Every issue needs clear next step
+6. CONCISE: One page when printed, bullet format only
+7. For meds: Name (dose/route) • Day X of Y • Indication • Concern if any
+8. Traffic light thinking: Flag deteriorating trends immediately
 
 Medical Report:
 ${medicalText}`;
