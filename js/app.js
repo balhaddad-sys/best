@@ -19,6 +19,20 @@ const AppState = {
   currentResults: null
 };
 
+// ==================== Debug Helper (for mobile) ====================
+function debugLog(message) {
+  // Log to console
+  console.log(message);
+
+  // Also log to visual debug panel for mobile users
+  const debugContent = document.getElementById('debug-content');
+  if (debugContent) {
+    const timestamp = new Date().toLocaleTimeString();
+    debugContent.innerHTML += `[${timestamp}] ${message}\n`;
+    debugContent.scrollTop = debugContent.scrollHeight;
+  }
+}
+
 // ==================== DOM Elements ====================
 const Elements = {
   // Sections
@@ -222,20 +236,20 @@ async function handleAnalyze() {
 
     // Handle image or text
     if (file) {
-      console.log('[Frontend] File selected:', file.name, 'Size:', file.size, 'bytes');
+      debugLog(`[Frontend] File selected: ${file.name}, Size: ${file.size} bytes`);
       const base64Data = await fileToBase64(file);
-      console.log('[Frontend] Base64 encoded. Length:', base64Data.length);
-      console.log('[Frontend] Base64 starts with:', base64Data.substring(0, 100));
-      console.log('[Frontend] Base64 ends with:', base64Data.substring(base64Data.length - 50));
+      debugLog(`[Frontend] Base64 encoded. Length: ${base64Data.length}`);
+      debugLog(`[Frontend] Base64 starts with: ${base64Data.substring(0, 100)}`);
+      debugLog(`[Frontend] Base64 ends with: ${base64Data.substring(base64Data.length - 50)}`);
       payload.image = base64Data;
-      console.log('[Frontend] Payload.image length:', payload.image.length);
+      debugLog(`[Frontend] Payload.image length: ${payload.image.length}`);
     } else {
       payload.text = text;
     }
 
-    console.log('[Frontend] Calling backend with payload. Keys:', Object.keys(payload));
+    debugLog(`[Frontend] Calling backend with payload. Keys: ${Object.keys(payload)}`);
     if (payload.image) {
-      console.log('[Frontend] Payload image length before sending:', payload.image.length);
+      debugLog(`[Frontend] Payload image length before sending: ${payload.image.length}`);
     }
 
     // Call backend
@@ -355,18 +369,18 @@ async function callBackend(action, data = {}) {
     ...data
   };
 
-  console.log('[Frontend] callBackend - action:', action);
-  console.log('[Frontend] callBackend - payload keys:', Object.keys(payload));
+  debugLog(`[Frontend] callBackend - action: ${action}`);
+  debugLog(`[Frontend] callBackend - payload keys: ${Object.keys(payload)}`);
 
   if (payload.image) {
-    console.log('[Frontend] callBackend - payload.image type:', typeof payload.image);
-    console.log('[Frontend] callBackend - payload.image length:', payload.image.length);
+    debugLog(`[Frontend] callBackend - payload.image type: ${typeof payload.image}`);
+    debugLog(`[Frontend] callBackend - payload.image length: ${payload.image.length}`);
   }
 
   try {
     const payloadString = JSON.stringify(payload);
-    console.log('[Frontend] callBackend - JSON.stringify length:', payloadString.length);
-    console.log('[Frontend] callBackend - JSON.stringify preview (first 200 chars):', payloadString.substring(0, 200));
+    debugLog(`[Frontend] callBackend - JSON.stringify length: ${payloadString.length}`);
+    debugLog(`[Frontend] callBackend - JSON.stringify preview (first 200 chars): ${payloadString.substring(0, 200)}`);
 
     const response = await fetch(CONFIG.BACKEND_URL, {
       method: 'POST',
@@ -376,7 +390,7 @@ async function callBackend(action, data = {}) {
       body: payloadString
     });
 
-    console.log('[Frontend] callBackend - fetch response status:', response.status);
+    debugLog(`[Frontend] callBackend - fetch response status: ${response.status}`);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -386,6 +400,7 @@ async function callBackend(action, data = {}) {
     return result;
 
   } catch (error) {
+    debugLog(`[Frontend] Backend call error: ${error.message}`);
     console.error('Backend call error:', error);
     throw error;
   }
@@ -397,16 +412,17 @@ function fileToBase64(file) {
     const reader = new FileReader();
     reader.onload = () => {
       const result = reader.result;
-      console.log('[Frontend] FileReader completed. Result length:', result.length);
-      console.log('[Frontend] FileReader result type:', typeof result);
-      console.log('[Frontend] FileReader result preview:', result.substring(0, 100));
+      debugLog(`[Frontend] FileReader completed. Result length: ${result.length}`);
+      debugLog(`[Frontend] FileReader result type: ${typeof result}`);
+      debugLog(`[Frontend] FileReader result preview: ${result.substring(0, 100)}`);
       resolve(result);
     };
     reader.onerror = (error) => {
+      debugLog(`[Frontend] FileReader error: ${error.message}`);
       console.error('[Frontend] FileReader error:', error);
       reject(error);
     };
-    console.log('[Frontend] Starting FileReader.readAsDataURL for file:', file.name, file.size, 'bytes');
+    debugLog(`[Frontend] Starting FileReader.readAsDataURL for file: ${file.name}, ${file.size} bytes`);
     reader.readAsDataURL(file);
   });
 }
