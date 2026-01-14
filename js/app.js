@@ -222,9 +222,20 @@ async function handleAnalyze() {
 
     // Handle image or text
     if (file) {
-      payload.image = await fileToBase64(file);
+      console.log('[Frontend] File selected:', file.name, 'Size:', file.size, 'bytes');
+      const base64Data = await fileToBase64(file);
+      console.log('[Frontend] Base64 encoded. Length:', base64Data.length);
+      console.log('[Frontend] Base64 starts with:', base64Data.substring(0, 100));
+      console.log('[Frontend] Base64 ends with:', base64Data.substring(base64Data.length - 50));
+      payload.image = base64Data;
+      console.log('[Frontend] Payload.image length:', payload.image.length);
     } else {
       payload.text = text;
+    }
+
+    console.log('[Frontend] Calling backend with payload. Keys:', Object.keys(payload));
+    if (payload.image) {
+      console.log('[Frontend] Payload image length before sending:', payload.image.length);
     }
 
     // Call backend
@@ -344,14 +355,28 @@ async function callBackend(action, data = {}) {
     ...data
   };
 
+  console.log('[Frontend] callBackend - action:', action);
+  console.log('[Frontend] callBackend - payload keys:', Object.keys(payload));
+
+  if (payload.image) {
+    console.log('[Frontend] callBackend - payload.image type:', typeof payload.image);
+    console.log('[Frontend] callBackend - payload.image length:', payload.image.length);
+  }
+
   try {
+    const payloadString = JSON.stringify(payload);
+    console.log('[Frontend] callBackend - JSON.stringify length:', payloadString.length);
+    console.log('[Frontend] callBackend - JSON.stringify preview (first 200 chars):', payloadString.substring(0, 200));
+
     const response = await fetch(CONFIG.BACKEND_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'text/plain' // Important: Avoids CORS preflight
       },
-      body: JSON.stringify(payload)
+      body: payloadString
     });
+
+    console.log('[Frontend] callBackend - fetch response status:', response.status);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -370,8 +395,18 @@ async function callBackend(action, data = {}) {
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
+    reader.onload = () => {
+      const result = reader.result;
+      console.log('[Frontend] FileReader completed. Result length:', result.length);
+      console.log('[Frontend] FileReader result type:', typeof result);
+      console.log('[Frontend] FileReader result preview:', result.substring(0, 100));
+      resolve(result);
+    };
+    reader.onerror = (error) => {
+      console.error('[Frontend] FileReader error:', error);
+      reject(error);
+    };
+    console.log('[Frontend] Starting FileReader.readAsDataURL for file:', file.name, file.size, 'bytes');
     reader.readAsDataURL(file);
   });
 }
