@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MedWard Master - AI-Powered Medical Report Interpretation">
+  <meta name="keywords" content="medical reports, AI interpretation, healthcare, clinical analysis">
+  <title>MedWard Master - AI Medical Report Interpretation</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo-section">
+          <h1 class="logo">🏥 MedWard Master</h1>
+          <p class="tagline">AI-Powered Medical Report Interpretation</p>
+        </div>
+        <div class="user-section" id="user-section" style="display: none;">
+          <span id="username-display"></span>
+          <button id="logout-btn" class="btn-secondary">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+
+      <!-- Login Section -->
+      <section id="login-section" class="section card">
+        <h2>Welcome to MedWard Master</h2>
+        <p>Please sign in to access medical report interpretation</p>
+        <div class="login-form">
+          <input
+            type="text"
+            id="username-input"
+            placeholder="Enter your username"
+            class="input-field"
+          >
+          <button id="login-btn" class="btn-primary">Sign In</button>
+        </div>
+      </section>
+
+      <!-- Input Section -->
+      <section id="input-section" class="section card" style="display: none;">
+        <h2>Upload Medical Report</h2>
+
+        <div class="input-method-selector">
+          <button class="method-btn active" data-method="text">
+            📝 Paste Text
+          </button>
+          <button class="method-btn" data-method="image">
+            📷 Upload Image
+          </button>
+        </div>
+
+        <!-- Text Input -->
+        <div id="text-input-area" class="input-area">
+          <textarea
+            id="medical-text"
+            class="textarea-field"
+            placeholder="Paste your medical report text here...&#10;&#10;Example:&#10;Hemoglobin: 12.5 g/dL&#10;WBC: 7.2 K/uL&#10;Platelets: 250 K/uL&#10;..."
+            rows="10"
+          ></textarea>
+        </div>
+
+        <!-- Image Input -->
+        <div id="image-input-area" class="input-area" style="display: none;">
+          <div class="file-upload-wrapper">
+            <input
+              type="file"
+              id="image-upload"
+              accept="image/*"
+              class="file-input"
+            >
+            <label for="image-upload" class="file-label">
+              <span class="upload-icon">📎</span>
+              <span id="file-name">Choose an image file or drag here</span>
+            </label>
+            <div id="image-preview" class="image-preview"></div>
+          </div>
+        </div>
+
+        <!-- Document Type Selector -->
+        <div class="form-group">
+          <label for="doc-type">Report Type:</label>
+          <select id="doc-type" class="select-field">
+            <option value="lab">🧪 Laboratory Results</option>
+            <option value="imaging">🔬 Imaging Report (X-ray, CT, MRI)</option>
+            <option value="pathology">🦠 Pathology Report</option>
+            <option value="general">📋 General Medical Report</option>
+          </select>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button id="analyze-btn" class="btn-primary btn-large">
+            <span class="btn-icon">🔍</span>
+            Analyze Report
+          </button>
+          <button id="clear-btn" class="btn-secondary">Clear</button>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="loading-indicator" class="loading" style="display: none;">
+          <div class="spinner"></div>
+          <p>Analyzing medical report with AI...</p>
+        </div>
+      </section>
+
+      <!-- Results Section -->
+      <section id="results-section" class="section" style="display: none;">
+
+        <!-- Summary Card -->
+        <div class="card result-card">
+          <div class="card-header">
+            <h3>📊 Summary</h3>
+            <button class="btn-icon-only" id="copy-summary-btn" title="Copy to clipboard">📋</button>
+          </div>
+          <div id="summary-content" class="card-content"></div>
+        </div>
+
+        <!-- Key Findings -->
+        <div class="card result-card">
+          <div class="card-header">
+            <h3>🔍 Key Findings</h3>
+          </div>
+          <div id="findings-content" class="card-content"></div>
+        </div>
+
+        <!-- Abnormalities & Alerts -->
+        <div class="card result-card alert-card">
+          <div class="card-header">
+            <h3>⚠️ Abnormalities & Alerts</h3>
+          </div>
+          <div id="alerts-content" class="card-content"></div>
+        </div>
+
+        <!-- Normal Findings -->
+        <div class="card result-card success-card">
+          <div class="card-header">
+            <h3>✅ Normal Findings</h3>
+          </div>
+          <div id="normal-content" class="card-content"></div>
+        </div>
+
+        <!-- Clinical Pearls -->
+        <div class="card result-card">
+          <div class="card-header">
+            <h3>💡 Clinical Pearls</h3>
+          </div>
+          <div id="pearls-content" class="card-content"></div>
+        </div>
+
+        <!-- Patient Discussion Points -->
+        <div class="card result-card">
+          <div class="card-header">
+            <h3>💬 Discussion Points for Patient</h3>
+          </div>
+          <div id="questions-content" class="card-content"></div>
+        </div>
+
+        <!-- Patient-Friendly Explanation -->
+        <div class="card result-card info-card">
+          <div class="card-header">
+            <h3>👤 Patient-Friendly Explanation</h3>
+          </div>
+          <div id="patient-explanation-content" class="card-content"></div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="card result-card">
+          <div class="card-header">
+            <h3>📝 Recommendations</h3>
+          </div>
+          <div id="recommendations-content" class="card-content"></div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="results-actions">
+          <button id="new-analysis-btn" class="btn-primary">
+            New Analysis
+          </button>
+          <button id="print-btn" class="btn-secondary">
+            🖨️ Print Report
+          </button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 MedWard Master. AI-Powered Medical Interpretation.</p>
+      <p class="disclaimer">
+        <strong>Disclaimer:</strong> This tool is for educational and informational purposes only.
+        Always consult with qualified healthcare professionals for medical decisions.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast"></div>
+
+  <!-- JavaScript -->
+  <script src="js/app.js"></script>
+</body>
+</html>
