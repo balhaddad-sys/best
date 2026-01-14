@@ -1170,6 +1170,501 @@ body {
   transform: none;
 }
 
+/* ==================== Clinical Decision Support Styles ==================== */
+
+/* Clinical Synopsis */
+.synopsis-card {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-left: 4px solid var(--primary);
+}
+
+.clinical-synopsis {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* Subsection Titles */
+.subsection-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin: 1.5rem 0 0.75rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--gray-200);
+  letter-spacing: 0.5px;
+}
+
+.subsection-title:first-child {
+  margin-top: 0;
+}
+
+/* Problem List Styles */
+.problem-priority-list,
+.problem-active-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.problem-item {
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--gray-300);
+  background: var(--gray-50);
+  transition: var(--transition);
+}
+
+.problem-item:hover {
+  transform: translateX(4px);
+  box-shadow: var(--shadow-sm);
+}
+
+.problem-item.immediate {
+  background: #fef2f2;
+  border-left-color: #dc2626;
+}
+
+.problem-item.active {
+  background: #fffbeb;
+  border-left-color: #f59e0b;
+}
+
+.problem-header {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.problem-detail,
+.problem-action,
+.problem-target {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-top: 0.4rem;
+  line-height: 1.6;
+}
+
+.problem-action strong,
+.problem-detail strong,
+.problem-target strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.background-conditions {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 1rem;
+}
+
+.background-conditions li {
+  padding: 0.75rem 1rem;
+  background: var(--gray-50);
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Systems Assessment Grid */
+.systems-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.system-card {
+  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--gray-200);
+  background: white;
+  transition: var(--transition);
+}
+
+.system-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.system-card.status-stable {
+  border-left: 4px solid #10b981;
+}
+
+.system-card.status-improving {
+  border-left: 4px solid #3b82f6;
+}
+
+.system-card.status-deteriorating {
+  border-left: 4px solid #ef4444;
+}
+
+.system-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--gray-100);
+}
+
+.system-header h5 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.system-status {
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background: var(--gray-100);
+}
+
+.system-parameters {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.parameter-item {
+  padding: 0.75rem;
+  background: var(--gray-50);
+  border-radius: var(--radius-sm);
+}
+
+.parameter-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.parameter-values {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.current-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.previous-value {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.reference-range {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.parameter-interpretation {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Medication Review Styles */
+.medications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.medication-item {
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--gray-200);
+  background: white;
+  transition: var(--transition);
+}
+
+.medication-item:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.medication-item.med-urgent {
+  border-left: 4px solid #dc2626;
+  background: #fef2f2;
+}
+
+.med-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.med-header strong {
+  font-size: 1.05rem;
+  color: var(--text-primary);
+}
+
+.med-dose {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  padding: 0.25rem 0.75rem;
+  background: var(--gray-100);
+  border-radius: var(--radius-sm);
+}
+
+.med-indication,
+.med-concern,
+.med-action {
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  line-height: 1.5;
+}
+
+.med-concern {
+  color: #dc2626;
+}
+
+.med-action {
+  color: var(--primary);
+  font-weight: 500;
+}
+
+/* Today's Plan Styles */
+.plan-urgent,
+.plan-routine,
+.plan-pending {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 1.5rem 0;
+}
+
+.plan-urgent li {
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  background: #fef2f2;
+  border-left: 4px solid #dc2626;
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.5rem;
+  position: relative;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.plan-urgent li::before {
+  content: '🚨';
+  position: absolute;
+  left: 0.75rem;
+  top: 0.75rem;
+}
+
+.plan-routine li {
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  background: var(--gray-50);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.5rem;
+  position: relative;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.plan-routine li::before {
+  content: '✓';
+  position: absolute;
+  left: 0.75rem;
+  top: 0.75rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.plan-pending li {
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  background: #fffbeb;
+  border-left: 4px solid #f59e0b;
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.5rem;
+  position: relative;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.plan-pending li::before {
+  content: '⏳';
+  position: absolute;
+  left: 0.75rem;
+  top: 0.75rem;
+}
+
+.urgent-section::before {
+  content: '🚨 ';
+}
+
+.routine-section::before {
+  content: '📅 ';
+}
+
+.pending-section::before {
+  content: '⏳ ';
+}
+
+/* Anticipatory Guidance Styles */
+.watch-for-list,
+.escalation-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 1.5rem 0;
+}
+
+.watch-for-list li,
+.escalation-list li {
+  padding: 0.75rem 1rem;
+  background: #fef2f2;
+  border-left: 4px solid #dc2626;
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.goals-of-care {
+  padding: 1rem;
+  background: #f0f9ff;
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-top: 0.75rem;
+}
+
+/* Patient Explanation */
+.patient-friendly {
+  padding: 1.25rem;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-left: 4px solid #10b981;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text-primary);
+}
+
+/* Ward Presentation Specific Styles */
+.ward-urgent {
+  background: #fef2f2;
+  border: 2px solid #fecaca;
+}
+
+.priorities-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.priority-item {
+  padding: 1rem;
+  background: white;
+  border-radius: var(--radius-sm);
+  border-left: 4px solid #dc2626;
+}
+
+.priority-problem {
+  font-size: 1.05rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.priority-why,
+.priority-action {
+  font-size: 0.9rem;
+  margin-top: 0.4rem;
+  line-height: 1.5;
+}
+
+.priority-why .label,
+.priority-action .label {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.medications-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.medications-table thead th {
+  background: var(--gray-100);
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--gray-300);
+}
+
+.medications-table tbody td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--gray-200);
+  font-size: 0.9rem;
+}
+
+.medications-table tbody tr.med-concern {
+  background: #fef2f2;
+}
+
+.task-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+}
+
+.task-item {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.urgent-task {
+  background: white;
+  border-left: 4px solid #dc2626;
+}
+
+.routine-task {
+  background: white;
+  border-left: 4px solid var(--primary);
+}
+
+.task-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.task-rationale {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.status-icon {
+  margin-right: 0.25rem;
+}
+
 /* ==================== Responsive Design ==================== */
 @media (max-width: 1024px) {
   .dashboard-container {

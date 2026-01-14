@@ -677,61 +677,263 @@ function displayResults(data) {
     Elements.analysisTimestamp.textContent = `Completed at ${now.toLocaleTimeString()}`;
   }
 
-  // Build results HTML
-  const sections = [
-    {
-      icon: '📊',
-      title: 'Summary',
-      content: data.interpretation?.summary || 'No summary available'
-    },
-    {
-      icon: '🔍',
-      title: 'Key Findings',
-      content: formatList(data.interpretation?.keyFindings)
-    },
-    {
-      icon: '⚠️',
-      title: 'Abnormalities & Alerts',
-      content: formatList(data.interpretation?.abnormalities, 'alert-item') || '<p>No abnormalities detected.</p>'
-    },
-    {
-      icon: '✅',
-      title: 'Normal Findings',
-      content: formatList(data.interpretation?.normalFindings, 'success-item') || '<p>No normal findings listed.</p>'
-    },
-    {
-      icon: '💡',
-      title: 'Clinical Pearls',
-      content: formatList(data.clinicalPearls) || '<p>No clinical pearls available.</p>'
-    },
-    {
-      icon: '💬',
-      title: 'Discussion Points',
-      content: formatList(data.potentialQuestions) || '<p>No specific discussion points.</p>'
-    },
-    {
-      icon: '👤',
-      title: 'Patient Explanation',
-      content: data.presentation?.patientFriendly || 'No patient explanation available'
-    },
-    {
-      icon: '📝',
-      title: 'Recommendations',
-      content: formatList(data.presentation?.recommendations) || '<p>No specific recommendations.</p>'
-    }
-  ];
+  // Build results HTML with new clinical decision support format
+  let resultsHTML = '';
 
-  Elements.resultsContent.innerHTML = sections.map(section => `
-    <div class="result-card">
-      <div class="result-card-header">
-        <span class="result-card-icon">${section.icon}</span>
-        <h4>${section.title}</h4>
+  // 1. Clinical Synopsis
+  if (data.clinicalSynopsis) {
+    resultsHTML += `
+      <div class="result-card synopsis-card">
+        <div class="result-card-header">
+          <span class="result-card-icon">🏥</span>
+          <h4>Clinical Synopsis</h4>
+        </div>
+        <div class="result-card-body">
+          <p class="clinical-synopsis">${escapeHtml(data.clinicalSynopsis)}</p>
+        </div>
       </div>
-      <div class="result-card-body">
-        ${section.content}
+    `;
+  }
+
+  // 2. Problem List
+  if (data.problemList) {
+    let problemListHTML = '';
+
+    if (data.problemList.immediatePriorities?.length > 0) {
+      problemListHTML += '<h5 class="subsection-title">⚠️ Immediate Priorities</h5><div class="problem-priority-list">';
+      data.problemList.immediatePriorities.forEach(item => {
+        problemListHTML += `
+          <div class="problem-item immediate">
+            <div class="problem-header">${escapeHtml(item.problem)}</div>
+            <div class="problem-detail"><strong>Why Now:</strong> ${escapeHtml(item.whyNow)}</div>
+            <div class="problem-action"><strong>Action:</strong> ${escapeHtml(item.action)}</div>
+          </div>
+        `;
+      });
+      problemListHTML += '</div>';
+    }
+
+    if (data.problemList.activeIssues?.length > 0) {
+      problemListHTML += '<h5 class="subsection-title">📋 Active Issues Requiring Monitoring</h5><div class="problem-active-list">';
+      data.problemList.activeIssues.forEach(item => {
+        problemListHTML += `
+          <div class="problem-item active">
+            <div class="problem-header">${escapeHtml(item.problem)}</div>
+            <div class="problem-detail"><strong>Status:</strong> ${escapeHtml(item.status)}</div>
+            <div class="problem-target"><strong>Target:</strong> ${escapeHtml(item.target)}</div>
+          </div>
+        `;
+      });
+      problemListHTML += '</div>';
+    }
+
+    if (data.problemList.backgroundConditions?.length > 0) {
+      problemListHTML += '<h5 class="subsection-title">🔖 Background Conditions</h5><ul class="background-conditions">';
+      data.problemList.backgroundConditions.forEach(item => {
+        problemListHTML += `<li><strong>${escapeHtml(item.condition)}:</strong> ${escapeHtml(item.impact)}</li>`;
+      });
+      problemListHTML += '</ul>';
+    }
+
+    resultsHTML += `
+      <div class="result-card">
+        <div class="result-card-header">
+          <span class="result-card-icon">📝</span>
+          <h4>Problem List</h4>
+        </div>
+        <div class="result-card-body">
+          ${problemListHTML}
+        </div>
       </div>
-    </div>
-  `).join('');
+    `;
+  }
+
+  // 3. Systems-Based Assessment
+  if (data.systemsAssessment?.length > 0) {
+    let systemsHTML = '<div class="systems-grid">';
+    data.systemsAssessment.forEach(system => {
+      const statusClass = system.status?.toLowerCase() || 'stable';
+      const statusIcon = statusClass === 'stable' ? '✅' : statusClass === 'improving' ? '📈' : '📉';
+
+      systemsHTML += `
+        <div class="system-card status-${statusClass}">
+          <div class="system-header">
+            <h5>${escapeHtml(system.system)}</h5>
+            <span class="system-status">${statusIcon} ${escapeHtml(system.status)}</span>
+          </div>
+          <div class="system-parameters">
+      `;
+
+      if (system.keyParameters?.length > 0) {
+        system.keyParameters.forEach(param => {
+          systemsHTML += `
+            <div class="parameter-item">
+              <div class="parameter-name">${escapeHtml(param.parameter)}</div>
+              <div class="parameter-values">
+                <span class="current-value">${escapeHtml(param.current)}</span>
+                ${param.previous ? `<span class="previous-value">← ${escapeHtml(param.previous)}</span>` : ''}
+                ${param.reference ? `<span class="reference-range">(Ref: ${escapeHtml(param.reference)})</span>` : ''}
+              </div>
+              <div class="parameter-interpretation">${escapeHtml(param.interpretation)}</div>
+            </div>
+          `;
+        });
+      }
+
+      systemsHTML += `
+          </div>
+        </div>
+      `;
+    });
+    systemsHTML += '</div>';
+
+    resultsHTML += `
+      <div class="result-card">
+        <div class="result-card-header">
+          <span class="result-card-icon">🔬</span>
+          <h4>Systems-Based Assessment</h4>
+        </div>
+        <div class="result-card-body">
+          ${systemsHTML}
+        </div>
+      </div>
+    `;
+  }
+
+  // 4. Medication Review
+  if (data.medicationReview?.length > 0) {
+    let medsHTML = '<div class="medications-list">';
+    data.medicationReview.forEach(med => {
+      const concernClass = med.concern?.toLowerCase().includes('urgent') || med.concern?.toLowerCase().includes('adjust') ? 'med-urgent' : 'med-routine';
+      medsHTML += `
+        <div class="medication-item ${concernClass}">
+          <div class="med-header">
+            <strong>${escapeHtml(med.medication)}</strong>
+            <span class="med-dose">${escapeHtml(med.dose)}</span>
+          </div>
+          <div class="med-indication"><strong>Indication:</strong> ${escapeHtml(med.indication)}</div>
+          ${med.concern ? `<div class="med-concern"><strong>⚠️ Concern:</strong> ${escapeHtml(med.concern)}</div>` : ''}
+          ${med.action ? `<div class="med-action"><strong>Action:</strong> ${escapeHtml(med.action)}</div>` : ''}
+        </div>
+      `;
+    });
+    medsHTML += '</div>';
+
+    resultsHTML += `
+      <div class="result-card">
+        <div class="result-card-header">
+          <span class="result-card-icon">💊</span>
+          <h4>Medication Review</h4>
+        </div>
+        <div class="result-card-body">
+          ${medsHTML}
+        </div>
+      </div>
+    `;
+  }
+
+  // 5. Today's Plan
+  if (data.todaysPlan) {
+    let planHTML = '';
+
+    if (data.todaysPlan.urgent?.length > 0) {
+      planHTML += '<h5 class="subsection-title urgent-section">🚨 Urgent (Complete within 4 hours)</h5><ul class="plan-urgent">';
+      data.todaysPlan.urgent.forEach(item => {
+        planHTML += `<li><strong>${escapeHtml(item.task)}</strong> - ${escapeHtml(item.rationale)}</li>`;
+      });
+      planHTML += '</ul>';
+    }
+
+    if (data.todaysPlan.routine?.length > 0) {
+      planHTML += '<h5 class="subsection-title routine-section">📅 Routine (Complete today)</h5><ul class="plan-routine">';
+      data.todaysPlan.routine.forEach(item => {
+        if (typeof item === 'string') {
+          planHTML += `<li>${escapeHtml(item)}</li>`;
+        } else {
+          planHTML += `<li><strong>${escapeHtml(item.task)}</strong> - ${escapeHtml(item.rationale)}</li>`;
+        }
+      });
+      planHTML += '</ul>';
+    }
+
+    if (data.todaysPlan.pending?.length > 0) {
+      planHTML += '<h5 class="subsection-title pending-section">⏳ Pending</h5><ul class="plan-pending">';
+      data.todaysPlan.pending.forEach(item => {
+        if (typeof item === 'string') {
+          planHTML += `<li>${escapeHtml(item)}</li>`;
+        } else {
+          planHTML += `<li><strong>${escapeHtml(item.item)}</strong> - ${escapeHtml(item.timeframe)}</li>`;
+        }
+      });
+      planHTML += '</ul>';
+    }
+
+    resultsHTML += `
+      <div class="result-card">
+        <div class="result-card-header">
+          <span class="result-card-icon">✅</span>
+          <h4>Today's Plan</h4>
+        </div>
+        <div class="result-card-body">
+          ${planHTML}
+        </div>
+      </div>
+    `;
+  }
+
+  // 6. Anticipatory Guidance
+  if (data.anticipatoryGuidance) {
+    let guidanceHTML = '';
+
+    if (data.anticipatoryGuidance.watchFor?.length > 0) {
+      guidanceHTML += '<h5 class="subsection-title">👁️ Watch For</h5><ul class="watch-for-list">';
+      data.anticipatoryGuidance.watchFor.forEach(item => {
+        guidanceHTML += `<li class="alert-item">${escapeHtml(item)}</li>`;
+      });
+      guidanceHTML += '</ul>';
+    }
+
+    if (data.anticipatoryGuidance.escalationTriggers?.length > 0) {
+      guidanceHTML += '<h5 class="subsection-title">🔔 Escalation Triggers</h5><ul class="escalation-list">';
+      data.anticipatoryGuidance.escalationTriggers.forEach(item => {
+        guidanceHTML += `<li class="alert-item">${escapeHtml(item)}</li>`;
+      });
+      guidanceHTML += '</ul>';
+    }
+
+    if (data.anticipatoryGuidance.goalsOfCare) {
+      guidanceHTML += `<h5 class="subsection-title">🎯 Goals of Care</h5><p class="goals-of-care">${escapeHtml(data.anticipatoryGuidance.goalsOfCare)}</p>`;
+    }
+
+    resultsHTML += `
+      <div class="result-card">
+        <div class="result-card-header">
+          <span class="result-card-icon">🔮</span>
+          <h4>Anticipatory Guidance</h4>
+        </div>
+        <div class="result-card-body">
+          ${guidanceHTML}
+        </div>
+      </div>
+    `;
+  }
+
+  // 7. Patient Explanation
+  if (data.patientExplanation) {
+    resultsHTML += `
+      <div class="result-card">
+        <div class="result-card-header">
+          <span class="result-card-icon">👤</span>
+          <h4>Patient Explanation</h4>
+        </div>
+        <div class="result-card-body">
+          <p class="patient-friendly">${escapeHtml(data.patientExplanation)}</p>
+        </div>
+      </div>
+    `;
+  }
+
+  Elements.resultsContent.innerHTML = resultsHTML;
 
   // Scroll to results
   Elements.resultsPanel?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -996,15 +1198,58 @@ function displayWardPresentation(data) {
 
   let html = '';
 
-  // Header
-  if (ward.header) {
+  // Synopsis
+  if (ward.synopsis) {
+    html += `<div class="ward-header">${escapeHtml(ward.synopsis)}</div>`;
+    html += '<hr class="ward-divider">';
+  } else if (ward.header) {
+    // Fallback to old format
     html += `<div class="ward-header">${escapeHtml(ward.header)}</div>`;
+    html += '<hr class="ward-divider">';
   }
 
-  html += '<hr class="ward-divider">';
+  // Immediate Priorities
+  if (ward.immediatePriorities && ward.immediatePriorities.length > 0) {
+    html += '<div class="ward-section ward-urgent">';
+    html += '<div class="ward-section-title">⚠️ IMMEDIATE PRIORITIES</div>';
+    html += '<div class="priorities-grid">';
 
-  // Status Table
-  if (ward.status && ward.status.length > 0) {
+    ward.immediatePriorities.forEach(item => {
+      html += `
+        <div class="priority-item">
+          <div class="priority-problem"><strong>${escapeHtml(item.problem)}</strong></div>
+          <div class="priority-why"><span class="label">Why Now:</span> ${escapeHtml(item.whyNow)}</div>
+          <div class="priority-action"><span class="label">Action:</span> ${escapeHtml(item.action)}</div>
+        </div>
+      `;
+    });
+
+    html += '</div>';
+    html += '</div>';
+  }
+
+  // Systems Status
+  if (ward.systemsStatus && ward.systemsStatus.length > 0) {
+    html += '<div class="ward-section">';
+    html += '<div class="ward-section-title">SYSTEMS STATUS</div>';
+    html += '<table class="status-table">';
+    html += '<thead><tr><th>System</th><th>Status</th><th>Key Parameters</th></tr></thead>';
+    html += '<tbody>';
+
+    ward.systemsStatus.forEach(item => {
+      const statusClass = item.status?.toLowerCase() || 'stable';
+      const statusIcon = statusClass === 'stable' ? '✅' : statusClass === 'improving' ? '📈' : '📉';
+      html += `<tr class="status-${statusClass}">
+        <td><strong>${escapeHtml(item.system)}</strong></td>
+        <td><span class="status-icon">${statusIcon}</span> ${escapeHtml(item.status)}</td>
+        <td>${escapeHtml(item.key)}</td>
+      </tr>`;
+    });
+
+    html += '</tbody></table>';
+    html += '</div>';
+  } else if (ward.status && ward.status.length > 0) {
+    // Fallback to old format
     html += '<div class="ward-section">';
     html += '<div class="ward-section-title">STATUS</div>';
     html += '<table class="status-table">';
@@ -1024,7 +1269,60 @@ function displayWardPresentation(data) {
     html += '</div>';
   }
 
-  // Active Issues
+  // Medications
+  if (ward.medications && ward.medications.length > 0) {
+    html += '<div class="ward-section">';
+    html += '<div class="ward-section-title">💊 MEDICATIONS</div>';
+    html += '<table class="medications-table">';
+    html += '<thead><tr><th>Drug</th><th>Day</th><th>Concern</th><th>Action</th></tr></thead>';
+    html += '<tbody>';
+
+    ward.medications.forEach(med => {
+      const rowClass = med.concern && med.concern !== 'Continue' && med.concern !== 'None' ? 'med-concern' : '';
+      html += `<tr class="${rowClass}">
+        <td><strong>${escapeHtml(med.drug)}</strong></td>
+        <td>${escapeHtml(med.day || '-')}</td>
+        <td>${escapeHtml(med.concern || 'None')}</td>
+        <td>${escapeHtml(med.action)}</td>
+      </tr>`;
+    });
+
+    html += '</tbody></table>';
+    html += '</div>';
+  }
+
+  // Urgent Tasks
+  if (ward.urgent && ward.urgent.length > 0) {
+    html += '<div class="ward-section ward-urgent">';
+    html += '<div class="ward-section-title">🚨 URGENT (within 4 hours)</div>';
+    html += '<ul class="task-list urgent-list">';
+
+    ward.urgent.forEach(item => {
+      html += `<li class="task-item urgent-task">
+        <div class="task-name">${escapeHtml(item.task)}</div>
+        <div class="task-rationale">${escapeHtml(item.why)}</div>
+      </li>`;
+    });
+
+    html += '</ul>';
+    html += '</div>';
+  }
+
+  // Routine Tasks
+  if (ward.routine && ward.routine.length > 0) {
+    html += '<div class="ward-section">';
+    html += '<div class="ward-section-title">📅 ROUTINE (complete today)</div>';
+    html += '<ul class="task-list routine-list">';
+
+    ward.routine.forEach(item => {
+      html += `<li class="task-item routine-task">${escapeHtml(item)}</li>`;
+    });
+
+    html += '</ul>';
+    html += '</div>';
+  }
+
+  // Active Issues (fallback for old format)
   if (ward.activeIssues && ward.activeIssues.length > 0) {
     html += '<div class="ward-section">';
     html += '<div class="ward-section-title">ACTIVE ISSUES</div>';
@@ -1049,8 +1347,8 @@ function displayWardPresentation(data) {
     html += '</div>';
   }
 
-  // Today's Plan
-  if (ward.todaysPlan && ward.todaysPlan.length > 0) {
+  // Today's Plan (fallback for old format)
+  if (ward.todaysPlan && ward.todaysPlan.length > 0 && !ward.routine && !ward.urgent) {
     html += '<div class="ward-section">';
     html += '<div class="ward-section-title">TODAY\'S PLAN</div>';
     html += '<ul class="plan-list">';
@@ -1066,7 +1364,7 @@ function displayWardPresentation(data) {
   // Watch For
   if (ward.watchFor && ward.watchFor.length > 0) {
     html += '<div class="ward-section">';
-    html += '<div class="ward-section-title">WATCH FOR</div>';
+    html += '<div class="ward-section-title">👁️ WATCH FOR</div>';
     html += '<ul class="watchfor-list">';
 
     ward.watchFor.forEach(item => {
