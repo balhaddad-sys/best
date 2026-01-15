@@ -376,15 +376,130 @@
     const now = new Date();
     elements.modalTimestamp.textContent = now.toLocaleTimeString();
     
+    console.log('Showing results:', results);
+    
     // Render views
     if (typeof ClinicalComponents !== 'undefined') {
+      console.log('ClinicalComponents found, rendering...');
       ClinicalComponents.renderDetailedView(results);
       ClinicalComponents.renderWardView(results);
+    } else {
+      console.error('ClinicalComponents not found!');
+      // Fallback - render basic content directly
+      renderFallbackContent(results);
     }
     
     // Show modal with animation
     elements.resultsModal.classList.add('active');
     document.body.style.overflow = 'hidden';
+  }
+
+  function renderFallbackContent(results) {
+    // Fallback rendering if ClinicalComponents fails
+    const detailedView = document.getElementById('detailed-view');
+    const wardView = document.getElementById('ward-view');
+    
+    if (detailedView) {
+      detailedView.innerHTML = `
+        <div style="padding: 1rem;">
+          <div style="background: linear-gradient(135deg, #1a1a25 0%, #22222f 100%); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; border-top: 3px solid #f0c674;">
+            <div style="color: #f0c674; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; font-weight: 600;">Clinical Summary</div>
+            <div style="color: rgba(255,255,255,0.8); line-height: 1.7;">${results.summary || 'No summary available'}</div>
+          </div>
+          
+          ${results.alerts && results.alerts.length > 0 ? results.alerts.map(alert => `
+            <div style="background: ${alert.severity === 'critical' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(245, 158, 11, 0.15)'}; border-left: 3px solid ${alert.severity === 'critical' ? '#ef4444' : '#f59e0b'}; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+              <div style="font-weight: 600; color: ${alert.severity === 'critical' ? '#ef4444' : '#f59e0b'}; margin-bottom: 0.25rem;">${alert.title}</div>
+              <div style="color: rgba(255,255,255,0.7); font-size: 0.875rem;">${alert.text}</div>
+            </div>
+          `).join('') : ''}
+          
+          ${results.findings && results.findings.length > 0 ? `
+            <div style="margin-bottom: 1.5rem;">
+              <h3 style="color: #fff; font-size: 1rem; margin-bottom: 1rem;">Key Findings</h3>
+              <div style="background: #1a1a25; border-radius: 8px; overflow: hidden;">
+                ${results.findings.map(f => `
+                  <div style="display: flex; justify-content: space-between; padding: 0.75rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                    <span style="font-weight: 500;">${f.name}</span>
+                    <span style="color: #f0c674; font-family: monospace;">${f.value}</span>
+                    <span style="color: ${f.status.toLowerCase().includes('high') ? '#ef4444' : f.status.toLowerCase().includes('low') ? '#f59e0b' : '#10b981'}; font-size: 0.75rem; font-weight: 600;">${f.status}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+          
+          ${results.recommendations && results.recommendations.length > 0 ? `
+            <div style="margin-bottom: 1.5rem;">
+              <h3 style="color: #fff; font-size: 1rem; margin-bottom: 1rem;">Recommendations</h3>
+              ${results.recommendations.map((rec, i) => `
+                <div style="display: flex; gap: 1rem; padding: 0.75rem; background: #1a1a25; border-radius: 8px; margin-bottom: 0.5rem;">
+                  <span style="width: 24px; height: 24px; background: ${i === 0 ? '#ef4444' : '#f0c674'}; color: #0a0a0f; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; flex-shrink: 0;">${i + 1}</span>
+                  <span style="color: rgba(255,255,255,0.8); font-size: 0.9rem; line-height: 1.5;">${typeof rec === 'string' ? rec : rec.text}</span>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+          
+          ${results.patientExplanation ? `
+            <div style="background: #1a1a25; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+              <div style="color: #4ecdc4; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.5rem;">Patient Explanation</div>
+              <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem; line-height: 1.6;">${results.patientExplanation}</div>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+    
+    if (wardView) {
+      wardView.innerHTML = `
+        <div style="padding: 1rem; display: grid; gap: 1rem;">
+          <div style="border: 2px solid #f0c674; border-radius: 12px; overflow: hidden;">
+            <div style="background: #f0c674; color: #0a0a0f; padding: 0.75rem 1rem; font-weight: 600;">Assessment</div>
+            <div style="padding: 1rem;">
+              <div style="display: flex; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                <span style="width: 100px; color: rgba(255,255,255,0.5); font-size: 0.8rem; font-weight: 600;">Diagnosis</span>
+                <span style="flex: 1;">${results.diagnosis || results.summary || 'Pending'}</span>
+              </div>
+              ${results.severity ? `
+              <div style="display: flex; padding: 0.5rem 0;">
+                <span style="width: 100px; color: rgba(255,255,255,0.5); font-size: 0.8rem; font-weight: 600;">Severity</span>
+                <span style="flex: 1;">${results.severity}</span>
+              </div>
+              ` : ''}
+            </div>
+          </div>
+          
+          ${results.findings && results.findings.filter(f => !f.status.toLowerCase().includes('normal')).length > 0 ? `
+          <div style="border: 2px solid #f0c674; border-radius: 12px; overflow: hidden;">
+            <div style="background: #f0c674; color: #0a0a0f; padding: 0.75rem 1rem; font-weight: 600;">Abnormal Values</div>
+            <div style="padding: 1rem;">
+              ${results.findings.filter(f => !f.status.toLowerCase().includes('normal')).slice(0, 6).map(f => `
+                <div style="display: flex; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                  <span style="width: 100px; color: rgba(255,255,255,0.5); font-size: 0.8rem; font-weight: 600;">${f.name}</span>
+                  <span style="flex: 1;"><strong style="color: #f0c674;">${f.value}</strong> <span style="color: rgba(255,255,255,0.5);">(${f.status})</span></span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+          ` : ''}
+          
+          ${results.recommendations && results.recommendations.length > 0 ? `
+          <div style="border: 2px solid #f0c674; border-radius: 12px; overflow: hidden;">
+            <div style="background: #f0c674; color: #0a0a0f; padding: 0.75rem 1rem; font-weight: 600;">Plan</div>
+            <div style="padding: 1rem;">
+              ${results.recommendations.slice(0, 5).map((rec, i) => `
+                <div style="display: flex; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                  <span style="width: 30px; color: rgba(255,255,255,0.5); font-weight: 600;">${i + 1}.</span>
+                  <span style="flex: 1; font-size: 0.9rem;">${typeof rec === 'string' ? rec : rec.text}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+          ` : ''}
+        </div>
+      `;
+    }
   }
 
   function closeModal() {
