@@ -1,0 +1,443 @@
+/**
+ * MedWard Master - Clinical Design System
+ * Professional medical UI standards for ward round summaries
+ *
+ * Design Principles:
+ * 1. SCANABILITY - 30-second patient review
+ * 2. HIERARCHY - Critical items visually dominate
+ * 3. DENSITY - Maximum information without clutter
+ * 4. PRINTABILITY - Perfect output on paper
+ * 5. SAFETY - Red flags cannot be missed
+ */
+
+/* ==================== Typography System ==================== */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Font Families */
+  --font-body: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', Courier, monospace;
+  --font-heading: var(--font-body);
+
+  /* Type Scale (based on 11px base for medical documents) */
+  --text-xs: 0.6875rem;    /* 11px */
+  --text-sm: 0.75rem;      /* 12px */
+  --text-base: 0.875rem;   /* 14px */
+  --text-md: 1rem;         /* 16px */
+  --text-lg: 1.25rem;      /* 20px */
+  --text-xl: 1.5rem;       /* 24px */
+  --text-2xl: 2rem;        /* 32px */
+
+  /* Line Heights (optimized for readability) */
+  --leading-tight: 1.2;
+  --leading-normal: 1.4;
+  --leading-relaxed: 1.6;
+
+  /* Font Weights */
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+}
+
+/* ==================== Spacing System (8px Grid) ==================== */
+
+:root {
+  /* Base Unit: 8px */
+  --space-0: 0;
+  --space-1: 0.25rem;      /* 4px */
+  --space-2: 0.5rem;       /* 8px */
+  --space-3: 0.75rem;      /* 12px */
+  --space-4: 1rem;         /* 16px */
+  --space-5: 1.5rem;       /* 24px */
+  --space-6: 2rem;         /* 32px */
+  --space-8: 3rem;         /* 48px */
+  --space-10: 4rem;        /* 64px */
+
+  /* Component Spacing */
+  --space-component-padding: var(--space-4);   /* Internal component padding */
+  --space-section-gap: var(--space-5);          /* Gap between major sections */
+  --space-item-gap: var(--space-3);            /* Gap between list items */
+  --space-inline-gap: var(--space-2);          /* Inline element spacing */
+}
+
+/* ==================== Clinical Color System ==================== */
+
+:root {
+  /* Status Colors - Screen */
+  --status-critical: #DC2626;        /* red-600 */
+  --status-warning: #F59E0B;         /* amber-500 */
+  --status-stable: #16A34A;          /* green-600 */
+  --status-info: #2563EB;            /* blue-600 */
+  --status-neutral: #6B7280;         /* gray-500 */
+
+  /* Status Colors - Print (higher contrast) */
+  --status-critical-print: #B91C1C;  /* red-700 */
+  --status-warning-print: #B45309;   /* amber-700 */
+  --status-stable-print: #15803D;    /* green-700 */
+  --status-info-print: #1D4ED8;      /* blue-700 */
+
+  /* Background Colors - Screen */
+  --bg-critical: #FEF2F2;            /* red-50 */
+  --bg-warning: #FFFBEB;             /* amber-50 */
+  --bg-stable: #F0FDF4;              /* green-50 */
+  --bg-info: #EFF6FF;                /* blue-50 */
+  --bg-neutral: #F9FAFB;             /* gray-50 */
+
+  /* Background Colors - Print (lighter for paper) */
+  --bg-critical-print: #FFFFFF;
+  --bg-warning-print: #FFFFFF;
+  --bg-stable-print: #FFFFFF;
+
+  /* Semantic Colors */
+  --color-text-primary: #111827;     /* gray-900 */
+  --color-text-secondary: #4B5563;   /* gray-600 */
+  --color-text-muted: #9CA3AF;       /* gray-400 */
+  --color-border: #E5E7EB;           /* gray-200 */
+  --color-border-strong: #D1D5DB;    /* gray-300 */
+
+  /* Paper White */
+  --color-paper: #FFFFFF;
+  --color-paper-secondary: #F9FAFB;
+}
+
+/* ==================== Visual Hierarchy Tiers ==================== */
+
+:root {
+  /* Tier 1: Always Visible (Patient ID, Vitals, Urgent Flags) */
+  --tier1-size: var(--text-lg);
+  --tier1-weight: var(--font-bold);
+  --tier1-color: var(--color-text-primary);
+
+  /* Tier 2: Prominent (Problem Titles, Today's Plan) */
+  --tier2-size: var(--text-base);
+  --tier2-weight: var(--font-semibold);
+  --tier2-color: var(--color-text-primary);
+
+  /* Tier 3: Supporting (Assessments, History) */
+  --tier3-size: var(--text-sm);
+  --tier3-weight: var(--font-normal);
+  --tier3-color: var(--color-text-secondary);
+}
+
+/* ==================== Component Standards ==================== */
+
+:root {
+  /* Border Radius */
+  --radius-sm: 0.25rem;     /* 4px */
+  --radius-md: 0.5rem;      /* 8px */
+  --radius-lg: 0.75rem;     /* 12px */
+
+  /* Shadows (removed in print) */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+  /* Borders */
+  --border-width-thin: 1px;
+  --border-width-medium: 2px;
+  --border-width-thick: 4px;
+
+  /* Z-index Scale */
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-overlay: 1200;
+  --z-modal: 1300;
+  --z-toast: 1400;
+}
+
+/* ==================== Base Typography Styles ==================== */
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-tight);
+  margin: 0;
+}
+
+h1 { font-size: var(--text-2xl); }
+h2 { font-size: var(--text-xl); }
+h3 { font-size: var(--text-lg); }
+h4 { font-size: var(--text-md); }
+
+/* Monospace for vitals and codes */
+.vitals,
+.code,
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==================== Utility Classes ==================== */
+
+/* Status Badges */
+.status-critical {
+  color: var(--status-critical);
+  background-color: var(--bg-critical);
+}
+
+.status-warning {
+  color: var(--status-warning);
+  background-color: var(--bg-warning);
+}
+
+.status-stable {
+  color: var(--status-stable);
+  background-color: var(--bg-stable);
+}
+
+.status-info {
+  color: var(--status-info);
+  background-color: var(--bg-info);
+}
+
+/* Priority Indicators */
+.priority-critical {
+  border-left: var(--border-width-thick) solid var(--status-critical);
+}
+
+.priority-high {
+  border-left: var(--border-width-thick) solid var(--status-warning);
+}
+
+.priority-medium {
+  border-left: var(--border-width-thick) solid var(--status-info);
+}
+
+.priority-low {
+  border-left: var(--border-width-thick) solid var(--status-neutral);
+}
+
+/* Trend Indicators */
+.trend-up::after {
+  content: ' ↑';
+  color: var(--status-critical);
+  font-weight: var(--font-bold);
+}
+
+.trend-down::after {
+  content: ' ↓';
+  color: var(--status-stable);
+  font-weight: var(--font-bold);
+}
+
+.trend-stable::after {
+  content: ' →';
+  color: var(--status-neutral);
+}
+
+/* Visual Hierarchy Tiers */
+.tier-1 {
+  font-size: var(--tier1-size);
+  font-weight: var(--tier1-weight);
+  color: var(--tier1-color);
+}
+
+.tier-2 {
+  font-size: var(--tier2-size);
+  font-weight: var(--tier2-weight);
+  color: var(--tier2-color);
+}
+
+.tier-3 {
+  font-size: var(--tier3-size);
+  font-weight: var(--tier3-weight);
+  color: var(--tier3-color);
+}
+
+/* ==================== Print Optimizations ==================== */
+
+@media print {
+  /* Use print-safe colors */
+  :root {
+    --status-critical: var(--status-critical-print);
+    --status-warning: var(--status-warning-print);
+    --status-stable: var(--status-stable-print);
+
+    --bg-critical: var(--bg-critical-print);
+    --bg-warning: var(--bg-warning-print);
+    --bg-stable: var(--bg-stable-print);
+  }
+
+  /* Remove shadows and transitions */
+  * {
+    box-shadow: none !important;
+    transition: none !important;
+  }
+
+  /* Optimize typography for print */
+  body {
+    font-size: 11pt;
+    line-height: 1.4;
+  }
+
+  h1 { font-size: 18pt; }
+  h2 { font-size: 16pt; }
+  h3 { font-size: 14pt; }
+  h4 { font-size: 12pt; }
+
+  /* Ensure black text on white background */
+  body {
+    color: #000000;
+    background: #FFFFFF;
+  }
+
+  /* Maintain borders for structure */
+  .priority-critical,
+  .priority-high,
+  .priority-medium,
+  .priority-low {
+    border-left-width: 3pt !important;
+  }
+}
+
+/* ==================== Accessibility ==================== */
+
+/* Focus styles for keyboard navigation */
+:focus-visible {
+  outline: 2px solid var(--status-info);
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --status-critical: #CC0000;
+    --status-warning: #CC6600;
+    --status-stable: #008800;
+    --color-text-primary: #000000;
+    --color-border: #000000;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ==================== Layout Utilities ==================== */
+
+/* Container for ward round summary */
+.ward-summary-container {
+  max-width: 210mm; /* A4 width */
+  margin: 0 auto;
+  padding: var(--space-4);
+  background: var(--color-paper);
+}
+
+/* Section spacing */
+.section {
+  margin-bottom: var(--space-section-gap);
+}
+
+/* Card component */
+.card {
+  background: var(--color-paper);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-component-padding);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Grid layouts */
+.grid-vitals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+}
+
+/* Flex utilities */
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flex-start {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Spacing utilities */
+.mb-2 { margin-bottom: var(--space-2); }
+.mb-3 { margin-bottom: var(--space-3); }
+.mb-4 { margin-bottom: var(--space-4); }
+.mb-5 { margin-bottom: var(--space-5); }
+
+.mt-2 { margin-top: var(--space-2); }
+.mt-3 { margin-top: var(--space-3); }
+.mt-4 { margin-top: var(--space-4); }
+
+.p-0 { padding: 0; }
+.p-2 { padding: var(--space-2); }
+.p-3 { padding: var(--space-3); }
+.p-4 { padding: var(--space-4); }
+
+/* Text utilities */
+.text-bold { font-weight: var(--font-bold); }
+.text-semibold { font-weight: var(--font-semibold); }
+.text-medium { font-weight: var(--font-medium); }
+.text-muted { color: var(--color-text-muted); }
+.text-secondary { color: var(--color-text-secondary); }
+
+/* ==================== Component-Specific Styles ==================== */
+
+/* Urgent banner */
+.urgent-banner {
+  background: var(--status-critical);
+  color: white;
+  padding: var(--space-3) var(--space-4);
+  text-align: center;
+  font-weight: var(--font-bold);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  margin-bottom: 0;
+}
+
+/* Escalation panel (always visible) */
+.escalation-panel {
+  border: var(--border-width-medium) solid var(--status-critical);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  background: var(--bg-critical);
+  margin-top: var(--space-5);
+}
+
+.escalation-panel h3 {
+  color: var(--status-critical);
+  margin-bottom: var(--space-3);
+}
+
+/* Checkbox styling for print */
+.checkbox {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: var(--border-width-medium) solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  margin-right: var(--space-2);
+  vertical-align: middle;
+}
+
+@media print {
+  .checkbox {
+    border-color: #000000;
+  }
+}
