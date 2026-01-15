@@ -1,420 +1,304 @@
 /**
- * MedWard Master - Clinical UI Components
- * Professional ward round display components
+ * MedWard Master - Clinical Components
+ * Clean, practical medical report rendering
  */
 
-'use strict';
-
-// ==================== Vitals Strip Component ====================
-
-/**
- * VitalsStrip - Displays patient vitals with trend indicators and alerts
- *
- * @param {Object} vitals - Vitals data
- * @param {Object} vitals.temperature - { value, trend, unit }
- * @param {Object} vitals.heartRate - { value, trend }
- * @param {Object} vitals.bloodPressure - { systolic, diastolic, trend }
- * @param {Object} vitals.respiratoryRate - { value, trend }
- * @param {Object} vitals.spO2 - { value, support, trend }
- * @returns {string} HTML string
- */
-function renderVitalsStrip(vitals) {
-  if (!vitals) {
-    return '<div class="vitals-strip"><span class="text-muted">⏳ Vitals pending</span></div>';
-  }
-
-  const temp = vitals.temperature || {};
-  const hr = vitals.heartRate || {};
-  const bp = vitals.bloodPressure || {};
-  const rr = vitals.respiratoryRate || {};
-  const spo2 = vitals.spO2 || {};
-
-  // Determine abnormal status for each vital
-  const tempStatus = getVitalStatus('temp', temp.value);
-  const hrStatus = getVitalStatus('hr', hr.value);
-  const bpStatus = getVitalStatus('bp', bp.systolic, bp.diastolic);
-  const rrStatus = getVitalStatus('rr', rr.value);
-  const spo2Status = getVitalStatus('spo2', spo2.value);
-
-  return `
-    <div class="vitals-strip card">
-      <div class="grid-vitals">
-        <div class="vital-item ${tempStatus}">
-          <div class="vital-label">T</div>
-          <div class="vital-value ${getTrendClass(temp.trend)}">
-            ${temp.value || '--'}${temp.unit || '°C'}
-          </div>
+const ClinicalComponents = {
+  
+  /**
+   * Render the detailed analysis view
+   */
+  renderDetailedView(data) {
+    const container = document.getElementById('results-content');
+    if (!container) return;
+    
+    let html = '';
+    
+    // 1. Summary Box (always at top - most important)
+    if (data.summary) {
+      html += `
+        <div class="summary-box">
+          <div class="summary-label">Clinical Summary</div>
+          <div class="summary-text">${this.escapeHtml(data.summary)}</div>
         </div>
-
-        <div class="vital-item ${hrStatus}">
-          <div class="vital-label">HR</div>
-          <div class="vital-value ${getTrendClass(hr.trend)}">
-            ${hr.value || '--'}
-          </div>
-        </div>
-
-        <div class="vital-item ${bpStatus}">
-          <div class="vital-label">BP</div>
-          <div class="vital-value ${getTrendClass(bp.trend)}">
-            ${bp.systolic || '--'}/${bp.diastolic || '--'}
-          </div>
-        </div>
-
-        <div class="vital-item ${rrStatus}">
-          <div class="vital-label">RR</div>
-          <div class="vital-value ${getTrendClass(rr.trend)}">
-            ${rr.value || '--'}
-          </div>
-        </div>
-
-        <div class="vital-item ${spo2Status}">
-          <div class="vital-label">SpO₂</div>
-          <div class="vital-value ${getTrendClass(spo2.trend)}">
-            ${spo2.value || '--'}%${spo2.support ? ` (${spo2.support})` : ''}
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-/**
- * Determine vital status based on value
- */
-function getVitalStatus(type, value, value2) {
-  if (value === null || value === undefined) return '';
-
-  switch (type) {
-    case 'temp':
-      if (value > 38.0 || value < 36.0) return 'status-warning';
-      if (value > 39.0 || value < 35.0) return 'status-critical';
-      return 'status-stable';
-
-    case 'hr':
-      if ((value > 100 && value <= 120) || (value < 60 && value >= 50)) return 'status-warning';
-      if (value > 120 || value < 50) return 'status-critical';
-      return 'status-stable';
-
-    case 'bp':
-      const systolic = value;
-      const diastolic = value2;
-      if (systolic > 180 || systolic < 90 || diastolic > 110 || diastolic < 60) return 'status-critical';
-      if (systolic > 160 || systolic < 100 || diastolic > 100 || diastolic < 65) return 'status-warning';
-      return 'status-stable';
-
-    case 'rr':
-      if ((value > 24 && value <= 30) || (value < 12 && value >= 10)) return 'status-warning';
-      if (value > 30 || value < 10) return 'status-critical';
-      return 'status-stable';
-
-    case 'spo2':
-      if (value < 90) return 'status-critical';
-      if (value < 94) return 'status-warning';
-      return 'status-stable';
-
-    default:
-      return '';
-  }
-}
-
-/**
- * Get trend CSS class
- */
-function getTrendClass(trend) {
-  if (!trend) return 'trend-stable';
-
-  const t = trend.toLowerCase();
-  if (t === 'up' || t === 'increasing' || t === '↑') return 'trend-up';
-  if (t === 'down' || t === 'decreasing' || t === '↓') return 'trend-down';
-  return 'trend-stable';
-}
-
-// ==================== Problem Card Component ====================
-
-/**
- * ProblemCard - Displays a single clinical problem with assessment and plan
- *
- * @param {Object} problem - Problem data
- * @param {string} problem.title - Problem title
- * @param {string} problem.priority - 'critical' | 'high' | 'medium' | 'low'
- * @param {boolean} problem.isAcute - Is this an acute problem?
- * @param {string} problem.assessment - Clinical assessment
- * @param {Array} problem.plan - Action items
- * @param {string} problem.history - Historical context
- * @returns {string} HTML string
- */
-function renderProblemCard(problem, index) {
-  const priorityClass = `priority-${problem.priority || 'medium'}`;
-  const priorityIcon = getPriorityIcon(problem.priority);
-  const priorityLabel = (problem.priority || 'medium').toUpperCase();
-
-  return `
-    <div class="problem-card card ${priorityClass}">
-      <div class="problem-header flex-between mb-3">
-        <div class="flex-start">
-          <span class="priority-icon">${priorityIcon}</span>
-          <h4 class="tier-2">${index}. ${problem.title || 'Untitled Problem'}</h4>
-        </div>
-        <span class="priority-badge status-${problem.priority || 'info'}">${priorityLabel}</span>
-      </div>
-
-      ${problem.assessment ? `
-        <div class="problem-assessment tier-3 mb-3">
-          <strong>Assessment:</strong> ${problem.assessment}
-        </div>
-      ` : ''}
-
-      ${problem.plan && problem.plan.length > 0 ? `
-        <div class="problem-plan mb-3">
-          <strong class="tier-2">Plan:</strong>
-          <ul class="plan-list">
-            ${problem.plan.map(item => `
-              <li class="plan-item tier-3">
-                <span class="checkbox"></span>
-                ${typeof item === 'string' ? item : item.action || item.text}
-              </li>
-            `).join('')}
-          </ul>
-        </div>
-      ` : ''}
-
-      ${problem.history ? `
-        <div class="problem-history tier-3 text-muted">
-          <em>${problem.history}</em>
-        </div>
-      ` : ''}
-    </div>
-  `;
-}
-
-/**
- * Get priority icon
- */
-function getPriorityIcon(priority) {
-  switch (priority) {
-    case 'critical': return '⚡';
-    case 'high': return '⚠';
-    case 'medium': return '●';
-    case 'low': return '○';
-    default: return '●';
-  }
-}
-
-// ==================== Problem List Component ====================
-
-/**
- * ProblemList - Renders sorted list of problems
- *
- * @param {Array} problems - Array of problem objects
- * @returns {string} HTML string
- */
-function renderProblemList(problems) {
-  if (!problems || problems.length === 0) {
-    return '<div class="no-problems text-muted tier-3">No active problems documented</div>';
-  }
-
-  // Sort by priority
-  const priorityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
-  const sortedProblems = [...problems].sort((a, b) => {
-    const priorityA = priorityOrder[a.priority] ?? 2;
-    const priorityB = priorityOrder[b.priority] ?? 2;
-    return priorityA - priorityB;
-  });
-
-  return `
-    <div class="problem-list section">
-      <h3 class="section-title tier-1 mb-4">Active Problems</h3>
-      ${sortedProblems.map((problem, idx) => renderProblemCard(problem, idx + 1)).join('')}
-    </div>
-  `;
-}
-
-// ==================== Escalation Panel Component ====================
-
-/**
- * EscalationPanel - Displays escalation triggers (always visible)
- *
- * @param {Array} triggers - Array of { condition, response }
- * @returns {string} HTML string
- */
-function renderEscalationPanel(triggers) {
-  if (!triggers || triggers.length === 0) {
-    return '';
-  }
-
-  return `
-    <div class="escalation-panel section">
-      <h3 class="tier-1 flex-start">
-        <span>⛔</span>
-        <span>Escalate If:</span>
-      </h3>
-      <ul class="escalation-list">
-        ${triggers.map(trigger => `
-          <li class="escalation-item tier-3">
-            <strong>${trigger.condition || trigger.watchFor || trigger.text}</strong>
-            ${trigger.response ? ` → ${trigger.response}` : ''}
-          </li>
-        `).join('')}
-      </ul>
-    </div>
-  `;
-}
-
-// ==================== Patient Header Component ====================
-
-/**
- * PatientHeader - Displays patient identification and status
- *
- * @param {Object} patient - Patient data
- * @param {string} patient.bed - Bed number
- * @param {number} patient.dayOfAdmission - Day number
- * @param {string} patient.primaryDiagnosis - Main diagnosis
- * @param {string} patient.status - 'critical' | 'unstable' | 'stable'
- * @returns {string} HTML string
- */
-function renderPatientHeader(patient) {
-  const hasUrgentFlags = patient.status === 'critical' || patient.status === 'unstable';
-
-  return `
-    ${hasUrgentFlags ? '<div class="urgent-banner">⚠ URGENT ATTENTION REQUIRED</div>' : ''}
-    <div class="patient-header card ${hasUrgentFlags ? 'urgent' : ''}">
-      <div class="patient-info flex-between">
-        <div class="patient-details">
-          <span class="patient-bed tier-1">Bed ${patient.bed || '?'}</span>
-          <span class="patient-separator">│</span>
-          <span class="patient-day tier-2">Day ${patient.dayOfAdmission || '?'}</span>
-          <span class="patient-separator">│</span>
-          <span class="patient-diagnosis tier-2">${patient.primaryDiagnosis || 'Diagnosis pending'}</span>
-        </div>
-        <div class="patient-status status-${patient.status || 'info'}">
-          ${(patient.status || 'stable').toUpperCase()}
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-// ==================== Ward Round Summary Component ====================
-
-/**
- * WardRoundSummary - Complete ward round display
- *
- * @param {Object} data - Complete patient data
- * @returns {string} HTML string
- */
-function renderWardRoundSummary(data) {
-  return `
-    <div class="ward-summary-container">
-      ${renderPatientHeader(data.patient || {})}
-      ${renderVitalsStrip(data.vitals)}
-      ${renderProblemList(data.problems || [])}
-      ${renderEscalationPanel(data.escalationTriggers || data.watchFor || [])}
-
-      <div class="summary-footer tier-3 text-muted mt-6">
-        <div class="flex-between">
-          <span>Generated: ${new Date(data.metadata?.generatedAt || Date.now()).toLocaleString()}</span>
-          <span>Ward: ${data.metadata?.ward || 'General'}</span>
-          <span>Page 1/1</span>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-// ==================== Integration with Neural System ====================
-
-/**
- * Convert neural system output to ward round format
- */
-function convertNeuralToWardRound(neuralResult, parsedData) {
-  // Extract patient info from parsed data
-  const patient = {
-    bed: 'TBD',  // Would come from EMR integration
-    dayOfAdmission: 1,  // Would come from admission date
-    primaryDiagnosis: parsedData?.type || 'Lab Review',
-    status: hasUrgentFindings(parsedData) ? 'critical' : 'stable'
-  };
-
-  // Build vitals from parsed lab data (if available)
-  const vitals = extractVitalsFromLabs(parsedData);
-
-  // Convert neural problems to problem format
-  const problems = (neuralResult.problems || []).map(p => ({
-    title: p.title,
-    priority: mapSeverityToPriority(p.severity),
-    isAcute: true,
-    assessment: p.details || p.interpretation || '',
-    plan: Array.isArray(p.action) ? p.action : [p.action],
-    history: ''
-  }));
-
-  // Extract escalation triggers from watchFor
-  const escalationTriggers = (neuralResult.watchFor || []).map(item => ({
-    condition: item,
-    response: 'Notify senior physician immediately'
-  }));
-
-  return {
-    patient,
-    vitals,
-    problems,
-    escalationTriggers,
-    metadata: {
-      generatedAt: Date.now(),
-      ward: 'General Medicine',
-      author: 'Neural System'
+      `;
     }
-  };
-}
+    
+    // 2. Urgent Alerts (critical items that need immediate attention)
+    if (data.alerts && data.alerts.length > 0) {
+      data.alerts.forEach(alert => {
+        const severity = alert.severity || 'warning';
+        html += `
+          <div class="alert-banner ${severity}">
+            <svg class="alert-icon" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+            </svg>
+            <div class="alert-content">
+              <div class="alert-title">${this.escapeHtml(alert.title)}</div>
+              <div class="alert-text">${this.escapeHtml(alert.text)}</div>
+            </div>
+          </div>
+        `;
+      });
+    }
+    
+    // 3. Key Findings Table (compact, scannable)
+    if (data.findings && data.findings.length > 0) {
+      html += `
+        <div class="section-header">
+          <svg class="section-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+            <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
+          </svg>
+          <span class="section-title">Key Findings</span>
+        </div>
+        <table class="findings-table">
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Value</th>
+              <th>Reference</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      
+      data.findings.forEach(finding => {
+        const statusClass = this.getStatusClass(finding.status);
+        html += `
+          <tr>
+            <td class="param-name">${this.escapeHtml(finding.name)}</td>
+            <td class="param-value">${this.escapeHtml(finding.value)}</td>
+            <td>${this.escapeHtml(finding.reference || '-')}</td>
+            <td><span class="param-status ${statusClass}">${this.escapeHtml(finding.status)}</span></td>
+          </tr>
+        `;
+      });
+      
+      html += `
+          </tbody>
+        </table>
+      `;
+    }
+    
+    // 4. Clinical Pearl (single, most important insight)
+    if (data.clinicalPearl) {
+      html += `
+        <div class="pearls-section">
+          <div class="pearls-title">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z"/>
+            </svg>
+            Clinical Pearl
+          </div>
+          <div class="pearls-text">${this.escapeHtml(data.clinicalPearl)}</div>
+        </div>
+      `;
+    }
+    
+    // 5. Recommendations (numbered, prioritized)
+    if (data.recommendations && data.recommendations.length > 0) {
+      html += `
+        <div class="section-header">
+          <svg class="section-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          <span class="section-title">Recommendations</span>
+        </div>
+        <div class="recommendations">
+      `;
+      
+      data.recommendations.forEach((rec, index) => {
+        const isUrgent = rec.urgent || index === 0;
+        const text = typeof rec === 'string' ? rec : rec.text;
+        html += `
+          <div class="rec-item">
+            <span class="rec-number ${isUrgent ? 'urgent' : ''}">${index + 1}</span>
+            <span class="rec-text">${this.escapeHtml(text)}</span>
+          </div>
+        `;
+      });
+      
+      html += `</div>`;
+    }
+    
+    // 6. Patient Explanation (lay terms)
+    if (data.patientExplanation) {
+      html += `
+        <div class="patient-box">
+          <div class="patient-title">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+            </svg>
+            Patient Explanation
+          </div>
+          <div class="patient-text">${this.escapeHtml(data.patientExplanation)}</div>
+        </div>
+      `;
+    }
+    
+    // 7. Discussion Points (collapsed by default - less important)
+    if (data.discussionPoints && data.discussionPoints.length > 0) {
+      html += `
+        <button class="discussion-toggle" onclick="this.nextElementSibling.classList.toggle('show')">
+          <span>Discussion Points (${data.discussionPoints.length})</span>
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+        <div class="discussion-content">
+      `;
+      
+      data.discussionPoints.forEach(point => {
+        html += `<div class="discussion-item">${this.escapeHtml(point)}</div>`;
+      });
+      
+      html += `</div>`;
+    }
+    
+    container.innerHTML = html;
+  },
+  
+  /**
+   * Render the ward presentation view (compact for quick reference)
+   */
+  renderWardView(data) {
+    const container = document.getElementById('ward-content');
+    if (!container) return;
+    
+    let html = '';
+    
+    // Diagnosis Card
+    html += `
+      <div class="ward-card">
+        <div class="ward-header">Assessment</div>
+        <div class="ward-body">
+          <div class="ward-row">
+            <span class="ward-label">Diagnosis</span>
+            <span class="ward-value">${this.escapeHtml(data.diagnosis || data.summary || 'Pending')}</span>
+          </div>
+          ${data.severity ? `
+          <div class="ward-row">
+            <span class="ward-label">Severity</span>
+            <span class="ward-value">${this.escapeHtml(data.severity)}</span>
+          </div>
+          ` : ''}
+        </div>
+      </div>
+    `;
+    
+    // Key Labs Card
+    if (data.findings && data.findings.length > 0) {
+      const abnormalFindings = data.findings.filter(f => f.status !== 'Normal' && f.status !== 'normal');
+      if (abnormalFindings.length > 0) {
+        html += `
+          <div class="ward-card">
+            <div class="ward-header">Abnormal Values</div>
+            <div class="ward-body">
+        `;
+        
+        abnormalFindings.slice(0, 5).forEach(finding => {
+          html += `
+            <div class="ward-row">
+              <span class="ward-label">${this.escapeHtml(finding.name)}</span>
+              <span class="ward-value"><strong>${this.escapeHtml(finding.value)}</strong> (${this.escapeHtml(finding.status)})</span>
+            </div>
+          `;
+        });
+        
+        html += `
+            </div>
+          </div>
+        `;
+      }
+    }
+    
+    // Plan Card
+    if (data.recommendations && data.recommendations.length > 0) {
+      html += `
+        <div class="ward-card">
+          <div class="ward-header">Plan</div>
+          <div class="ward-body">
+      `;
+      
+      data.recommendations.slice(0, 4).forEach((rec, index) => {
+        const text = typeof rec === 'string' ? rec : rec.text;
+        html += `
+          <div class="ward-row">
+            <span class="ward-label">${index + 1}.</span>
+            <span class="ward-value">${this.escapeHtml(text)}</span>
+          </div>
+        `;
+      });
+      
+      html += `
+          </div>
+        </div>
+      `;
+    }
+    
+    container.innerHTML = html;
+  },
+  
+  /**
+   * Get CSS class for status
+   */
+  getStatusClass(status) {
+    if (!status) return 'status-normal';
+    const s = status.toLowerCase();
+    if (s.includes('high') || s.includes('critical') || s.includes('elevated')) return 'status-high';
+    if (s.includes('low') || s.includes('decreased')) return 'status-low';
+    return 'status-normal';
+  },
+  
+  /**
+   * Escape HTML to prevent XSS
+   */
+  escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  },
+  
+  /**
+   * Parse AI response into structured data
+   */
+  parseAnalysisResponse(response) {
+    // This handles both structured JSON responses and text responses
+    if (typeof response === 'object') {
+      return response;
+    }
+    
+    // Parse text response into structured format
+    const data = {
+      summary: '',
+      alerts: [],
+      findings: [],
+      clinicalPearl: '',
+      recommendations: [],
+      patientExplanation: '',
+      discussionPoints: [],
+      diagnosis: '',
+      severity: ''
+    };
+    
+    // Extract sections from text
+    const text = response.toString();
+    
+    // Simple extraction logic - can be enhanced based on AI output format
+    const sections = text.split(/\n\n+/);
+    
+    if (sections.length > 0) {
+      data.summary = sections[0].replace(/^(Summary|Clinical Summary):?\s*/i, '').trim();
+    }
+    
+    return data;
+  }
+};
 
-/**
- * Check if parsed data has urgent findings
- */
-function hasUrgentFindings(parsedData) {
-  if (!parsedData || !parsedData.tests) return false;
-
-  return parsedData.tests.some(test =>
-    test.severity === 'critical' ||
-    test.status === 'critical'
-  );
-}
-
-/**
- * Extract vitals from lab data (if present)
- */
-function extractVitalsFromLabs(parsedData) {
-  // This would extract vitals if they're in the lab report
-  // For now, return null (vitals would come from separate source)
-  return null;
-}
-
-/**
- * Map severity to priority
- */
-function mapSeverityToPriority(severity) {
-  const map = {
-    'critical': 'critical',
-    'severe': 'critical',
-    'high': 'high',
-    'abnormal': 'high',
-    'moderate': 'medium',
-    'mild': 'low',
-    'normal': 'low'
-  };
-
-  return map[severity?.toLowerCase()] || 'medium';
-}
-
-// ==================== Exports ====================
-
-if (typeof window !== 'undefined') {
-  window.ClinicalComponents = {
-    renderVitalsStrip,
-    renderProblemCard,
-    renderProblemList,
-    renderEscalationPanel,
-    renderPatientHeader,
-    renderWardRoundSummary,
-    convertNeuralToWardRound
-  };
+// Export for use in other modules
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = ClinicalComponents;
 }
