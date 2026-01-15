@@ -590,7 +590,7 @@ class MedWardNeural {
     // Extract problems from abnormalities
     if (backendResult.interpretation?.abnormalities) {
       backendResult.interpretation.abnormalities.forEach((abn, idx) => {
-        const match = abn.match(/^(.+?)\s*\((\w+)\)\s*[→->]\s*(.+)$/);
+        const match = abn.match(/^(.+?)\s*\((\w+)\)\s*(?:→|->)\s*(.+)$/);
         if (match) {
           result.problems.push({
             title: match[1],
@@ -649,7 +649,7 @@ class MedWardNeural {
     const pm = text.match(/===PROBLEMS===([\s\S]*?)(?====|$)/);
     if (pm) {
       for (const line of pm[1].trim().split('\n')) {
-        const m = line.match(/^\d+\.\s*(.+?)\s*\((\w+)\)\s*[→->]\s*(.+)$/);
+        const m = line.match(/^\d+\.\s*(.+?)\s*\((\w+)\)\s*(?:→|->)\s*(.+)$/);
         if (m) result.problems.push({ title: m[1], severity: m[2].toLowerCase(), action: m[3] });
       }
     }
