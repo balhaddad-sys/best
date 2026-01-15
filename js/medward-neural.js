@@ -1108,9 +1108,9 @@ class MedWardNeural {
       vocabSize: config.vocabSize || 15000,
       maxSeqLength: config.maxSeqLength || 512,
       
-      // Confidence Thresholds
-      confidenceThreshold: config.confidenceThreshold || 0.85,
-      criticalThreshold: config.criticalThreshold || 0.95,
+      // Confidence Thresholds (lowered for better cache utilization)
+      confidenceThreshold: config.confidenceThreshold || 0.70,
+      criticalThreshold: config.criticalThreshold || 0.90,
       
       // Learning Parameters
       positiveBoost: config.positiveBoost || 0.05,
@@ -1440,11 +1440,26 @@ class MedWardNeural {
     const candidates = this.patternStore.getByType(type);
     const matches = [];
 
+    if (this.config.debug) {
+      console.log('[Neural] Finding matches for signature:', signature);
+      console.log('[Neural] Candidates in store:', candidates.length);
+    }
+
     for (const pattern of candidates) {
-      if (!pattern.embedding) continue;
+      if (!pattern.embedding) {
+        if (this.config.debug) {
+          console.log('[Neural] Skipping pattern without embedding:', pattern.id);
+        }
+        continue;
+      }
 
       const similarity = this.cosineSimilarity(embedding, pattern.embedding);
       const adjustedScore = similarity * (pattern.successRate || 0.5);
+
+      if (this.config.debug && similarity > 0.3) {
+        console.log(`[Neural] Pattern ${pattern.id}: similarity=${similarity.toFixed(3)}, adjusted=${adjustedScore.toFixed(3)}, threshold=${this.config.confidenceThreshold}`);
+        console.log(`[Neural]   Pattern signature: ${pattern.signature}`);
+      }
 
       if (adjustedScore >= this.config.confidenceThreshold * 0.5) { // Lower threshold for candidates
         matches.push({
@@ -1458,6 +1473,10 @@ class MedWardNeural {
 
     // Sort by adjusted score
     matches.sort((a, b) => b.adjustedScore - a.adjustedScore);
+
+    if (this.config.debug) {
+      console.log(`[Neural] Found ${matches.length} candidate matches, best confidence: ${matches[0]?.confidence?.toFixed(3) || 'none'}`);
+    }
 
     return {
       signature,
@@ -1683,6 +1702,7 @@ class MedWardNeural {
 
   /**
    * Generate response locally when API unavailable
+   * Enhanced to generate interpretations for ALL tests (not just abnormal)
    */
   generateLocalResponse(data) {
     const result = {
@@ -1693,8 +1713,20 @@ class MedWardNeural {
       source: 'local_generated'
     };
 
-    // Generate problems from abnormal tests
+    // Generate interpretations for ALL tests (enables learning from normal values too)
     for (const [name, test] of Object.entries(data.tests || {})) {
+      // Always create interpretation for learning purposes
+      result.interpretations[name] = {
+        status: test.status,
+        severity: test.severity || 'normal',
+        explanation: this.generateExplanation(name, test),
+        value: test.latestValue,
+        unit: test.unit,
+        reference: test.reference,
+        trend: test.trend
+      };
+
+      // Only add to problems if abnormal/critical
       if (test.severity === 'critical' || test.severity === 'abnormal') {
         result.problems.push({
           title: `${name} ${test.status}`,
@@ -1705,12 +1737,6 @@ class MedWardNeural {
           trend: test.trend,
           action: this.getDefaultAction(name, test)
         });
-
-        result.interpretations[name] = {
-          status: test.status,
-          severity: test.severity,
-          explanation: this.generateExplanation(name, test)
-        };
       }
     }
 
@@ -1732,21 +1758,32 @@ class MedWardNeural {
 
   /**
    * Generate explanation for a test result
+   * Enhanced to handle all statuses including normal
    */
   generateExplanation(name, test) {
-    const status = test.status;
+    const status = test.status || 'normal';
     const severity = test.severity;
     const trend = test.trend;
 
-    let explanation = `${name} is ${status}`;
+    let explanation = '';
+    
+    if (status === 'normal') {
+      explanation = `${name} is within normal range`;
+    } else {
+      explanation = `${name} is ${status}`;
+    }
     
     if (severity === 'critical') {
-      explanation += ' at critical levels';
+      explanation += ' at critical levels requiring immediate attention';
+    } else if (severity === 'abnormal') {
+      explanation += ' and should be monitored';
     }
     
     if (trend && trend !== 'unknown' && trend !== 'stable') {
       const trendText = trend.replace('_', ' ');
       explanation += `, trending ${trendText}`;
+    } else if (trend === 'stable') {
+      explanation += ', stable';
     }
 
     return explanation;
@@ -1851,73 +1888,73 @@ class MedWardNeural {
 
   /**
    * Learn from API response - extract and store patterns
+   * Enhanced to learn from ALL tests with CONSISTENT signature format
    */
   async learn(data, embedding, result, type, signature) {
     if (this.config.debug) {
       console.log('[Neural] Learning new patterns...');
+      console.log('[Neural] Overall signature:', signature);
+      console.log('[Neural] Tests available:', Object.keys(data.tests || {}));
     }
 
     const patterns = [];
+    const tests = data.tests || {};
+    const interpretations = result.interpretations || {};
 
-    // Create pattern for each interpretation
-    for (const [name, interp] of Object.entries(result.interpretations || {})) {
-      const test = data.tests?.[name];
-      if (test) {
-        const patternSig = `${name}:${test.status}:${test.trend || 'unknown'}`;
-        const patternEmb = await this.embed(patternSig);
-        
-        patterns.push({
-          id: `pat_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
-          type,
-          signature: patternSig,
-          embedding: patternEmb,
-          template: {
-            interpretations: { 
-              [name]: { 
-                ...interp, 
-                action: result.problems.find(p => 
-                  p.title?.toLowerCase().includes(name.toLowerCase())
-                )?.action 
-              } 
-            }
-          },
-          successRate: 1.0,
-          usageCount: 0,
-          createdAt: Date.now(),
-          lastUsed: Date.now()
-        });
+    // ALWAYS create the overall pattern FIRST - this is what will be matched
+    // Using the SAME signature generated by generateSignature()
+    const testCount = Object.keys(tests).length;
+    if (testCount > 0) {
+      // Build comprehensive interpretations from all tests
+      const allInterpretations = {};
+      for (const [name, test] of Object.entries(tests)) {
+        allInterpretations[name] = interpretations[name] || {
+          status: test.status,
+          severity: test.severity || 'normal',
+          explanation: this.generateExplanation(name, test)
+        };
       }
-    }
 
-    // Create overall pattern for the analysis
-    if (Object.keys(data.tests || {}).length >= 3) {
       patterns.push({
-        id: `pat_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+        id: `pat_overall_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
         type,
-        signature,
-        embedding,
+        signature,  // Using the EXACT same signature from generateSignature()
+        embedding,  // Using the EXACT same embedding
         template: {
-          interpretations: result.interpretations,
-          plan: result.plan,
-          watchFor: result.watchFor
+          interpretations: allInterpretations,
+          plan: result.plan || [],
+          watchFor: result.watchFor || [],
+          summary: data.summary
         },
         successRate: 1.0,
         usageCount: 0,
         createdAt: Date.now(),
-        lastUsed: Date.now()
+        lastUsed: Date.now(),
+        isOverallPattern: true,
+        testCount
       });
+
+      if (this.config.debug) {
+        console.log('[Neural] Created overall pattern with signature:', signature);
+      }
     }
 
     // Store patterns
+    let storedCount = 0;
     for (const pattern of patterns) {
-      this.patternStore.add(pattern);
+      try {
+        this.patternStore.add(pattern);
+        storedCount++;
+      } catch (err) {
+        console.warn(`[Neural] Failed to store pattern ${pattern.id}:`, err);
+      }
     }
 
     // Persist to IndexedDB
     await this.saveKnowledge();
 
     if (this.config.debug) {
-      console.log(`[Neural] Learned ${patterns.length} patterns. Total: ${this.patternStore.size()}`);
+      console.log(`[Neural] Learned ${storedCount}/${patterns.length} patterns. Total in store: ${this.patternStore.size()}`);
     }
   }
 

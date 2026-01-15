@@ -25,17 +25,16 @@
  * - Use Drive workflow for production
  */
 
-// Configuration
+// Configuration - OPTIMIZED FOR SPEED
 const CONFIG = {
   OPENAI_TEXT_MODEL: 'gpt-4',
   OPENAI_VISION_MODEL: 'gpt-4-vision-preview',
-  // Claude model - check https://docs.anthropic.com/en/docs/models-overview for latest versions
-  // Haiku is faster and more cost-effective for most medical analysis tasks
+  // Claude Haiku is fastest for medical analysis
   CLAUDE_MODEL: 'claude-haiku-4-5-20251001',
-  MAX_TOKENS: 4000,
-  TEMPERATURE: 0.7,
+  MAX_TOKENS: 2000, // Reduced for faster response
+  TEMPERATURE: 0.3, // Lower = faster, more focused
   DRIVE_FOLDER_NAME: 'MedWard Reports',
-  DEFAULT_PROVIDER: 'claude' // 'claude' or 'openai'
+  DEFAULT_PROVIDER: 'claude'
 };
 
 /**
@@ -206,82 +205,57 @@ function handleUploadImage(data) {
 
 /**
  * Handle medical report interpretation requests
+ * OPTIMIZED: Single API call for image analysis + interpretation
  */
 function handleInterpret(data) {
   try {
     const documentType = data.documentType || 'general';
     const username = data.username || 'Anonymous';
     const provider = data.provider || getPreferredProvider();
-    const presentationFormat = data.presentationFormat || 'detailed'; // 'detailed' or 'ward'
+    const presentationFormat = data.presentationFormat || 'detailed';
 
     let medicalText = data.text || '';
-    let visionAnalysis = null;
     let imageData = null;
 
-    // If fileId is provided, download from Drive (RECOMMENDED)
+    // If fileId is provided, download from Drive
     if (data.fileId) {
-      Logger.log('=== Using Drive API workflow ===');
-      Logger.log('Processing image from Drive fileId: ' + data.fileId);
-
+      Logger.log('Processing image from Drive: ' + data.fileId);
       imageData = downloadImageFromDrive(data.fileId);
 
       if (!imageData) {
-        const errorMsg = 'Failed to download image from Google Drive. Please check: ' +
-          '1) File ID is valid, ' +
-          '2) File exists in Drive, ' +
-          '3) Script has Drive access permissions';
-        Logger.log('ERROR: ' + errorMsg);
-        return { success: false, error: errorMsg };
+        return { success: false, error: 'Failed to download image from Google Drive' };
       }
-
-      Logger.log('[Drive] Successfully downloaded image from Drive');
-      Logger.log('Image data length: ' + imageData.length + ' characters');
     }
-    // If image is provided directly (legacy support - has size limitations)
+    // If image is provided directly (legacy)
     else if (data.image) {
-      Logger.log('=== Using direct base64 upload (legacy) ===');
-      Logger.log('[Warning] Direct base64 upload has size limitations. Consider using Drive API.');
-      Logger.log('Image data length: ' + data.image.length + ' characters');
-      Logger.log('Image data starts with: ' + data.image.substring(0, 100));
-
-      // Validate the image data is not truncated (data URL includes prefix, so threshold is higher)
-      const MIN_DATA_URL_LENGTH = 75; // Accounts for 'data:image/png;base64,' prefix + minimal base64
-      if (data.image.length < MIN_DATA_URL_LENGTH) {
-        const errorMsg = 'Image data appears to be truncated or invalid. ' +
-          'Length: ' + data.image.length + ' characters (expected at least ' + MIN_DATA_URL_LENGTH + '). ' +
-          'Use the Drive API workflow (upload image first, then pass fileId) for reliable operation.';
-        Logger.log('ERROR: ' + errorMsg);
-        return { success: false, error: errorMsg };
-      }
-
       imageData = data.image;
     }
 
-    // If we have image data, use Vision AI for extraction and analysis
+    // OPTIMIZED: Single API call for image analysis
     if (imageData) {
-      visionAnalysis = analyzeImageWithVisionAI(imageData, documentType, provider);
-
-      if (!visionAnalysis || !visionAnalysis.extractedText) {
-        return { success: false, error: 'Vision AI failed to analyze image' };
+      const result = analyzeImageCombined(imageData, documentType, provider);
+      
+      // Archive asynchronously (don't wait)
+      try {
+        archiveReport(result.extractedText || '', result, username, documentType);
+      } catch (e) {
+        Logger.log('Archive failed (non-blocking): ' + e);
       }
 
-      medicalText = visionAnalysis.extractedText;
+      return {
+        success: true,
+        provider: provider,
+        ...result,
+        timestamp: new Date().toISOString()
+      };
     }
 
+    // Text-only analysis
     if (!medicalText || medicalText.trim().length === 0) {
       return { success: false, error: 'No medical text provided or extracted' };
     }
 
-    // Get comprehensive AI interpretation
     const interpretation = getAIInterpretation(medicalText, documentType, provider, presentationFormat);
-
-    // If vision analysis provided initial insights, merge them
-    if (visionAnalysis && visionAnalysis.initialInsights) {
-      interpretation.visionInsights = visionAnalysis.initialInsights;
-    }
-
-    // Archive the report to Google Drive
-    archiveReport(medicalText, interpretation, username, documentType);
 
     return {
       success: true,
@@ -294,6 +268,102 @@ function handleInterpret(data) {
     Logger.log('Interpret error: ' + error.toString());
     return { success: false, error: error.toString() };
   }
+}
+
+/**
+ * OPTIMIZED: Single API call to extract text AND interpret in one request
+ * Much faster than two separate calls
+ */
+function analyzeImageCombined(base64Image, documentType, provider) {
+  const apiKey = PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY');
+  
+  if (!apiKey) {
+    throw new Error('Anthropic API key not configured');
+  }
+
+  const base64Data = sanitizeBase64(base64Image);
+  const mediaType = getMediaTypeFromBase64(base64Image);
+
+  // Combined prompt - extract AND interpret in one call
+  const prompt = buildCombinedPrompt(documentType);
+
+  const response = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
+    method: 'post',
+    headers: {
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'content-type': 'application/json'
+    },
+    payload: JSON.stringify({
+      model: CONFIG.CLAUDE_MODEL,
+      max_tokens: 2000, // Reduced for speed
+      messages: [{
+        role: 'user',
+        content: [
+          {
+            type: 'image',
+            source: {
+              type: 'base64',
+              media_type: mediaType,
+              data: base64Data
+            }
+          },
+          {
+            type: 'text',
+            text: prompt
+          }
+        ]
+      }]
+    }),
+    muteHttpExceptions: true
+  });
+
+  const result = JSON.parse(response.getContentText());
+
+  if (result.error) {
+    throw new Error('Claude API Error: ' + JSON.stringify(result.error));
+  }
+
+  const aiResponse = result.content[0].text;
+  return parseAIResponse(aiResponse);
+}
+
+/**
+ * Combined prompt for single-call image analysis
+ * Extracts text AND provides interpretation in one response
+ */
+function buildCombinedPrompt(documentType) {
+  return `Analyze this medical ${documentType} report image. Extract all text and provide clinical interpretation.
+
+Return JSON only (no markdown):
+
+{
+  "extractedText": "All text from the image verbatim",
+  "interpretation": {
+    "summary": "2-3 sentence clinical overview with key values",
+    "keyFindings": ["Finding 1 with value", "Finding 2 with value"],
+    "abnormalities": ["Abnormal: Test=Value (ref range) - significance"],
+    "normalFindings": ["Normal findings summary"]
+  },
+  "wardPresentation": {
+    "header": "${documentType} Analysis",
+    "status": [
+      {"domain": "Overall", "indicator": "green|yellow|red", "value": "Brief status"}
+    ],
+    "activeIssues": [
+      {"issue": "Issue name", "status": "Current value", "action": "Next step"}
+    ],
+    "todaysPlan": ["Action 1", "Action 2"],
+    "watchFor": ["Red flag to monitor"]
+  },
+  "clinicalPearls": ["One key clinical insight"],
+  "presentation": {
+    "patientFriendly": "Simple explanation for patient",
+    "recommendations": ["Recommendation 1"]
+  }
+}
+
+Be concise. Focus on clinically significant findings. Return valid JSON only.`;
 }
 
 /**
@@ -949,39 +1019,104 @@ Analyze the above medical data and generate a ward-round-ready presentation foll
 
 /**
  * Parse AI response into structured format
+ * More robust parsing that handles various response formats
  */
 function parseAIResponse(aiResponse) {
   try {
-    // Try to extract JSON from the response
-    const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      return JSON.parse(jsonMatch[0]);
+    Logger.log('Parsing AI response, length: ' + (aiResponse ? aiResponse.length : 0));
+    
+    if (!aiResponse || aiResponse.trim().length === 0) {
+      Logger.log('Empty AI response');
+      return createFallbackResponse('No response from AI');
     }
-
-    // Fallback: return as plain text interpretation
-    return {
-      interpretation: {
-        summary: aiResponse.substring(0, 500),
-        keyFindings: [aiResponse],
-        abnormalities: [],
-        normalFindings: []
-      },
-      clinicalPearls: [],
-      potentialQuestions: [],
-      presentation: {
-        patientFriendly: aiResponse,
-        recommendations: []
+    
+    // Log first 500 chars for debugging
+    Logger.log('Response preview: ' + aiResponse.substring(0, 500));
+    
+    // Try to find JSON in the response - handle markdown code blocks
+    let jsonStr = aiResponse;
+    
+    // Remove markdown code blocks if present
+    const codeBlockMatch = aiResponse.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (codeBlockMatch) {
+      jsonStr = codeBlockMatch[1].trim();
+      Logger.log('Extracted from code block');
+    }
+    
+    // Try to extract JSON object
+    const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      try {
+        const parsed = JSON.parse(jsonMatch[0]);
+        Logger.log('Successfully parsed JSON response');
+        return parsed;
+      } catch (jsonError) {
+        Logger.log('JSON parse failed: ' + jsonError.toString());
+        // Continue to fallback
       }
-    };
+    }
+    
+    // Fallback: create structured response from plain text
+    Logger.log('Using fallback text parsing');
+    return createFallbackResponse(aiResponse);
+    
   } catch (error) {
     Logger.log('Parse error: ' + error.toString());
-    throw new Error('Failed to parse AI response');
+    return createFallbackResponse('Error parsing response: ' + error.toString());
   }
 }
 
 /**
+ * Create a fallback structured response from plain text
+ */
+function createFallbackResponse(text) {
+  // Try to extract meaningful sections from the text
+  const lines = text.split('\n').filter(l => l.trim().length > 0);
+  const keyFindings = [];
+  const abnormalities = [];
+  
+  // Simple heuristic: lines with numbers or medical terms might be findings
+  lines.forEach(line => {
+    if (line.match(/\d+\.?\d*\s*(mg|g|L|mL|mmol|µmol|U|IU|%|mmHg)/i) ||
+        line.match(/(low|high|elevated|decreased|abnormal|critical)/i)) {
+      if (line.match(/(low|high|elevated|decreased|abnormal|critical)/i)) {
+        abnormalities.push(line.trim());
+      } else {
+        keyFindings.push(line.trim());
+      }
+    }
+  });
+  
+  return {
+    interpretation: {
+      summary: text.substring(0, 1000),
+      keyFindings: keyFindings.length > 0 ? keyFindings : [text.substring(0, 500)],
+      abnormalities: abnormalities,
+      normalFindings: []
+    },
+    clinicalPearls: [],
+    potentialQuestions: [],
+    presentation: {
+      patientFriendly: text.substring(0, 500),
+      recommendations: ['Review findings with clinical context', 'Correlate with patient history']
+    },
+    wardPresentation: {
+      header: 'Medical Report Analysis',
+      status: [
+        { domain: 'Analysis', indicator: 'yellow', value: 'Plain text response - review manually' }
+      ],
+      activeIssues: [],
+      todaysPlan: ['Review the extracted findings below'],
+      watchFor: []
+    },
+    extractedText: text
+  };
+}
+
+/**
  * Download image from Google Drive and convert to base64 data URL
- * Optimized with minimal logging
+ * WITH AUTOMATIC COMPRESSION for large images (>4MB)
+ * Uses Drive thumbnail API to resize images that exceed Claude's 5MB limit
  * @param {string} fileId - Google Drive file ID
  * @return {string} Base64 data URL or null if error
  */
@@ -998,28 +1133,59 @@ function downloadImageFromDrive(fileId) {
       return null;
     }
 
-    const blob = file.getBlob();
+    let blob = file.getBlob();
+    let fileSize = blob.getBytes().length;
     const mimeType = blob.getContentType();
-    const fileSize = blob.getBytes().length;
 
-    // Check size limits (10MB max for most Vision APIs)
-    const MAX_SIZE = 10 * 1024 * 1024; // 10MB
-    if (fileSize > MAX_SIZE) {
-      Logger.log('File too large: ' + fileSize + ' bytes');
-      throw new Error('Image file too large. Maximum size is 10MB.');
+    Logger.log('Original: ' + file.getName() + ' (' + fileSize + ' bytes, ' + mimeType + ')');
+
+    // Claude's API limit is 5MB for base64 images
+    // Target 4MB to leave room for base64 encoding overhead (~33% increase)
+    const MAX_SIZE = 4 * 1024 * 1024; // 4MB
+
+    if (fileSize <= MAX_SIZE) {
+      // Image is small enough, use original
+      const base64 = Utilities.base64Encode(blob.getBytes());
+      return 'data:' + mimeType + ';base64,' + base64;
     }
 
-    // Convert to base64 and create data URL in one step
-    const base64 = Utilities.base64Encode(blob.getBytes());
-    const dataUrl = 'data:' + mimeType + ';base64,' + base64;
+    // Image too large - compress using Drive thumbnail API
+    Logger.log('File too large (' + (fileSize/1024/1024).toFixed(2) + 'MB), fetching compressed thumbnail...');
+    
+    const driveFile = Drive.Files.get(fileId, { fields: 'thumbnailLink' });
+    
+    if (driveFile.thumbnailLink) {
+      // Request largest thumbnail (1600px) - usually sufficient for medical reports
+      const thumbnailUrl = driveFile.thumbnailLink.replace(/=s\d+/, '=s1600');
+      
+      const response = UrlFetchApp.fetch(thumbnailUrl, {
+        headers: { 'Authorization': 'Bearer ' + ScriptApp.getOAuthToken() },
+        muteHttpExceptions: true
+      });
+      
+      if (response.getResponseCode() === 200) {
+        blob = response.getBlob();
+        fileSize = blob.getBytes().length;
+        Logger.log('Compressed to: ' + (fileSize/1024/1024).toFixed(2) + 'MB');
+        
+        // Verify it's now under limit
+        if (fileSize > 5 * 1024 * 1024) {
+          throw new Error('Image still too large after compression (' + (fileSize/1024/1024).toFixed(1) + 'MB). Please upload a smaller image.');
+        }
+        
+        const base64 = Utilities.base64Encode(blob.getBytes());
+        return 'data:' + blob.getContentType() + ';base64,' + base64;
+      } else {
+        Logger.log('Thumbnail fetch failed: ' + response.getResponseCode());
+      }
+    }
 
-    Logger.log('Drive download: ' + file.getName() + ' (' + fileSize + ' bytes)');
-
-    return dataUrl;
+    // Fallback error if compression failed
+    throw new Error('Image too large (' + (fileSize/1024/1024).toFixed(1) + 'MB > 4MB limit). Please upload a smaller image or take a lower resolution photo.');
 
   } catch (error) {
     Logger.log('Drive download error: ' + error.toString());
-    return null;
+    throw error; // Re-throw to show user the actual error
   }
 }
 

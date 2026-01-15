@@ -4,9 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MedWard Master | AI Clinical Intelligence</title>
+
+  <!-- PWA Meta Tags -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0a0a0f">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="MedWard">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1695,6 +1699,234 @@
     .mb-1 { margin-bottom: 0.5rem; }
     .mb-2 { margin-bottom: 1rem; }
     .mb-3 { margin-bottom: 1.5rem; }
+
+    /* ==================== MOBILE RESPONSIVE ==================== */
+    @media (max-width: 1024px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      html { font-size: 14px; }
+      
+      /* PERFORMANCE: Reduce heavy effects on mobile */
+      .bg-wrapper { display: none; } /* Hide animated background */
+      body { background: linear-gradient(135deg, #0a0a0f 0%, #12121a 100%); }
+      .floating-orb { display: none; }
+      .nav { backdrop-filter: none; background: rgba(10, 10, 15, 0.95); }
+      .modal-overlay { backdrop-filter: none; background: rgba(0, 0, 0, 0.9); }
+      .processing-overlay { backdrop-filter: none; }
+      
+      /* GPU acceleration for smooth scrolling */
+      .modal-body, .container, .card-body, .activity-list {
+        -webkit-overflow-scrolling: touch;
+        transform: translateZ(0);
+        will-change: scroll-position;
+      }
+      
+      /* Navigation */
+      .nav { padding: 0.75rem 1rem; }
+      .nav-inner { gap: 0.5rem; }
+      .logo { gap: 0.5rem; }
+      .logo-icon { width: 36px; height: 36px; }
+      .logo-icon svg { width: 18px; height: 18px; }
+      .logo-name { font-size: 1.1rem; }
+      .logo-tagline { display: none; }
+      .user-pill { padding: 0.25rem 0.5rem 0.25rem 0.25rem; gap: 0.5rem; }
+      .avatar { width: 28px; height: 28px; font-size: 0.7rem; }
+      .user-name { display: none; }
+      .btn-ghost { padding: 0.4rem 0.75rem; font-size: 0.75rem; }
+      
+      /* Main Container */
+      .main { padding-top: 70px; }
+      .container { padding: 1rem; }
+      
+      /* Dashboard */
+      .dashboard-header { margin-bottom: 1.25rem; }
+      .dashboard-title { font-size: 1.5rem; }
+      .dashboard-subtitle { font-size: 0.8rem; }
+      .dashboard-grid { gap: 1rem; }
+      
+      /* Cards */
+      .upload-card, .activity-card { border-radius: 16px; }
+      .card-header { padding: 1rem; gap: 0.75rem; }
+      .card-icon { width: 40px; height: 40px; }
+      .card-icon svg { width: 20px; height: 20px; }
+      .card-title { font-size: 1.1rem; }
+      .card-subtitle { font-size: 0.75rem; }
+      .card-body { padding: 1rem; }
+      
+      /* Upload Tabs */
+      .upload-tabs { padding: 0.25rem; margin-bottom: 1rem; gap: 0.25rem; }
+      .upload-tab { padding: 0.6rem 0.75rem; font-size: 0.8rem; }
+      .upload-tab svg { width: 16px; height: 16px; }
+      
+      /* Dropzone */
+      .dropzone { padding: 1.5rem 1rem; }
+      .dropzone-icon { width: 48px; height: 48px; margin-bottom: 0.75rem; }
+      .dropzone-icon svg { width: 24px; height: 24px; }
+      .dropzone-title { font-size: 0.95rem; }
+      .dropzone-hint { font-size: 0.75rem; }
+      
+      /* Form Elements */
+      .form-group { margin-bottom: 1rem; }
+      .form-label { font-size: 0.7rem; margin-bottom: 0.4rem; }
+      .form-input, .form-select { padding: 0.75rem; font-size: 0.875rem; }
+      .form-textarea { min-height: 150px; font-size: 0.8rem; }
+      
+      /* Buttons */
+      .btn { padding: 0.6rem 1rem; font-size: 0.8rem; min-height: 44px; }
+      .btn-primary { padding: 0.75rem 1.25rem; }
+      
+      /* Stats Grid */
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-bottom: 1rem; }
+      .stat-widget { padding: 1rem; border-radius: 12px; }
+      .stat-icon { width: 32px; height: 32px; margin-bottom: 0.5rem; }
+      .stat-value { font-size: 1.5rem; }
+      .stat-label { font-size: 0.6rem; }
+      
+      /* Activity */
+      .activity-list { padding: 0.75rem; }
+      .activity-item { padding: 0.75rem; gap: 0.75rem; }
+      .activity-icon { width: 36px; height: 36px; }
+      .activity-title { font-size: 0.85rem; }
+      .activity-time { font-size: 0.7rem; }
+      .activity-empty svg { width: 36px; height: 36px; }
+      
+      /* Login */
+      .login-container { padding: 1rem; min-height: calc(100vh - 70px); }
+      .login-card { padding: 1.5rem; border-radius: 20px; max-width: 100%; }
+      .login-icon { width: 56px; height: 56px; margin-bottom: 1rem; }
+      .login-icon svg { width: 28px; height: 28px; }
+      .login-title { font-size: 1.5rem; }
+      .login-subtitle { font-size: 0.85rem; }
+      
+      /* Modal - Full Screen on Mobile */
+      .modal-overlay { padding: 0; }
+      .modal-container { 
+        max-width: 100%; 
+        max-height: 100vh; 
+        height: 100vh;
+        border-radius: 0; 
+        margin: 0;
+      }
+      .modal-header { 
+        padding: 1rem; 
+        flex-wrap: wrap; 
+        gap: 0.75rem; 
+      }
+      .modal-title-group { flex: 1; min-width: 0; }
+      .modal-icon { width: 36px; height: 36px; }
+      .modal-icon svg { width: 18px; height: 18px; }
+      .modal-title { font-size: 1.1rem; }
+      .modal-timestamp { font-size: 0.65rem; }
+      .modal-actions { gap: 0.5rem; }
+      .modal-close { width: 36px; height: 36px; }
+      .btn-glow { padding: 0.5rem 0.75rem; font-size: 0.75rem; }
+      
+      .modal-tabs { padding: 0 1rem; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .modal-tab { padding: 0.75rem 1rem; font-size: 0.8rem; white-space: nowrap; }
+      
+      .modal-body { padding: 1rem; }
+      
+      /* Results Content */
+      .result-summary { padding: 1rem; margin-bottom: 1rem; }
+      .summary-label { font-size: 0.6rem; }
+      .summary-text { font-size: 0.85rem; }
+      
+      .alert-banner { padding: 0.875rem; margin-bottom: 0.875rem; }
+      .alert-icon-wrap { width: 32px; height: 32px; }
+      .alert-title { font-size: 0.85rem; }
+      .alert-text { font-size: 0.8rem; }
+      
+      .section-header { margin-bottom: 0.75rem; }
+      .section-icon { width: 28px; height: 28px; }
+      .section-title { font-size: 0.9rem; }
+      
+      .findings-table { font-size: 0.75rem; }
+      .findings-table th { padding: 0.6rem 0.5rem; font-size: 0.6rem; }
+      .findings-table td { padding: 0.6rem 0.5rem; }
+      .status-badge { padding: 0.2rem 0.4rem; font-size: 0.6rem; }
+      
+      .rec-list { gap: 0.5rem; }
+      .rec-item { padding: 0.75rem; gap: 0.75rem; }
+      .rec-number { width: 24px; height: 24px; font-size: 0.7rem; }
+      .rec-text { font-size: 0.8rem; }
+      
+      .pearl-box, .patient-box { padding: 1rem; margin-bottom: 1rem; }
+      .pearl-label, .patient-label { font-size: 0.75rem; }
+      .pearl-text, .patient-text { font-size: 0.8rem; }
+      
+      .discussion-trigger { padding: 0.75rem 1rem; font-size: 0.8rem; }
+      .discussion-item { padding: 0.5rem 0; padding-left: 0.75rem; font-size: 0.8rem; }
+      
+      /* Ward View */
+      .ward-grid { gap: 0.875rem; }
+      .ward-card-header { padding: 0.625rem 1rem; font-size: 0.85rem; }
+      .ward-card-body { padding: 0.875rem; }
+      .ward-row { padding: 0.4rem 0; }
+      .ward-label { width: 80px; font-size: 0.7rem; }
+      .ward-value { font-size: 0.8rem; }
+      
+      /* Processing */
+      .processing-card { padding: 2rem 1.5rem; }
+      .processing-animation { width: 80px; height: 80px; margin-bottom: 1.5rem; }
+      .processing-core { inset: 25px; }
+      .processing-core svg { width: 18px; height: 18px; }
+      .processing-title { font-size: 1.1rem; }
+      .processing-status { font-size: 0.8rem; }
+      
+      /* Toast */
+      .toast { left: 1rem; right: 1rem; bottom: 1rem; padding: 0.75rem 1rem; }
+      .toast-icon { width: 20px; height: 20px; }
+      .toast-message { font-size: 0.8rem; }
+    }
+
+    /* Small phones */
+    @media (max-width: 400px) {
+      html { font-size: 13px; }
+      
+      .nav { padding: 0.5rem 0.75rem; }
+      .logo-icon { width: 32px; height: 32px; }
+      .logo-name { font-size: 1rem; }
+      
+      .container { padding: 0.75rem; }
+      .dashboard-title { font-size: 1.3rem; }
+      
+      .upload-card, .activity-card { border-radius: 14px; }
+      .card-header { padding: 0.875rem; }
+      .card-body { padding: 0.875rem; }
+      
+      .dropzone { padding: 1.25rem 0.75rem; }
+      
+      .stats-grid { gap: 0.5rem; }
+      .stat-widget { padding: 0.75rem; }
+      .stat-value { font-size: 1.3rem; }
+      
+      .login-card { padding: 1.25rem; }
+      .login-icon { width: 48px; height: 48px; }
+      
+      .modal-header { padding: 0.875rem; }
+      .modal-body { padding: 0.875rem; }
+    }
+
+    /* Touch targets */
+    @media (hover: none) and (pointer: coarse) {
+      .btn, .upload-tab, .modal-tab { min-height: 44px; }
+      .modal-close, .file-remove { min-width: 44px; min-height: 44px; }
+      .rec-item, .activity-item, .discussion-trigger { min-height: 48px; }
+    }
+
+    /* Safe areas for notched phones */
+    @supports (padding: max(0px)) {
+      .nav {
+        padding-top: max(0.75rem, env(safe-area-inset-top));
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+      }
+      .main { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+      .modal-body { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+      .toast { bottom: max(1rem, env(safe-area-inset-bottom)); }
+    }
   </style>
 </head>
 <body>
@@ -2024,14 +2256,24 @@
   </div>
 
   <!-- Scripts -->
+  <script>
+    // MedWard Backend Configuration
+    window.MEDWARD_BACKEND_URL = 'https://script.google.com/macros/s/AKfycby-3iNSD4CquZiyg0inXQ_sGs3IxNrSx1WzRREIv2ABKnyPP5GjvSYZdzClkZqWZ9M7Og/exec';
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0"></script>
   <script src="js/medward-neural.js"></script>
   <script src="js/clinical-components.js"></script>
   <script src="js/app.js"></script>
+
+  <!-- Service Worker Registration for PWA -->
   <script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js');
-}
-</script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('Service Worker registered:', reg.scope))
+          .catch(err => console.log('Service Worker registration failed:', err));
+      });
+    }
+  </script>
 </body>
 </html>
