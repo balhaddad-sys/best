@@ -1822,49 +1822,34 @@ function convertNeuralToDisplay(neuralResult, parsedData, meta) {
 }
 
 /**
- * FIXED: Update metrics display with proper null checks
+ * REINFORCED: Unified Metrics Update
+ * Validates the Neural System and safely updates the DOM to prevent TypeErrors.
  */
 function updateMetricsDisplay() {
   try {
-    // Safety check - exit if neural system not ready
-    if (!neuralSystem) {
-      console.log('[Metrics] Neural system not available');
+    // 1. Safety check - exit if neural system or metrics are unavailable
+    if (!neuralSystem || typeof neuralSystem.getMetrics !== 'function') {
+      console.log('[Metrics] Neural system not ready for display update.');
       return;
     }
     
-    // Check if getMetrics exists
-    if (typeof neuralSystem.getMetrics !== 'function') {
-      console.log('[Metrics] getMetrics not available');
-      return;
-    }
-    
-    var metrics;
-    try {
-      metrics = neuralSystem.getMetrics();
-    } catch (metricsErr) {
-      console.warn('[Metrics] getMetrics() threw error:', metricsErr.message);
-      return;
-    }
-    
-    // Safety check for metrics object
+    const metrics = neuralSystem.getMetrics();
     if (!metrics || typeof metrics !== 'object') {
-      console.log('[Metrics] No valid metrics returned');
       return;
     }
     
-    // Helper to safely update element
-    var safeUpdate = function(id, value) {
-      try {
-        var elem = document.getElementById(id);
-        if (elem) {
-          elem.textContent = value;
-        }
-      } catch (e) {
-        // Silently ignore DOM errors
+    /**
+     * Helper to safely update element textContent.
+     * This prevents: "TypeError: Cannot set properties of null"
+     */
+    const safeUpdate = (id, value) => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.textContent = value;
       }
     };
     
-    // Safe updates with fallback values
+    // 2. Map Metric IDs to their respective values
     safeUpdate('metric-total', metrics.total || 0);
     safeUpdate('metric-cache', metrics.cacheHitRate || '0%');
     safeUpdate('metric-local-speed', (metrics.avgLocalMs || 0) + 'ms');
@@ -1872,10 +1857,10 @@ function updateMetricsDisplay() {
     safeUpdate('metric-patterns', metrics.patterns || 0);
     safeUpdate('metric-savings', metrics.estimatedSavings || '$0.00');
     
-    console.log('[Metrics] Display updated:', metrics.total || 0, 'analyses');
+    console.log('[Metrics] UI updated successfully.');
     
-  } catch (e) {
-    console.warn('[Metrics] Update failed:', e.message);
+  } catch (error) {
+    console.warn('[Metrics] Update failed:', error.message);
   }
 }
 
