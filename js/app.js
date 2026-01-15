@@ -1838,39 +1838,41 @@ function updateMetricsDisplay() {
       return;
     }
     
-    var metrics = neuralSystem.getMetrics();
-    
-    // Safety check for metrics object
-    if (!metrics) {
-      console.log('[Metrics] No metrics returned');
+    var metrics;
+    try {
+      metrics = neuralSystem.getMetrics();
+    } catch (metricsErr) {
+      console.warn('[Metrics] getMetrics() threw error:', metricsErr.message);
       return;
     }
     
-    // Helper to safely get element
-    var el = function(id) { 
-      return document.getElementById(id); 
+    // Safety check for metrics object
+    if (!metrics || typeof metrics !== 'object') {
+      console.log('[Metrics] No valid metrics returned');
+      return;
+    }
+    
+    // Helper to safely update element
+    var safeUpdate = function(id, value) {
+      try {
+        var elem = document.getElementById(id);
+        if (elem) {
+          elem.textContent = value;
+        }
+      } catch (e) {
+        // Silently ignore DOM errors
+      }
     };
     
     // Safe updates with fallback values
-    var totalEl = el('metric-total');
-    if (totalEl) totalEl.textContent = metrics.total || 0;
+    safeUpdate('metric-total', metrics.total || 0);
+    safeUpdate('metric-cache', metrics.cacheHitRate || '0%');
+    safeUpdate('metric-local-speed', (metrics.avgLocalMs || 0) + 'ms');
+    safeUpdate('metric-api-speed', (metrics.avgApiMs || 0) + 'ms');
+    safeUpdate('metric-patterns', metrics.patterns || 0);
+    safeUpdate('metric-savings', metrics.estimatedSavings || '$0.00');
     
-    var cacheEl = el('metric-cache');
-    if (cacheEl) cacheEl.textContent = metrics.cacheHitRate || '0%';
-    
-    var localSpeedEl = el('metric-local-speed');
-    if (localSpeedEl) localSpeedEl.textContent = (metrics.avgLocalMs || 0) + 'ms';
-    
-    var apiSpeedEl = el('metric-api-speed');
-    if (apiSpeedEl) apiSpeedEl.textContent = (metrics.avgApiMs || 0) + 'ms';
-    
-    var patternsEl = el('metric-patterns');
-    if (patternsEl) patternsEl.textContent = metrics.patterns || 0;
-    
-    var savingsEl = el('metric-savings');
-    if (savingsEl) savingsEl.textContent = metrics.estimatedSavings || '$0.00';
-    
-    console.log('[Metrics] Display updated:', metrics.total, 'analyses');
+    console.log('[Metrics] Display updated:', metrics.total || 0, 'analyses');
     
   } catch (e) {
     console.warn('[Metrics] Update failed:', e.message);
