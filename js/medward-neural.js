@@ -1683,6 +1683,7 @@ class MedWardNeural {
 
   /**
    * Generate response locally when API unavailable
+   * Enhanced to generate interpretations for ALL tests (not just abnormal)
    */
   generateLocalResponse(data) {
     const result = {
@@ -1693,8 +1694,20 @@ class MedWardNeural {
       source: 'local_generated'
     };
 
-    // Generate problems from abnormal tests
+    // Generate interpretations for ALL tests (enables learning from normal values too)
     for (const [name, test] of Object.entries(data.tests || {})) {
+      // Always create interpretation for learning purposes
+      result.interpretations[name] = {
+        status: test.status,
+        severity: test.severity || 'normal',
+        explanation: this.generateExplanation(name, test),
+        value: test.latestValue,
+        unit: test.unit,
+        reference: test.reference,
+        trend: test.trend
+      };
+
+      // Only add to problems if abnormal/critical
       if (test.severity === 'critical' || test.severity === 'abnormal') {
         result.problems.push({
           title: `${name} ${test.status}`,
@@ -1705,12 +1718,6 @@ class MedWardNeural {
           trend: test.trend,
           action: this.getDefaultAction(name, test)
         });
-
-        result.interpretations[name] = {
-          status: test.status,
-          severity: test.severity,
-          explanation: this.generateExplanation(name, test)
-        };
       }
     }
 
@@ -1732,21 +1739,32 @@ class MedWardNeural {
 
   /**
    * Generate explanation for a test result
+   * Enhanced to handle all statuses including normal
    */
   generateExplanation(name, test) {
-    const status = test.status;
+    const status = test.status || 'normal';
     const severity = test.severity;
     const trend = test.trend;
 
-    let explanation = `${name} is ${status}`;
+    let explanation = '';
+    
+    if (status === 'normal') {
+      explanation = `${name} is within normal range`;
+    } else {
+      explanation = `${name} is ${status}`;
+    }
     
     if (severity === 'critical') {
-      explanation += ' at critical levels';
+      explanation += ' at critical levels requiring immediate attention';
+    } else if (severity === 'abnormal') {
+      explanation += ' and should be monitored';
     }
     
     if (trend && trend !== 'unknown' && trend !== 'stable') {
       const trendText = trend.replace('_', ' ');
       explanation += `, trending ${trendText}`;
+    } else if (trend === 'stable') {
+      explanation += ', stable';
     }
 
     return explanation;
@@ -1851,55 +1869,55 @@ class MedWardNeural {
 
   /**
    * Learn from API response - extract and store patterns
+   * Enhanced to learn from ALL tests, not just those with interpretations
    */
   async learn(data, embedding, result, type, signature) {
     if (this.config.debug) {
       console.log('[Neural] Learning new patterns...');
+      console.log('[Neural] Tests available:', Object.keys(data.tests || {}));
+      console.log('[Neural] Interpretations available:', Object.keys(result.interpretations || {}));
     }
 
     const patterns = [];
+    const tests = data.tests || {};
+    const interpretations = result.interpretations || {};
 
-    // Create pattern for each interpretation
-    for (const [name, interp] of Object.entries(result.interpretations || {})) {
-      const test = data.tests?.[name];
-      if (test) {
-        const patternSig = `${name}:${test.status}:${test.trend || 'unknown'}`;
-        const patternEmb = await this.embed(patternSig);
-        
-        patterns.push({
-          id: `pat_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
-          type,
-          signature: patternSig,
-          embedding: patternEmb,
-          template: {
-            interpretations: { 
-              [name]: { 
-                ...interp, 
-                action: result.problems.find(p => 
-                  p.title?.toLowerCase().includes(name.toLowerCase())
-                )?.action 
-              } 
-            }
-          },
-          successRate: 1.0,
-          usageCount: 0,
-          createdAt: Date.now(),
-          lastUsed: Date.now()
-        });
-      }
-    }
+    // ENHANCED: Create patterns for ALL tests, not just those with interpretations
+    for (const [name, test] of Object.entries(tests)) {
+      const patternSig = `${name}:${test.status}:${test.severity || 'normal'}:${test.trend || 'unknown'}`;
+      const patternEmb = await this.embed(patternSig);
+      
+      // Get interpretation if exists, otherwise create basic one
+      const interp = interpretations[name] || {
+        status: test.status,
+        severity: test.severity || 'normal',
+        explanation: this.generateExplanation(name, test)
+      };
 
-    // Create overall pattern for the analysis
-    if (Object.keys(data.tests || {}).length >= 3) {
+      // Find related problem action if any
+      const relatedProblem = result.problems?.find(p => 
+        p.title?.toLowerCase().includes(name.toLowerCase())
+      );
+
       patterns.push({
-        id: `pat_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+        id: `pat_${Date.now()}_${Math.random().toString(36).slice(2, 9)}_${name}`,
         type,
-        signature,
-        embedding,
+        signature: patternSig,
+        embedding: patternEmb,
         template: {
-          interpretations: result.interpretations,
-          plan: result.plan,
-          watchFor: result.watchFor
+          interpretations: { 
+            [name]: { 
+              ...interp, 
+              action: relatedProblem?.action || this.getDefaultAction(name, test)
+            } 
+          },
+          testData: {
+            name,
+            status: test.status,
+            severity: test.severity,
+            trend: test.trend,
+            unit: test.unit
+          }
         },
         successRate: 1.0,
         usageCount: 0,
@@ -1908,16 +1926,55 @@ class MedWardNeural {
       });
     }
 
+    // ALWAYS create overall pattern (removed minimum test requirement)
+    const testCount = Object.keys(tests).length;
+    if (testCount > 0) {
+      // Build comprehensive interpretations from all tests
+      const allInterpretations = {};
+      for (const [name, test] of Object.entries(tests)) {
+        allInterpretations[name] = interpretations[name] || {
+          status: test.status,
+          severity: test.severity || 'normal',
+          explanation: this.generateExplanation(name, test)
+        };
+      }
+
+      patterns.push({
+        id: `pat_overall_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+        type,
+        signature,
+        embedding,
+        template: {
+          interpretations: allInterpretations,
+          plan: result.plan || [],
+          watchFor: result.watchFor || [],
+          summary: data.summary
+        },
+        successRate: 1.0,
+        usageCount: 0,
+        createdAt: Date.now(),
+        lastUsed: Date.now(),
+        isOverallPattern: true,
+        testCount
+      });
+    }
+
     // Store patterns
+    let storedCount = 0;
     for (const pattern of patterns) {
-      this.patternStore.add(pattern);
+      try {
+        this.patternStore.add(pattern);
+        storedCount++;
+      } catch (err) {
+        console.warn(`[Neural] Failed to store pattern ${pattern.id}:`, err);
+      }
     }
 
     // Persist to IndexedDB
     await this.saveKnowledge();
 
     if (this.config.debug) {
-      console.log(`[Neural] Learned ${patterns.length} patterns. Total: ${this.patternStore.size()}`);
+      console.log(`[Neural] Learned ${storedCount}/${patterns.length} patterns. Total in store: ${this.patternStore.size()}`);
     }
   }
 
