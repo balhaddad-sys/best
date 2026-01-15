@@ -257,33 +257,12 @@ class MedicalDocumentParser {
   }
 
   /**
-   * Extract text from image using Vision API
+   * Extract text from image using backend
    */
   async extractTextFromImage(input) {
-    const base64 = input instanceof Blob
-      ? btoa(String.fromCharCode(...new Uint8Array(await input.arrayBuffer())))
-      : input;
-
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': this.config.apiKey,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 8192,
-        messages: [{
-          role: 'user',
-          content: [
-            { type: 'image', source: { type: 'base64', media_type: input.type || 'image/png', data: base64 }},
-            { type: 'text', text: 'Extract ALL text from this lab report. Preserve tabular structure. Include H/L flags. Include reference ranges.' }
-          ]
-        }]
-      })
-    });
-    return (await resp.json()).content[0].text;
+    // Image OCR is not needed for text-based analysis
+    // If image support is needed, use the backend's uploadImage + interpret workflow
+    throw new Error('Image OCR not available in neural parser. Use backend uploadImage workflow instead.');
   }
 
   /**
@@ -564,36 +543,100 @@ class MedWardNeural {
 
   /**
    * Call API for analysis (fallback when no pattern match)
+   * Uses the existing backend infrastructure for security
    */
   async callAPI(data, type) {
-    const parser = new MedicalDocumentParser({ apiKey: this.config.apiKey });
+    // Use the existing backend (defined in app.js)
+    if (typeof callBackendWithRetry === 'undefined') {
+      throw new Error('Backend not available. Neural system requires backend integration.');
+    }
+
+    const parser = new MedicalDocumentParser();
     const prompt = parser.toAIPrompt(data);
 
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': this.config.apiKey,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 4096,
-        system: `Analyze lab results. Use format:
-===PROBLEMS===
-1. TITLE (SEVERITY) → ACTION
-===INTERPRETATIONS===
-TEST: STATUS - EXPLANATION
-===PLAN===
-[P1] Action
-===WATCH_FOR===
-- Item`,
-        messages: [{ role: 'user', content: prompt }]
-      })
+    // Call backend with structured prompt
+    const result = await callBackendWithRetry('interpret', {
+      text: prompt,
+      documentType: type,
+      username: 'Neural System',
+      neuralMode: true
     });
 
-    const text = (await resp.json()).content[0].text;
-    return this.parseAPIResponse(text);
+    if (!result.success) {
+      throw new Error(result.error || 'Backend analysis failed');
+    }
+
+    // If backend returns structured data, use it
+    if (result.interpretation) {
+      return this.convertBackendResponse(result);
+    }
+
+    // Otherwise parse as text
+    return this.parseAPIResponse(JSON.stringify(result));
+  }
+
+  /**
+   * Convert backend response to neural format
+   */
+  convertBackendResponse(backendResult) {
+    const result = {
+      problems: [],
+      interpretations: {},
+      plan: [],
+      watchFor: [],
+      source: 'api'
+    };
+
+    // Extract problems from abnormalities
+    if (backendResult.interpretation?.abnormalities) {
+      backendResult.interpretation.abnormalities.forEach((abn, idx) => {
+        const match = abn.match(/^(.+?)\s*\((\w+)\)\s*[→->]\s*(.+)$/);
+        if (match) {
+          result.problems.push({
+            title: match[1],
+            severity: match[2].toLowerCase(),
+            action: match[3]
+          });
+        } else {
+          result.problems.push({
+            title: abn,
+            severity: 'moderate',
+            action: 'Review and correlate clinically'
+          });
+        }
+      });
+    }
+
+    // Extract interpretations from key findings
+    if (backendResult.interpretation?.keyFindings) {
+      backendResult.interpretation.keyFindings.forEach(finding => {
+        const match = finding.match(/^(\w+):\s*(.+?)\s*\((\w+)\)\s*-\s*(.+)$/);
+        if (match) {
+          result.interpretations[match[1]] = {
+            value: match[2],
+            status: match[3].toLowerCase(),
+            explanation: match[4]
+          };
+        }
+      });
+    }
+
+    // Extract plan from recommendations
+    if (backendResult.presentation?.recommendations) {
+      result.plan = backendResult.presentation.recommendations.map((rec, idx) => ({
+        problemRef: idx + 1,
+        text: rec
+      }));
+    }
+
+    // Extract watch for from clinical pearls
+    if (backendResult.clinicalPearls) {
+      result.watchFor = backendResult.clinicalPearls
+        .filter(pearl => pearl.toLowerCase().includes('monitor'))
+        .map(pearl => pearl.replace(/^Monitor:\s*/i, ''));
+    }
+
+    return result;
   }
 
   /**
