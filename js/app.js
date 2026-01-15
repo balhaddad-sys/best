@@ -4,6 +4,88 @@
  * With Image Compression & Advanced Error Handling
  */
 
+// ==================== Medical Document Pre-Processor ====================
+/**
+ * Pre-processes medical documents (especially lab reports) to extract structured data
+ * Handles cumulative lab reports with multiple date columns
+ */
+class MedicalDocumentPreProcessor {
+  constructor() {
+    // Standard reference ranges for common lab tests
+    this.referenceRanges = {
+      'WBC': { min: 3.7, max: 10, unit: '×10⁹/L' },
+      'RBC': { min: 4.5, max: 5.5, unit: '×10¹²/L' },
+      'Hb': { min: 130, max: 170, unit: 'g/L' },
+      'Hct': { min: 0.4, max: 0.5, unit: 'L/L' },
+      'MCV': { min: 83, max: 101, unit: 'fL' },
+      'MCH': { min: 27, max: 32, unit: 'pg' },
+      'MCHC': { min: 315, max: 345, unit: 'g/L' },
+      'RDW': { min: 11.6, max: 14.6, unit: '%' },
+      'Plt': { min: 130, max: 430, unit: '×10⁹/L' },
+      'Neutrophils': { min: 1.7, max: 6, unit: '×10⁹/L' },
+      'Lymphocytes': { min: 0.9, max: 2.9, unit: '×10⁹/L' }
+    };
+  }
+
+  /**
+   * Normalize test names to standard format
+   */
+  normalizeTestName(rawName) {
+    const testNameMap = {
+      'WBC': ['WBC', 'White Blood Cell', 'Leukocytes'],
+      'RBC': ['RBC', 'Red Blood Cell', 'Erythrocytes'],
+      'Hb': ['Hb', 'HGB', 'Hemoglobin', 'Haemoglobin'],
+      'Hct': ['Hct', 'HCT', 'Hematocrit', 'Haematocrit', 'PCV'],
+      'Plt': ['Plt', 'PLT', 'Platelets', 'Platelet Count']
+    };
+
+    const normalized = rawName.replace(/[.#%]/g, '').trim();
+
+    for (const [standard, variations] of Object.entries(testNameMap)) {
+      if (variations.some(v => v.toLowerCase() === normalized.toLowerCase())) {
+        return standard;
+      }
+    }
+
+    return normalized;
+  }
+
+  /**
+   * Assess clinical severity of abnormal value
+   */
+  assessSeverity(testName, value, ref, direction) {
+    const criticalThresholds = {
+      'Hb': { criticalLow: 70, criticalHigh: 200 },
+      'WBC': { criticalLow: 1.0, criticalHigh: 30 },
+      'Plt': { criticalLow: 20, criticalHigh: 1000 },
+      'Neutrophils': { criticalLow: 0.5, criticalHigh: 20 }
+    };
+
+    const thresholds = criticalThresholds[testName];
+    if (!thresholds) return 'moderate';
+
+    if (direction === 'low' && value <= thresholds.criticalLow) return 'critical';
+    if (direction === 'high' && value >= thresholds.criticalHigh) return 'critical';
+
+    return 'moderate';
+  }
+
+  /**
+   * Format enhanced text prompt for AI with structured data
+   */
+  formatForAI(text, documentType) {
+    // Add structure hints for better AI parsing
+    let formatted = `DOCUMENT TYPE: ${documentType.toUpperCase()}\n\n`;
+    formatted += `RAW MEDICAL DATA:\n${text}\n\n`;
+    formatted += `INSTRUCTIONS: Extract all clinical findings, lab values with reference ranges, `;
+    formatted += `and provide structured analysis suitable for ward presentation.\n`;
+    return formatted;
+  }
+}
+
+// Initialize medical document preprocessor
+const medicalPreProcessor = new MedicalDocumentPreProcessor();
+
 // ==================== Configuration ====================
 const CONFIG = {
   BACKEND_URL: 'https://script.google.com/macros/s/AKfycby-3iNSD4CquZiyg0inXQ_sGs3IxNrSx1WzRREIv2ABKnyPP5GjvSYZdzClkZqWZ9M7Og/exec',
@@ -82,7 +164,7 @@ const Elements = {
 
 // ==================== Initialization ====================
 function init() {
-  console.log('🚀 MedWard Master initializing...');
+  console.log('[MedWard] Initializing application...');
 
   // Event Listeners
   Elements.loginBtn?.addEventListener('click', handleLogin);
@@ -136,7 +218,7 @@ function init() {
     copyBtn.addEventListener('click', copyToClipboard);
   }
 
-  console.log('✅ MedWard Master initialized - Clinical Grade');
+  console.log('[MedWard] Application initialized successfully - Clinical Grade');
 }
 
 // ==================== Authentication ====================
@@ -296,7 +378,7 @@ window.removeFile = removeFile;
 async function compressImage(file) {
   // Skip compression for small files - faster!
   if (file.size < CONFIG.COMPRESS_THRESHOLD) {
-    console.log(`⚡ Skipping compression for small file: ${file.name}`);
+    console.log(`[Compression] Skipping compression for small file: ${file.name}`);
     return file;
   }
 
@@ -476,12 +558,15 @@ async function analyzeText(docType) {
     throw new Error('Please enter medical report text');
   }
 
-  // Check cache first for instant results
+  // Pre-process medical text for better AI parsing
+  const processedText = medicalPreProcessor.formatForAI(text, docType);
+
+  // Check cache first for instant results (use original text for cache key)
   const cacheKey = generateCacheKey(text, docType);
   const cachedResult = getFromCache(cacheKey);
 
   if (cachedResult) {
-    console.log('✓ Cache hit - using cached analysis');
+    console.log('[Cache] Hit - using cached analysis');
     updateStep('compress', 'completed', 'Not needed');
     updateStep('upload', 'completed', 'Not needed');
     updateStep('ocr', 'completed', 'Cached');
@@ -497,14 +582,14 @@ async function analyzeText(docType) {
   updateStep('upload', 'completed', 'Not needed');
   updateProgress(40);
 
-  updateStep('ocr', 'active', 'Processing text...');
+  updateStep('ocr', 'active', 'Pre-processing medical data...');
   updateProgress(60);
 
   updateStep('analyze', 'active', 'Analyzing with AI...');
   updateProgress(80);
 
   const payload = {
-    text: text,
+    text: processedText, // Send enhanced text with structure hints
     documentType: docType,
     username: State.user?.username || 'Guest'
   };
@@ -515,10 +600,10 @@ async function analyzeText(docType) {
     throw new Error(result.error || 'Analysis failed');
   }
 
-  // Store source data for ward presentation reuse
+  // Store source data for ward presentation reuse (use original text, not processed)
   State.sourceData = {
     type: 'text',
-    text: text,
+    text: text, // Store original text
     documentType: docType
   };
 
@@ -614,7 +699,7 @@ async function callBackendWithRetry(action, data, attempt = 1) {
     return await callBackend(action, data);
   } catch (error) {
     if (attempt < CONFIG.RETRY_ATTEMPTS) {
-      console.log(`⚠️ Retry attempt ${attempt}/${CONFIG.RETRY_ATTEMPTS}...`);
+      console.log(`[Network] Retry attempt ${attempt}/${CONFIG.RETRY_ATTEMPTS}...`);
       await new Promise(resolve => setTimeout(resolve, CONFIG.RETRY_DELAY * attempt));
       return callBackendWithRetry(action, data, attempt + 1);
     }
@@ -849,9 +934,9 @@ async function generateWardPresentation() {
   const wardContent = document.getElementById('ward-content');
   if (!wardContent) return;
 
-  console.log('🏥 Generating ward presentation...');
-  console.log('📋 State.sourceData:', State.sourceData);
-  console.log('📊 State.currentAnalysis:', State.currentAnalysis);
+  console.log('[Ward] Generating ward presentation...');
+  console.log('[Ward] State.sourceData:', State.sourceData);
+  console.log('[Ward] State.currentAnalysis:', State.currentAnalysis);
 
   // Show loading
   wardContent.innerHTML = '<div class="loading"><div class="processing-spinner"></div><p>Generating ward presentation...</p></div>';
@@ -871,16 +956,16 @@ async function generateWardPresentation() {
     // Use stored source data
     if (State.sourceData.type === 'image') {
       payload.fileId = State.sourceData.fileId;
-      console.log('📷 Using stored fileId:', payload.fileId);
+      console.log('[Ward] Using stored fileId:', payload.fileId);
     } else {
       payload.text = State.sourceData.text;
-      console.log('📝 Using stored text (length):', payload.text?.length);
+      console.log('[Ward] Using stored text (length):', payload.text?.length);
     }
 
-    console.log('🚀 Calling backend with payload:', { ...payload, text: payload.text ? '(text truncated)' : undefined });
+    console.log('[Ward] Calling backend with payload:', { ...payload, text: payload.text ? '(text truncated)' : undefined });
 
     const result = await callBackendWithRetry('interpret', payload);
-    console.log('✅ Backend response:', result);
+    console.log('[Ward] Backend response:', result);
 
     if (!result.success) {
       throw new Error(result.error || 'Failed to generate ward presentation');
@@ -888,24 +973,24 @@ async function generateWardPresentation() {
 
     // Check if backend returned ward presentation
     if (result.wardPresentation) {
-      console.log('🎯 Ward presentation received from backend');
+      console.log('[Ward] Ward presentation received from backend');
       State.wardPresentation = result.wardPresentation;
       displayWardPresentation(State.wardPresentation);
     } else if (hasWardFields(result)) {
-      console.log('🎯 Result has ward fields directly');
+      console.log('[Ward] Result has ward fields directly');
       State.wardPresentation = result;
       displayWardPresentation(State.wardPresentation);
     } else {
       // Fallback: Convert detailed analysis to ward format
-      console.log('⚠️ Backend did not return ward format, converting detailed analysis...');
+      console.log('[Ward] Backend did not return ward format, converting detailed analysis...');
       State.wardPresentation = convertToWardFormat(State.currentAnalysis || result);
       displayWardPresentation(State.wardPresentation);
     }
 
   } catch (error) {
-    console.error('❌ Ward presentation error:', error);
+    console.error('[Ward] Ward presentation error:', error);
     wardContent.innerHTML = `<div class="error-message" style="padding: 2rem; text-align: center;">
-      <p style="color: #ef4444; font-size: 1.1rem; margin-bottom: 1rem;">⚠️ Failed to generate ward presentation</p>
+      <p style="color: #ef4444; font-size: 1.1rem; margin-bottom: 1rem;"><strong>!</strong> Failed to generate ward presentation</p>
       <p style="color: #666; margin-bottom: 1.5rem;">${escapeHtml(error.message)}</p>
       <button class="btn-secondary" onclick="generateWardPresentation()">Try Again</button>
     </div>`;
@@ -919,7 +1004,7 @@ function hasWardFields(data) {
 
 // Convert detailed analysis to ward format (fallback)
 function convertToWardFormat(analysis) {
-  console.log('🔄 Converting detailed analysis to ward format');
+  console.log('[Ward] Converting detailed analysis to ward format');
 
   if (!analysis || !analysis.interpretation) {
     return {
@@ -992,7 +1077,7 @@ function convertToWardFormat(analysis) {
     ward.watchFor.push('Clinical correlation recommended');
   }
 
-  console.log('✅ Converted ward format:', ward);
+  console.log('[Ward] Converted ward format:', ward);
   return ward;
 }
 

@@ -234,13 +234,13 @@ function handleInterpret(data) {
         return { success: false, error: errorMsg };
       }
 
-      Logger.log('✓ Successfully downloaded image from Drive');
+      Logger.log('[Drive] Successfully downloaded image from Drive');
       Logger.log('Image data length: ' + imageData.length + ' characters');
     }
     // If image is provided directly (legacy support - has size limitations)
     else if (data.image) {
       Logger.log('=== Using direct base64 upload (legacy) ===');
-      Logger.log('⚠️ Warning: Direct base64 upload has size limitations. Consider using Drive API.');
+      Logger.log('[Warning] Direct base64 upload has size limitations. Consider using Drive API.');
       Logger.log('Image data length: ' + data.image.length + ' characters');
       Logger.log('Image data starts with: ' + data.image.substring(0, 100));
 
@@ -588,7 +588,7 @@ function getAIInterpretation(medicalText, documentType, provider, presentationFo
   const cachedResult = cache.get(cacheKey);
 
   if (cachedResult) {
-    Logger.log('✓ Cache hit - returning cached interpretation');
+    Logger.log('[Cache] Hit - returning cached interpretation');
     try {
       return JSON.parse(cachedResult);
     } catch (e) {
@@ -778,82 +778,173 @@ function buildUserPrompt(medicalText, documentType, presentationFormat) {
 }
 
 /**
- * Build detailed presentation prompt (original format)
+ * Build detailed presentation prompt (comprehensive analysis format)
+ * Enhanced for clinical accuracy and structured output
  */
 function buildDetailedPrompt(medicalText, documentType) {
-  return `Please analyze this ${documentType} report and provide a structured interpretation in JSON format with the following sections:
+  return `You are a clinical AI assistant providing comprehensive medical report analysis.
+Analyze this ${documentType} report and provide a detailed, structured interpretation.
+
+Return JSON in this EXACT structure:
 
 {
   "interpretation": {
-    "summary": "Brief clinical overview in 2-3 sentences highlighting the most important findings",
-    "keyFindings": ["Finding 1 with clinical significance", "Finding 2 with clinical significance", "..."],
-    "abnormalities": ["Abnormality 1 with values, severity, and clinical implications", "..."],
-    "normalFindings": ["Normal finding 1", "Normal finding 2", "..."]
+    "summary": "Clinical overview in 2-3 sentences highlighting the most important findings. Be specific with values and clinical significance.",
+    "keyFindings": [
+      "Finding 1 with specific values, reference ranges, and clinical significance",
+      "Finding 2 with specific values, reference ranges, and clinical significance",
+      "Include all clinically significant findings"
+    ],
+    "abnormalities": [
+      "Abnormality 1: [Test name] = [Value] ([Reference range]) - [SEVERITY: HIGH/MODERATE/LOW] → [Clinical implications and recommended actions]",
+      "Include all abnormal results with quantitative data",
+      "Prioritize by clinical urgency"
+    ],
+    "normalFindings": [
+      "Normal finding 1 with values",
+      "Normal finding 2 with values",
+      "Include reassuring normal results that rule out important differentials"
+    ]
   },
-  "clinicalPearls": ["Clinical pearl 1 relevant to these findings", "Pearl 2", "..."],
-  "potentialQuestions": ["Question 1 to ask the patient", "Question 2 about symptoms or history", "..."],
+  "clinicalPearls": [
+    "Clinical pearl 1: Evidence-based insight relevant to these findings",
+    "Clinical pearl 2: Diagnostic or management pearls",
+    "Maximum 5 pearls, prioritize actionable insights"
+  ],
+  "potentialQuestions": [
+    "Question 1 to ask the patient about symptoms or history relevant to findings",
+    "Question 2 to clarify clinical context",
+    "Focus on questions that would change management"
+  ],
   "presentation": {
-    "patientFriendly": "Clear explanation in simple, non-medical terms that a patient can understand",
-    "recommendations": ["Recommendation 1 for follow-up or further testing", "Recommendation 2", "..."]
+    "patientFriendly": "Clear explanation in simple, non-medical terms that a patient can understand. Explain what the results mean for their health. Avoid medical jargon. Be reassuring where appropriate but honest about concerns.",
+    "recommendations": [
+      "Recommendation 1: Specific follow-up action with timeframe",
+      "Recommendation 2: Further testing or specialist referral if indicated",
+      "Include preventive measures and lifestyle modifications if relevant"
+    ]
   }
 }
 
-Important:
-- Be precise with numerical values and reference ranges
-- Highlight any critical or urgent findings
-- Consider differential diagnoses where appropriate
-- Provide actionable clinical recommendations
-- Use evidence-based clinical reasoning
+CRITICAL ANALYSIS REQUIREMENTS:
+
+1. PRECISION:
+   - Include ALL numerical values with units
+   - State reference ranges for abnormal values
+   - Use standard medical terminology and abbreviations
+   - Quantify severity (not just "elevated" but "elevated 2x upper limit")
+
+2. CLINICAL SIGNIFICANCE:
+   - Explain WHY findings matter clinically
+   - Consider differential diagnoses
+   - Note urgent/critical findings explicitly
+   - Correlate findings with common clinical presentations
+
+3. ACTIONABILITY:
+   - Recommendations must be specific and time-bound
+   - Prioritize by urgency
+   - Consider follow-up intervals
+   - Include both immediate and long-term actions
+
+4. EVIDENCE-BASE:
+   - Use current clinical guidelines where applicable
+   - Reference normal pathophysiology
+   - Consider common clinical patterns
+
+5. FORMAT:
+   - No emoji or decorative characters
+   - Use standard medical abbreviations (Hb, WBC, Plt, Cr, Na, K, etc.)
+   - Use arrows (→) to indicate actions or implications
+   - Use severity labels in capitals: CRITICAL, HIGH, MODERATE, LOW
+
+Document Type: ${documentType}
 
 Medical Report:
-${medicalText}`;
+${medicalText}
+
+Provide comprehensive clinical analysis following ALL requirements above.`;
 }
 
 /**
  * Build ward presentation prompt (concise format for rounds)
+ * Enhanced for clinical-grade output with structured data
  */
 function buildWardPresentationPrompt(medicalText, documentType) {
-  return `Generate a ward presentation summary in JSON format for morning rounds. Be CONCISE, SCANNABLE, and ACTIONABLE.
+  return `You are a clinical AI assistant preparing a WARD ROUND PRESENTATION for medical teams.
+Generate a structured JSON response suitable for ward rounds presentation.
+
+CRITICAL OUTPUT REQUIREMENTS:
+
+1. Structure your analysis in EXACTLY these sections with clear delimiters:
+   - STATUS: Traffic light indicators (green/yellow/red) for each clinical domain
+   - PROBLEMS: Numbered list of active problems with severity (CRITICAL/HIGH/MODERATE/LOW)
+   - PLAN: Actionable items for today, specific and time-bound
+   - LABS: Key lab values with reference ranges and trends (if applicable)
+   - WATCH_FOR: Red flags to monitor, maximum 5 items
+
+2. For PROBLEMS section:
+   - Number each problem (1, 2, 3...)
+   - Include severity assessment
+   - Include recommended action
+   - Example: "Acute anemia requiring transfusion (CRITICAL) → Check Hb post-transfusion in 6 hours"
+
+3. For PLAN section:
+   - Make items specific and actionable
+   - Include timeframes where relevant
+   - Example: "Recheck electrolytes post-correction - 6 hours"
+
+4. For LABS section (if lab data present):
+   - Include reference ranges
+   - Mark abnormal values with direction (HIGH/LOW)
+   - Example: "Hb 8.5 g/dL (13-17) - LOW, trending down from 9.2"
+
+5. FORMATTING STANDARDS:
+   - Use standard medical abbreviations (DM, HTN, CKD, POD, UO, Cr, Hb, BP, SpO2, HR, RR)
+   - Quantify everything - use numbers not descriptions
+   - Front-load critical information - most urgent first
+   - Traffic light indicators: green (stable), yellow (needs attention), red (urgent/critical)
+   - Maximum one page when printed
+   - No emoji or special characters except arrows (→) and standard symbols
+
+6. If information is MISSING or UNCLEAR:
+   - Explicitly state what's needed
+   - Add to WATCH_FOR or PLAN as appropriate
+   - Don't guess or assume values
 
 Return JSON in this EXACT structure:
 
 {
   "wardPresentation": {
-    "header": "Age Sex | Primary Diagnosis | POD/Day# | Key Comorbidities",
+    "header": "Medical Report Analysis | ${documentType}",
     "status": [
-      {"domain": "Hemodynamics", "indicator": "green|yellow|red", "value": "Brief status"},
-      {"domain": "Respiratory", "indicator": "green|yellow|red", "value": "Brief status"},
-      {"domain": "Renal", "indicator": "green|yellow|red", "value": "Brief status"},
-      {"domain": "Infection", "indicator": "green|yellow|red", "value": "Brief status"}
+      {"domain": "Clinical Status", "indicator": "green|yellow|red", "value": "Brief assessment"},
+      {"domain": "Labs/Results", "indicator": "green|yellow|red", "value": "Key findings"},
+      {"domain": "Urgent Items", "indicator": "green|yellow|red", "value": "Action needed"}
     ],
     "activeIssues": [
-      {"issue": "Issue name", "status": "Current status", "action": "What to do"},
-      "Maximum 5 issues, prioritized by urgency"
+      {"issue": "Problem 1 name", "status": "Current status with values", "action": "Specific action with timeframe"},
+      {"issue": "Problem 2 name", "status": "Current status with values", "action": "Specific action with timeframe"}
     ],
     "todaysPlan": [
-      "Checkbox item 1 - specific actionable task",
-      "Checkbox item 2 - specific actionable task",
-      "Maximum 6 tasks"
+      "Specific actionable task 1 - with timeframe if applicable",
+      "Specific actionable task 2 - with responsible team member if applicable",
+      "Maximum 8 tasks, prioritized"
     ],
     "watchFor": [
-      "Red flag 1 with → clinical implication",
-      "Red flag 2 with → clinical implication",
-      "Maximum 4 red flags"
+      "Red flag 1 → clinical implication if it occurs",
+      "Red flag 2 → clinical implication if it occurs",
+      "Maximum 5 red flags"
     ]
   }
 }
 
-FORMATTING RULES:
-1. Use standard medical abbreviations (DM, HTN, CKD, POD, UO, Cr, Hb, BP, SpO2)
-2. Quantify everything with numbers, not descriptions
-3. Front-load critical info - most urgent first
-4. Each issue needs "issue → status → action" format
-5. No prose, use bullet points
-6. Maximum one page when printed
-7. Traffic light indicators: green (stable), yellow (watch), red (urgent)
+CLINICAL CONTEXT:
+Document Type: ${documentType}
 
-Medical Report:
-${medicalText}`;
+Medical Report Data:
+${medicalText}
+
+Analyze the above medical data and generate a ward-round-ready presentation following ALL the requirements above.`;
 }
 
 /**
@@ -1076,6 +1167,6 @@ function testImageInterpretDirect() {
  * but redirect to the Drive-based approach
  */
 function testImageInterpret() {
-  Logger.log('⚠️ testImageInterpret() is deprecated. Use testImageInterpretWithDrive() instead.');
+  Logger.log('[Deprecated] testImageInterpret() is deprecated. Use testImageInterpretWithDrive() instead.');
   return testImageInterpretWithDrive();
 }
