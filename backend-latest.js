@@ -949,34 +949,98 @@ Analyze the above medical data and generate a ward-round-ready presentation foll
 
 /**
  * Parse AI response into structured format
+ * More robust parsing that handles various response formats
  */
 function parseAIResponse(aiResponse) {
   try {
-    // Try to extract JSON from the response
-    const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      return JSON.parse(jsonMatch[0]);
+    Logger.log('Parsing AI response, length: ' + (aiResponse ? aiResponse.length : 0));
+    
+    if (!aiResponse || aiResponse.trim().length === 0) {
+      Logger.log('Empty AI response');
+      return createFallbackResponse('No response from AI');
     }
-
-    // Fallback: return as plain text interpretation
-    return {
-      interpretation: {
-        summary: aiResponse.substring(0, 500),
-        keyFindings: [aiResponse],
-        abnormalities: [],
-        normalFindings: []
-      },
-      clinicalPearls: [],
-      potentialQuestions: [],
-      presentation: {
-        patientFriendly: aiResponse,
-        recommendations: []
+    
+    // Log first 500 chars for debugging
+    Logger.log('Response preview: ' + aiResponse.substring(0, 500));
+    
+    // Try to find JSON in the response - handle markdown code blocks
+    let jsonStr = aiResponse;
+    
+    // Remove markdown code blocks if present
+    const codeBlockMatch = aiResponse.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (codeBlockMatch) {
+      jsonStr = codeBlockMatch[1].trim();
+      Logger.log('Extracted from code block');
+    }
+    
+    // Try to extract JSON object
+    const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      try {
+        const parsed = JSON.parse(jsonMatch[0]);
+        Logger.log('Successfully parsed JSON response');
+        return parsed;
+      } catch (jsonError) {
+        Logger.log('JSON parse failed: ' + jsonError.toString());
+        // Continue to fallback
       }
-    };
+    }
+    
+    // Fallback: create structured response from plain text
+    Logger.log('Using fallback text parsing');
+    return createFallbackResponse(aiResponse);
+    
   } catch (error) {
     Logger.log('Parse error: ' + error.toString());
-    throw new Error('Failed to parse AI response');
+    return createFallbackResponse('Error parsing response: ' + error.toString());
   }
+}
+
+/**
+ * Create a fallback structured response from plain text
+ */
+function createFallbackResponse(text) {
+  // Try to extract meaningful sections from the text
+  const lines = text.split('\n').filter(l => l.trim().length > 0);
+  const keyFindings = [];
+  const abnormalities = [];
+  
+  // Simple heuristic: lines with numbers or medical terms might be findings
+  lines.forEach(line => {
+    if (line.match(/\d+\.?\d*\s*(mg|g|L|mL|mmol|µmol|U|IU|%|mmHg)/i) ||
+        line.match(/(low|high|elevated|decreased|abnormal|critical)/i)) {
+      if (line.match(/(low|high|elevated|decreased|abnormal|critical)/i)) {
+        abnormalities.push(line.trim());
+      } else {
+        keyFindings.push(line.trim());
+      }
+    }
+  });
+  
+  return {
+    interpretation: {
+      summary: text.substring(0, 1000),
+      keyFindings: keyFindings.length > 0 ? keyFindings : [text.substring(0, 500)],
+      abnormalities: abnormalities,
+      normalFindings: []
+    },
+    clinicalPearls: [],
+    potentialQuestions: [],
+    presentation: {
+      patientFriendly: text.substring(0, 500),
+      recommendations: ['Review findings with clinical context', 'Correlate with patient history']
+    },
+    wardPresentation: {
+      header: 'Medical Report Analysis',
+      status: [
+        { domain: 'Analysis', indicator: 'yellow', value: 'Plain text response - review manually' }
+      ],
+      activeIssues: [],
+      todaysPlan: ['Review the extracted findings below'],
+      watchFor: []
+    },
+    extractedText: text
+  };
 }
 
 /**
