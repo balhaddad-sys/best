@@ -17,55 +17,65 @@
     patterns: 0
   };
 
-  // DOM Elements
-  const elements = {
-    loginScreen: document.getElementById('login-screen'),
-    dashboardScreen: document.getElementById('dashboard-screen'),
-    usernameInput: document.getElementById('username-input'),
-    loginBtn: document.getElementById('login-btn'),
-    navUser: document.getElementById('nav-user'),
-    userInitial: document.getElementById('user-initial'),
-    userName: document.getElementById('user-name'),
-    logoutBtn: document.getElementById('logout-btn'),
-    dropzone: document.getElementById('dropzone'),
-    fileInput: document.getElementById('file-input'),
-    fileList: document.getElementById('file-list'),
-    analyzeBtn: document.getElementById('analyze-btn'),
-    textInput: document.getElementById('text-input'),
-    analyzeTextBtn: document.getElementById('analyze-text-btn'),
-    activityList: document.getElementById('activity-list'),
-    resultsModal: document.getElementById('results-modal'),
-    modalClose: document.getElementById('modal-close'),
-    modalTimestamp: document.getElementById('modal-timestamp'),
-    newAnalysisBtn: document.getElementById('new-analysis-btn'),
-    detailedView: document.getElementById('detailed-view'),
-    wardView: document.getElementById('ward-view'),
-    processingOverlay: document.getElementById('processing-overlay'),
-    processingText: document.getElementById('processing-text'),
-    toast: document.getElementById('toast'),
-    toastMessage: document.getElementById('toast-message'),
-    metricTotal: document.getElementById('metric-total'),
-    metricCache: document.getElementById('metric-cache'),
-    metricSpeed: document.getElementById('metric-speed'),
-    metricPatterns: document.getElementById('metric-patterns')
-  };
+  // DOM Elements - will be populated on init
+  let elements = {};
 
   // Initialize
   function init() {
+    // Get DOM elements after DOM is ready
+    elements = {
+      loginScreen: document.getElementById('login-screen'),
+      dashboardScreen: document.getElementById('dashboard-screen'),
+      usernameInput: document.getElementById('username-input'),
+      loginBtn: document.getElementById('login-btn'),
+      navUser: document.getElementById('nav-user'),
+      userInitial: document.getElementById('user-initial'),
+      userName: document.getElementById('user-name'),
+      logoutBtn: document.getElementById('logout-btn'),
+      dropzone: document.getElementById('dropzone'),
+      fileInput: document.getElementById('file-input'),
+      fileList: document.getElementById('file-list'),
+      analyzeBtn: document.getElementById('analyze-btn'),
+      textInput: document.getElementById('text-input'),
+      analyzeTextBtn: document.getElementById('analyze-text-btn'),
+      activityList: document.getElementById('activity-list'),
+      resultsModal: document.getElementById('results-modal'),
+      modalClose: document.getElementById('modal-close'),
+      modalTimestamp: document.getElementById('modal-timestamp'),
+      newAnalysisBtn: document.getElementById('new-analysis-btn'),
+      detailedView: document.getElementById('detailed-view'),
+      wardView: document.getElementById('ward-view'),
+      processingOverlay: document.getElementById('processing-overlay'),
+      processingText: document.getElementById('processing-text'),
+      toast: document.getElementById('toast'),
+      toastMessage: document.getElementById('toast-message'),
+      metricTotal: document.getElementById('metric-total'),
+      metricCache: document.getElementById('metric-cache'),
+      metricSpeed: document.getElementById('metric-speed'),
+      metricPatterns: document.getElementById('metric-patterns')
+    };
+
     setupEventListeners();
     checkSession();
+  }
+
+  // Safe event listener helper
+  function addEvent(element, event, handler) {
+    if (element) {
+      element.addEventListener(event, handler);
+    }
   }
 
   // Event Listeners
   function setupEventListeners() {
     // Login
-    elements.loginBtn.addEventListener('click', handleLogin);
-    elements.usernameInput.addEventListener('keypress', (e) => {
+    addEvent(elements.loginBtn, 'click', handleLogin);
+    addEvent(elements.usernameInput, 'keypress', (e) => {
       if (e.key === 'Enter') handleLogin();
     });
     
     // Logout
-    elements.logoutBtn.addEventListener('click', handleLogout);
+    addEvent(elements.logoutBtn, 'click', handleLogout);
     
     // Upload Tabs
     document.querySelectorAll('.upload-tab').forEach(tab => {
@@ -73,23 +83,30 @@
     });
     
     // Dropzone
-    elements.dropzone.addEventListener('click', () => elements.fileInput.click());
-    elements.dropzone.addEventListener('dragover', handleDragOver);
-    elements.dropzone.addEventListener('dragleave', handleDragLeave);
-    elements.dropzone.addEventListener('drop', handleDrop);
-    elements.fileInput.addEventListener('change', handleFileSelect);
+    addEvent(elements.dropzone, 'click', () => {
+      if (elements.fileInput) elements.fileInput.click();
+    });
+    addEvent(elements.dropzone, 'dragover', handleDragOver);
+    addEvent(elements.dropzone, 'dragleave', handleDragLeave);
+    addEvent(elements.dropzone, 'drop', handleDrop);
+    addEvent(elements.fileInput, 'change', handleFileSelect);
     
     // Analyze buttons
-    elements.analyzeBtn.addEventListener('click', () => runAnalysis('image'));
-    elements.analyzeTextBtn.addEventListener('click', () => runAnalysis('text'));
+    addEvent(elements.analyzeBtn, 'click', () => runAnalysis('image'));
+    addEvent(elements.analyzeTextBtn, 'click', () => runAnalysis('text'));
     
     // Modal
-    elements.modalClose.addEventListener('click', closeModal);
-    elements.newAnalysisBtn.addEventListener('click', () => {
+    addEvent(elements.modalClose, 'click', closeModal);
+    addEvent(elements.newAnalysisBtn, 'click', () => {
       closeModal();
       resetUpload();
+      // Clear the modal content for next time
+      if (elements.detailedView) elements.detailedView.innerHTML = '';
+      if (elements.wardView) elements.wardView.innerHTML = '';
+      // Scroll to top
+      window.scrollTo(0, 0);
     });
-    elements.resultsModal.addEventListener('click', (e) => {
+    addEvent(elements.resultsModal, 'click', (e) => {
       if (e.target === elements.resultsModal) closeModal();
     });
     
@@ -100,7 +117,7 @@
     
     // Keyboard
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && elements.resultsModal.classList.contains('active')) {
+      if (e.key === 'Escape' && elements.resultsModal && elements.resultsModal.classList.contains('active')) {
         closeModal();
       }
     });
@@ -108,29 +125,35 @@
 
   // Session Management
   function checkSession() {
-    const saved = localStorage.getItem('medward_user');
-    if (saved) {
-      currentUser = JSON.parse(saved);
-      showDashboard();
-    }
-    
-    // Load metrics
-    const savedMetrics = localStorage.getItem('medward_metrics');
-    if (savedMetrics) {
-      metrics = JSON.parse(savedMetrics);
-      updateMetricsDisplay();
-    }
-    
-    // Load history
-    const savedHistory = localStorage.getItem('medward_history');
-    if (savedHistory) {
-      analysisHistory = JSON.parse(savedHistory);
-      renderActivityList();
+    try {
+      const saved = localStorage.getItem('medward_user');
+      if (saved) {
+        currentUser = JSON.parse(saved);
+        showDashboard();
+      }
+      
+      // Load metrics
+      const savedMetrics = localStorage.getItem('medward_metrics');
+      if (savedMetrics) {
+        metrics = JSON.parse(savedMetrics);
+        updateMetricsDisplay();
+      }
+      
+      // Load history
+      const savedHistory = localStorage.getItem('medward_history');
+      if (savedHistory) {
+        analysisHistory = JSON.parse(savedHistory);
+        renderActivityList();
+      }
+    } catch (e) {
+      console.error('Session check error:', e);
     }
   }
 
   // Login
   function handleLogin() {
+    if (!elements.usernameInput) return;
+    
     const username = elements.usernameInput.value.trim();
     if (!username) {
       showToast('Please enter a username', 'error');
@@ -138,29 +161,40 @@
     }
     
     currentUser = { name: username, initial: username[0].toUpperCase() };
-    localStorage.setItem('medward_user', JSON.stringify(currentUser));
+    
+    try {
+      localStorage.setItem('medward_user', JSON.stringify(currentUser));
+    } catch (e) {
+      console.error('localStorage error:', e);
+    }
+    
     showDashboard();
     showToast(`Welcome, ${username}!`, 'success');
   }
 
   function handleLogout() {
     currentUser = null;
-    localStorage.removeItem('medward_user');
+    try {
+      localStorage.removeItem('medward_user');
+    } catch (e) {}
     showScreen('login');
-    elements.navUser.hidden = true;
-    elements.usernameInput.value = '';
+    if (elements.navUser) elements.navUser.hidden = true;
+    if (elements.usernameInput) elements.usernameInput.value = '';
   }
 
   function showDashboard() {
-    elements.userInitial.textContent = currentUser.initial;
-    elements.userName.textContent = currentUser.name;
-    elements.navUser.hidden = false;
+    if (elements.userInitial) elements.userInitial.textContent = currentUser.initial;
+    if (elements.userName) elements.userName.textContent = currentUser.name;
+    if (elements.navUser) elements.navUser.hidden = false;
     showScreen('dashboard');
   }
 
   function showScreen(screen) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(`${screen}-screen`).classList.add('active');
+    const targetScreen = document.getElementById(`${screen}-screen`);
+    if (targetScreen) {
+      targetScreen.classList.add('active');
+    }
   }
 
   // Upload Tab Switching
@@ -176,17 +210,17 @@
   // Drag & Drop
   function handleDragOver(e) {
     e.preventDefault();
-    elements.dropzone.classList.add('dragover');
+    if (elements.dropzone) elements.dropzone.classList.add('dragover');
   }
 
   function handleDragLeave(e) {
     e.preventDefault();
-    elements.dropzone.classList.remove('dragover');
+    if (elements.dropzone) elements.dropzone.classList.remove('dragover');
   }
 
   function handleDrop(e) {
     e.preventDefault();
-    elements.dropzone.classList.remove('dragover');
+    if (elements.dropzone) elements.dropzone.classList.remove('dragover');
     const files = Array.from(e.dataTransfer.files);
     processFiles(files);
   }
@@ -212,10 +246,12 @@
     });
     
     renderFileList();
-    elements.analyzeBtn.disabled = uploadedFiles.length === 0;
+    if (elements.analyzeBtn) elements.analyzeBtn.disabled = uploadedFiles.length === 0;
   }
 
   function renderFileList() {
+    if (!elements.fileList) return;
+    
     if (uploadedFiles.length === 0) {
       elements.fileList.innerHTML = '';
       return;
@@ -249,19 +285,26 @@
   function removeFile(index) {
     uploadedFiles.splice(index, 1);
     renderFileList();
-    elements.analyzeBtn.disabled = uploadedFiles.length === 0;
+    if (elements.analyzeBtn) elements.analyzeBtn.disabled = uploadedFiles.length === 0;
   }
 
   function resetUpload() {
     uploadedFiles = [];
-    elements.fileList.innerHTML = '';
-    elements.fileInput.value = '';
-    elements.textInput.value = '';
-    elements.analyzeBtn.disabled = true;
+    if (elements.fileList) elements.fileList.innerHTML = '';
+    if (elements.fileInput) elements.fileInput.value = '';
+    if (elements.textInput) elements.textInput.value = '';
+    if (elements.analyzeBtn) elements.analyzeBtn.disabled = true;
   }
 
   // Analysis
   async function runAnalysis(type) {
+    // Close any open modal first
+    closeModal();
+    
+    // Clear previous results
+    if (elements.detailedView) elements.detailedView.innerHTML = '<p style="color: rgba(255,255,255,0.5); text-align: center; padding: 2rem;">Analyzing...</p>';
+    if (elements.wardView) elements.wardView.innerHTML = '<p style="color: rgba(255,255,255,0.5); text-align: center; padding: 2rem;">Analyzing...</p>';
+    
     const startTime = Date.now();
     
     // Show processing
@@ -278,7 +321,7 @@
     ];
     
     for (let i = 0; i < statuses.length; i++) {
-      elements.processingText.textContent = statuses[i];
+      if (elements.processingText) elements.processingText.textContent = statuses[i];
       await sleep(600 + Math.random() * 400);
     }
     
@@ -305,7 +348,11 @@
     };
     analysisHistory.unshift(historyItem);
     if (analysisHistory.length > 10) analysisHistory.pop();
-    localStorage.setItem('medward_history', JSON.stringify(analysisHistory));
+    
+    try {
+      localStorage.setItem('medward_history', JSON.stringify(analysisHistory));
+    } catch (e) {}
+    
     renderActivityList();
     
     // Hide processing, show results
@@ -314,88 +361,62 @@
   }
 
   function generateDemoResults() {
-    // Comprehensive demo data
     return {
       summary: "Patient presents with Stage 3b chronic kidney disease (eGFR 30) characterized by significantly elevated creatinine (244 µmol/L) and urea (13.1 mmol/L) indicating moderate renal impairment. Critical electrolyte disturbances include hypokalemia (3.3 mmol/L) and abnormal mineral metabolism with elevated phosphate (1.86 mmol/L) and urate (390 µmol/L), requiring urgent intervention.",
-      
       diagnosis: "Stage 3b CKD with electrolyte imbalance",
       severity: "Moderate-Severe",
-      
       alerts: [
         {
           severity: 'critical',
           title: 'Urgent: Hypokalemia',
-          text: 'Potassium 3.3 mmol/L requires immediate correction. Risk of cardiac arrhythmias. Obtain ECG and consider IV replacement if symptomatic.'
+          text: 'Potassium 3.3 mmol/L requires immediate correction. Risk of cardiac arrhythmias.'
         },
         {
           severity: 'warning',
           title: 'Acute-on-Chronic Kidney Injury',
-          text: 'Creatinine trending 232→281→244 over 3-4 days suggests AKI superimposed on CKD. Investigate precipitants.'
+          text: 'Creatinine trending suggests AKI superimposed on CKD. Investigate precipitants.'
         }
       ],
-      
       findings: [
         { name: 'Creatinine', value: '244 µmol/L', reference: '59-104', status: 'High' },
         { name: 'eGFR', value: '30 mL/min', reference: '>90', status: 'Low' },
         { name: 'Potassium', value: '3.3 mmol/L', reference: '3.5-5.0', status: 'Low' },
         { name: 'Urea', value: '13.1 mmol/L', reference: '2.5-6.4', status: 'High' },
         { name: 'Phosphate', value: '1.86 mmol/L', reference: '0.8-1.5', status: 'High' },
-        { name: 'Urate', value: '390 µmol/L', reference: '200-430', status: 'Normal' },
-        { name: 'Sodium', value: '137 mmol/L', reference: '136-145', status: 'Normal' },
-        { name: 'Chloride', value: '104 mmol/L', reference: '98-106', status: 'Normal' }
+        { name: 'Sodium', value: '137 mmol/L', reference: '136-145', status: 'Normal' }
       ],
-      
-      clinicalPearl: "Hypokalemia in CKD is paradoxical—typically CKD causes hyperkalemia due to reduced excretion. Consider diuretics, GI losses, or poor intake as causes. This makes the finding more clinically significant and warrants thorough medication review.",
-      
       recommendations: [
-        { text: 'Obtain ECG immediately to assess for hypokalemic changes (U waves, prolonged QT)', urgent: true },
-        { text: 'Initiate potassium replacement—consider IV if K+ <3.0 or symptomatic, otherwise oral KCl 40 mEq BID' },
-        { text: 'Review medication list for nephrotoxins (NSAIDs, aminoglycosides) and potassium-wasting agents' },
-        { text: 'Assess volume status—hypovolemia may be precipitating AKI' },
-        { text: 'Start phosphate binder (sevelamer or lanthanum) targeting PO4 <1.5 mmol/L' },
-        { text: 'Nephrology referral for CKD management optimization' },
-        { text: 'Renal dietitian consult for protein/phosphate/potassium dietary guidance' },
-        { text: 'Repeat electrolytes and renal function in 24-48 hours' }
+        { text: 'Obtain ECG immediately to assess for hypokalemic changes', urgent: true },
+        { text: 'Initiate potassium replacement therapy' },
+        { text: 'Review medication list for nephrotoxins' },
+        { text: 'Assess volume status' },
+        { text: 'Nephrology referral for CKD management' }
       ],
-      
-      patientExplanation: "Your kidneys are not filtering waste as well as they should (Stage 3b kidney disease). Blood tests show elevated waste products (urea and creatinine) that your kidneys should be clearing. Your potassium level is low, which can affect your heart rhythm and needs prompt treatment. You also have elevated phosphate, which happens when kidneys can't filter minerals properly. We need to monitor you closely, adjust your medications, make some dietary changes, and repeat blood tests soon.",
-      
-      discussionPoints: [
-        "Is patient experiencing symptoms of hypokalemia (weakness, palpitations, muscle cramps)?",
-        "What is the patient's urine output and recent fluid intake?",
-        "Have there been recent medication changes (diuretics, ACE-I/ARB dose changes)?",
-        "Is this acute deterioration or expected CKD progression?",
-        "Any signs of uremia (nausea, pruritus, confusion) or fluid overload?",
-        "Has the patient been evaluated for proteinuria to guide RAAS blockade?"
-      ]
+      patientExplanation: "Your kidneys are not filtering waste as well as they should. Blood tests show elevated waste products that your kidneys should be clearing. Your potassium level is low, which needs prompt treatment."
     };
   }
 
   function showResults(results) {
-    // Update timestamp
-    const now = new Date();
-    elements.modalTimestamp.textContent = now.toLocaleTimeString();
-    
-    console.log('Showing results:', results);
+    if (elements.modalTimestamp) {
+      elements.modalTimestamp.textContent = new Date().toLocaleTimeString();
+    }
     
     // Render views
     if (typeof ClinicalComponents !== 'undefined') {
-      console.log('ClinicalComponents found, rendering...');
       ClinicalComponents.renderDetailedView(results);
       ClinicalComponents.renderWardView(results);
     } else {
-      console.error('ClinicalComponents not found!');
-      // Fallback - render basic content directly
       renderFallbackContent(results);
     }
     
-    // Show modal with animation
-    elements.resultsModal.classList.add('active');
-    document.body.style.overflow = 'hidden';
+    // Show modal
+    if (elements.resultsModal) {
+      elements.resultsModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
   }
 
   function renderFallbackContent(results) {
-    // Fallback rendering if ClinicalComponents fails
     const detailedView = document.getElementById('detailed-view');
     const wardView = document.getElementById('ward-view');
     
@@ -502,9 +523,16 @@
     }
   }
 
-  function closeModal() {
-    elements.resultsModal.classList.remove('active');
+  function closeModal(clearContent = false) {
+    if (elements.resultsModal) {
+      elements.resultsModal.classList.remove('active');
+    }
     document.body.style.overflow = '';
+    
+    if (clearContent) {
+      if (elements.detailedView) elements.detailedView.innerHTML = '';
+      if (elements.wardView) elements.wardView.innerHTML = '';
+    }
   }
 
   function switchModalView(view) {
@@ -518,6 +546,8 @@
 
   // Activity List
   function renderActivityList() {
+    if (!elements.activityList) return;
+    
     if (analysisHistory.length === 0) {
       elements.activityList.innerHTML = `
         <div class="activity-empty">
@@ -561,22 +591,29 @@
 
   // Metrics
   function updateMetricsDisplay() {
-    elements.metricTotal.textContent = metrics.total;
-    elements.metricCache.textContent = metrics.total > 0 
-      ? Math.round((metrics.cacheHits / metrics.total) * 100) + '%' 
-      : '0%';
-    elements.metricSpeed.textContent = metrics.total > 0 
-      ? Math.round(metrics.totalTime / metrics.total) + 'ms' 
-      : '0ms';
-    elements.metricPatterns.textContent = metrics.patterns;
+    if (elements.metricTotal) elements.metricTotal.textContent = metrics.total;
+    if (elements.metricCache) {
+      elements.metricCache.textContent = metrics.total > 0 
+        ? Math.round((metrics.cacheHits / metrics.total) * 100) + '%' 
+        : '0%';
+    }
+    if (elements.metricSpeed) {
+      elements.metricSpeed.textContent = metrics.total > 0 
+        ? Math.round(metrics.totalTime / metrics.total) + 'ms' 
+        : '0ms';
+    }
+    if (elements.metricPatterns) elements.metricPatterns.textContent = metrics.patterns;
   }
 
   function saveMetrics() {
-    localStorage.setItem('medward_metrics', JSON.stringify(metrics));
+    try {
+      localStorage.setItem('medward_metrics', JSON.stringify(metrics));
+    } catch (e) {}
   }
 
   // Processing Overlay
   function showProcessing(show) {
+    if (!elements.processingOverlay) return;
     if (show) {
       elements.processingOverlay.classList.add('active');
     } else {
@@ -586,6 +623,7 @@
 
   // Toast
   function showToast(message, type = 'success') {
+    if (!elements.toast || !elements.toastMessage) return;
     elements.toast.className = `toast ${type}`;
     elements.toastMessage.textContent = message;
     elements.toast.classList.add('show');
