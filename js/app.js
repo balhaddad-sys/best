@@ -1822,18 +1822,16 @@ function convertNeuralToDisplay(neuralResult, parsedData, meta) {
 function updateMetricsDisplay() {
   try {
     if (!neuralSystem) return;
-
     const metrics = neuralSystem.getMetrics();
-
-    // Update metric values with null checks
-    const els = {
-      total: document.getElementById('metric-total'),
-      cache: document.getElementById('metric-cache'),
-      localSpeed: document.getElementById('metric-local-speed'),
-      apiSpeed: document.getElementById('metric-api-speed'),
-      patterns: document.getElementById('metric-patterns'),
-      savings: document.getElementById('metric-savings')
-    };
+    const el = (id) => document.getElementById(id);
+    if (el('metric-total')) el('metric-total').textContent = metrics.total;
+    if (el('metric-cache')) el('metric-cache').textContent = metrics.cacheHitRate;
+    if (el('metric-local-speed')) el('metric-local-speed').textContent = metrics.avgLocalMs + 'ms';
+    if (el('metric-api-speed')) el('metric-api-speed').textContent = metrics.avgApiMs + 'ms';
+    if (el('metric-patterns')) el('metric-patterns').textContent = metrics.patterns;
+    if (el('metric-savings')) el('metric-savings').textContent = '$0.00';
+  } catch (e) { }
+}
 
     if (els.total) els.total.textContent = metrics.total;
     if (els.cache) els.cache.textContent = metrics.cacheHitRate;
