@@ -239,6 +239,11 @@ async function initializeNeuralSystem() {
   try {
     console.log('[Neural] Initializing neural intelligence system...');
 
+    // Check for required dependencies
+    if (typeof MedicalDocumentParser === 'undefined' || typeof MedWardNeural === 'undefined') {
+      throw new Error('Neural modules not loaded. Check that medward-neural.js is included.');
+    }
+
     // Initialize parser and neural system
     neuralParser = new MedicalDocumentParser({ debug: false });
     neuralSystem = new MedWardNeural({ debug: true });
@@ -252,9 +257,15 @@ async function initializeNeuralSystem() {
     updateMetricsDisplay();
 
     console.log('[Neural] Neural system ready!');
+    showToast('Neural Intelligence System activated!', 'success');
   } catch (error) {
     console.error('[Neural] Failed to initialize:', error);
+    console.error('[Neural] Error details:', error.stack);
     showToast('Neural system unavailable - using standard mode', 'warning');
+
+    // Continue without neural system - app will use legacy mode
+    neuralParser = null;
+    neuralSystem = null;
   }
 }
 
