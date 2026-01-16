@@ -1702,6 +1702,126 @@
         display: none !important;
       }
     }
+
+    /* === BATCH PROCESSING === */
+    .batch-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      background: linear-gradient(135deg, var(--accent-gold-dim), transparent);
+      border: 1px solid var(--accent-gold);
+      border-radius: var(--radius-md);
+      margin-bottom: 0.75rem;
+    }
+    
+    .batch-info {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    
+    .batch-count {
+      font-weight: 700;
+      color: var(--accent-gold);
+      font-size: 1rem;
+    }
+    
+    .batch-size {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    
+    .batch-clear {
+      background: transparent;
+      border: 1px solid var(--accent-rose);
+      color: var(--accent-rose);
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .batch-clear:hover {
+      background: var(--accent-rose-dim);
+    }
+    
+    .batch-progress {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    .batch-progress-bar {
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+    }
+    
+    .batch-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-teal), var(--accent-gold));
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+    
+    .batch-progress-text {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+    
+    .file-preview.more {
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      background: transparent;
+      border: 1px dashed var(--border-subtle);
+    }
+    
+    /* Pattern Learning Stats */
+    .pattern-stats {
+      background: linear-gradient(135deg, rgba(78, 205, 196, 0.1), transparent);
+      border: 1px solid var(--accent-teal);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .pattern-stats-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--accent-teal);
+      margin-bottom: 0.5rem;
+    }
+    
+    .pattern-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+    }
+    
+    .pattern-stat {
+      text-align: center;
+    }
+    
+    .pattern-stat-value {
+      font-family: var(--font-mono);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    
+    .pattern-stat-label {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
   </style>
 </head>
 <body>
@@ -2097,6 +2217,7 @@ Or paste clinical notes, history, examination findings..."></textarea>
   <script src="js/clinical-components.js"></script>
   <script src="js/data-classifier.js"></script>
   <script src="js/lab-trends.js"></script>
+  <script src="js/batch-processor.js"></script>
   <script src="js/app.js"></script>
 
   <!-- Patient Management Configuration -->
