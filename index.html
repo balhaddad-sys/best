@@ -1,4 +1,4 @@
-5<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -1677,7 +1677,7 @@
   <!-- Configuration -->
   <script>
     window.MEDWARD_CONFIG = {
-      BACKEND_URL: 'https://script.google.com/macros/s/AKfycbxjp-KDUx_eYvavlEHDciE-fR1V8eFM39vJfAcA7btETL-QUmrwuYU-_92_Pl20gl75kg/exec',
+      BACKEND_URL: 'https://script.google.com/macros/s/AKfycby-3iNSD4CquZiyg0inXQ_sGs3IxNrSx1WzRREIv2ABKnyPP5GjvSYZdzClkZqWZ9M7Og/exec',
       PATIENT_API_URL: 'https://script.google.com/macros/s/AKfycbx-l2xdsAHTZu7bcueN83Yz8xbCwtKbHfUSJuhIgtWVR5XyeJYh9TrfMgzznTYX4Z0kww/exec'
     };
   </script>
@@ -1687,5 +1687,67 @@
   <script src="js/core.js"></script>
   <script src="js/clinical.js"></script>
   <script src="js/patients.js"></script>
+  
+  <!-- Fallback login handler (in case modules fail to load) -->
+  <script>
+    (function() {
+      document.addEventListener('DOMContentLoaded', function() {
+        var loginBtn = document.getElementById('login-btn');
+        var usernameInput = document.getElementById('username-input');
+        
+        if (!loginBtn) {
+          console.error('CRITICAL: login-btn not found!');
+          return;
+        }
+        
+        function doLogin() {
+          var username = usernameInput ? usernameInput.value.trim() : '';
+          console.log('Fallback login triggered, username:', username);
+          
+          if (!username) {
+            alert('Please enter your name');
+            return;
+          }
+          
+          // Try MedWard.login first
+          if (window.MedWard && typeof window.MedWard.login === 'function') {
+            console.log('Using MedWard.login');
+            window.MedWard.login(username);
+          } else {
+            // Direct DOM manipulation fallback
+            console.log('Using direct DOM fallback');
+            localStorage.setItem('medward_user', JSON.stringify({ name: username, initial: username[0].toUpperCase() }));
+            
+            document.getElementById('login-screen').classList.remove('active');
+            document.getElementById('dashboard-screen').classList.add('active');
+            
+            var userInitial = document.getElementById('user-initial');
+            var userName = document.getElementById('user-name');
+            var navUser = document.getElementById('nav-user');
+            
+            if (userInitial) userInitial.textContent = username[0].toUpperCase();
+            if (userName) userName.textContent = username;
+            if (navUser) navUser.removeAttribute('hidden');
+          }
+        }
+        
+        loginBtn.onclick = function(e) {
+          e.preventDefault();
+          doLogin();
+        };
+        
+        if (usernameInput) {
+          usernameInput.onkeypress = function(e) {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              doLogin();
+            }
+          };
+        }
+        
+        console.log('Fallback login handler ready');
+      });
+    })();
+  </script>
 </body>
 </html>
