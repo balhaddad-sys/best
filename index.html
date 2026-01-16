@@ -3,168 +3,149 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MedWard Master | AI Clinical Intelligence</title>
-
-  <!-- PWA Meta Tags -->
-  <link rel="manifest" href="https://progressier.app/0IpCHZYvGyBKyFwHmGj2/progressier.json">
-  <script defer src="https://progressier.app/0IpCHZYvGyBKyFwHmGj2/script.js"></script>
+  <title>MedWard | Clinical Intelligence Platform</title>
+  
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0a0a0f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="MedWard">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
-
+  
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   
   <style>
+    /* ===== CSS CUSTOM PROPERTIES ===== */
     :root {
-      --bg-deep: #0a0a0f;
-      --bg-card: rgba(20, 20, 30, 0.8);
+      /* Colors */
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-tertiary: #1a1a25;
       --bg-glass: rgba(255, 255, 255, 0.03);
       --bg-glass-hover: rgba(255, 255, 255, 0.06);
-      --surface: #12121a;
-      --surface-2: #1a1a25;
-      --surface-3: #22222f;
       
       --text-primary: #ffffff;
       --text-secondary: rgba(255, 255, 255, 0.7);
       --text-muted: rgba(255, 255, 255, 0.4);
       
-      --accent-gold: #f0c674;
-      --accent-gold-dim: rgba(240, 198, 116, 0.15);
+      --accent-primary: #f0c674;
       --accent-teal: #4ecdc4;
-      --accent-teal-dim: rgba(78, 205, 196, 0.15);
-      --accent-rose: #ff6b9d;
-      --accent-rose-dim: rgba(255, 107, 157, 0.15);
       --accent-purple: #a78bfa;
-      --accent-purple-dim: rgba(167, 139, 250, 0.15);
       --accent-blue: #60a5fa;
-      --accent-blue-dim: rgba(96, 165, 250, 0.15);
       
-      --critical: #ef4444;
-      --critical-glow: rgba(239, 68, 68, 0.4);
-      --warning: #f59e0b;
-      --warning-glow: rgba(245, 158, 11, 0.4);
-      --success: #10b981;
-      --success-glow: rgba(16, 185, 129, 0.4);
+      --status-critical: #ef4444;
+      --status-warning: #f59e0b;
+      --status-success: #10b981;
+      --status-info: #3b82f6;
       
       --border-subtle: rgba(255, 255, 255, 0.06);
       --border-glow: rgba(240, 198, 116, 0.3);
       
-      --font-display: 'Playfair Display', Georgia, serif;
-      --font-body: 'Outfit', sans-serif;
-      --font-mono: 'IBM Plex Mono', monospace;
+      /* Typography */
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
       
-      --shadow-glow: 0 0 60px rgba(240, 198, 116, 0.1);
-      --shadow-card: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-      --shadow-float: 0 20px 40px rgba(0, 0, 0, 0.3);
+      /* Spacing */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2rem;
+      --space-2xl: 3rem;
       
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 20px;
-      --radius-xl: 28px;
+      /* Radii */
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      
+      /* Shadows */
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+      --shadow-glow: 0 0 40px rgba(240, 198, 116, 0.1);
+      
+      /* Transitions */
+      --transition-fast: 150ms ease;
+      --transition-normal: 250ms ease;
+      --transition-slow: 400ms ease;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     
-    html { font-size: 16px; scroll-behavior: smooth; }
+    html { 
+      font-size: 16px; 
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+    }
     
     body {
-      font-family: var(--font-body);
-      background: var(--bg-deep);
+      font-family: var(--font-sans);
+      background: var(--bg-primary);
       color: var(--text-primary);
       min-height: 100vh;
+      line-height: 1.5;
       overflow-x: hidden;
-      line-height: 1.6;
     }
+    
+    /* ===== UTILITY CLASSES ===== */
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
+    .hidden { display: none !important; }
+    .flex { display: flex; }
+    .flex-col { flex-direction: column; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .gap-sm { gap: var(--space-sm); }
+    .gap-md { gap: var(--space-md); }
+    .gap-lg { gap: var(--space-lg); }
+    .text-center { text-align: center; }
+    .text-muted { color: var(--text-muted); }
+    .font-mono { font-family: var(--font-mono); }
 
-    /* === ANIMATED BACKGROUND === */
+    /* ===== ANIMATED BACKGROUND ===== */
     .bg-wrapper {
       position: fixed;
       inset: 0;
       z-index: -1;
       overflow: hidden;
+      pointer-events: none;
     }
-
+    
     .bg-gradient {
       position: absolute;
       inset: 0;
       background: 
-        radial-gradient(ellipse 80% 50% at 20% -20%, rgba(240, 198, 116, 0.08) 0%, transparent 50%),
-        radial-gradient(ellipse 60% 40% at 80% 110%, rgba(78, 205, 196, 0.06) 0%, transparent 50%),
-        radial-gradient(ellipse 50% 50% at 50% 50%, rgba(167, 139, 250, 0.03) 0%, transparent 70%);
+        radial-gradient(ellipse 70% 50% at 20% -10%, rgba(240, 198, 116, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse 50% 40% at 80% 100%, rgba(78, 205, 196, 0.04) 0%, transparent 50%);
     }
-
+    
     .bg-grid {
       position: absolute;
       inset: 0;
       background-image: 
-        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-      background-size: 60px 60px;
+        linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+      background-size: 50px 50px;
       mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
     }
 
-    .floating-orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
-      animation: float 20s ease-in-out infinite;
-    }
-
-    .orb-1 {
-      width: 400px;
-      height: 400px;
-      background: var(--accent-gold);
-      opacity: 0.06;
-      top: -10%;
-      left: -5%;
-      animation-delay: 0s;
-    }
-
-    .orb-2 {
-      width: 300px;
-      height: 300px;
-      background: var(--accent-teal);
-      opacity: 0.05;
-      bottom: -10%;
-      right: -5%;
-      animation-delay: -7s;
-    }
-
-    .orb-3 {
-      width: 250px;
-      height: 250px;
-      background: var(--accent-purple);
-      opacity: 0.04;
-      top: 50%;
-      left: 60%;
-      animation-delay: -14s;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      25% { transform: translate(30px, -30px) scale(1.05); }
-      50% { transform: translate(-20px, 20px) scale(0.95); }
-      75% { transform: translate(20px, 30px) scale(1.02); }
-    }
-
-    /* === NAVIGATION === */
+    /* ===== NAVIGATION ===== */
     .nav {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       z-index: 100;
-      padding: 1rem 2rem;
-      background: rgba(10, 10, 15, 0.8);
-      backdrop-filter: blur(20px);
+      padding: var(--space-md) var(--space-xl);
+      background: rgba(10, 10, 15, 0.85);
+      backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border-subtle);
-      transition: all 0.3s ease;
     }
-
+    
     .nav-inner {
       max-width: 1400px;
       margin: 0 auto;
@@ -172,2166 +153,1051 @@
       align-items: center;
       justify-content: space-between;
     }
-
+    
     .logo {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: var(--space-md);
     }
-
+    
     .logo-icon {
-      width: 48px;
-      height: 48px;
-      background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-teal) 100%);
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-teal) 100%);
       border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: grid;
+      place-items: center;
       position: relative;
-      overflow: hidden;
     }
-
+    
     .logo-icon::before {
       content: '';
       position: absolute;
       inset: 2px;
-      background: var(--bg-deep);
+      background: var(--bg-primary);
       border-radius: calc(var(--radius-md) - 2px);
     }
-
+    
     .logo-icon svg {
       position: relative;
       z-index: 1;
-      width: 24px;
-      height: 24px;
-      stroke: var(--accent-gold);
+      width: 20px;
+      height: 20px;
+      stroke: var(--accent-primary);
     }
-
+    
     .logo-text {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .logo-name {
-      font-family: var(--font-display);
-      font-size: 1.5rem;
-      font-weight: 600;
-      background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-gold) 100%);
+      font-size: 1.25rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-primary) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-
-    .logo-tagline {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
+    
+    .nav-tabs {
+      display: flex;
+      gap: var(--space-xs);
+      background: var(--bg-glass);
+      padding: 4px;
+      border-radius: var(--radius-md);
     }
-
+    
+    .nav-tab {
+      padding: var(--space-sm) var(--space-lg);
+      border-radius: var(--radius-sm);
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    
+    .nav-tab:hover { color: var(--text-primary); }
+    .nav-tab.active {
+      background: var(--bg-tertiary);
+      color: var(--accent-primary);
+    }
+    
     .nav-user {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: var(--space-md);
     }
-
+    
     .user-avatar {
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-blue) 100%);
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-teal));
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: grid;
+      place-items: center;
       font-weight: 600;
-      font-size: 1rem;
+      font-size: 0.875rem;
     }
-
-    .user-name {
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-    }
-
-    .btn-logout {
-      background: transparent;
-      border: 1px solid var(--border-subtle);
-      color: var(--text-muted);
-      padding: 0.5rem 1rem;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      transition: all 0.2s;
-    }
-
-    .btn-logout:hover {
-      border-color: var(--accent-rose);
-      color: var(--accent-rose);
-    }
-
-    /* === SCREENS === */
-    .screen {
-      display: none;
-      min-height: 100vh;
-      padding-top: 100px;
-    }
-
-    .screen.active {
-      display: block;
-    }
-
-    /* === LOGIN SCREEN === */
-    .login-container {
-      max-width: 420px;
-      margin: 0 auto;
-      padding: 2rem;
-    }
-
-    .login-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-xl);
-      padding: 3rem 2.5rem;
-      backdrop-filter: blur(20px);
-      box-shadow: var(--shadow-card);
-    }
-
-    .login-header {
-      text-align: center;
-      margin-bottom: 2.5rem;
-    }
-
-    .login-title {
-      font-family: var(--font-display);
-      font-size: 2rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-    }
-
-    .login-subtitle {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-    }
-
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-
-    .form-label {
-      display: block;
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: var(--text-secondary);
-      margin-bottom: 0.5rem;
-    }
-
-    .form-input {
-      width: 100%;
-      padding: 1rem 1.25rem;
-      background: var(--surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      color: var(--text-primary);
-      font-family: var(--font-body);
-      font-size: 1rem;
-      transition: all 0.2s;
-    }
-
-    .form-input:focus {
-      outline: none;
-      border-color: var(--accent-gold);
-      box-shadow: 0 0 0 3px var(--accent-gold-dim);
-    }
-
-    .form-input::placeholder {
-      color: var(--text-muted);
-    }
-
+    
     .btn {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      padding: 1rem 2rem;
-      border-radius: var(--radius-md);
-      font-family: var(--font-body);
-      font-size: 1rem;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-lg);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.875rem;
       font-weight: 500;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all var(--transition-fast);
       border: none;
     }
-
+    
     .btn-primary {
-      background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-teal) 100%);
-      color: var(--bg-deep);
+      background: linear-gradient(135deg, var(--accent-primary), #d4a853);
+      color: var(--bg-primary);
     }
-
+    
     .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(240, 198, 116, 0.3);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(240, 198, 116, 0.3);
     }
-
+    
     .btn-secondary {
-      background: var(--surface-2);
+      background: var(--bg-glass);
+      color: var(--text-secondary);
       border: 1px solid var(--border-subtle);
+    }
+    
+    .btn-secondary:hover {
+      background: var(--bg-glass-hover);
+      color: var(--text-primary);
+    }
+    
+    .btn-ghost {
+      background: transparent;
       color: var(--text-secondary);
     }
-
-    .btn-secondary:hover {
-      background: var(--surface-3);
-      border-color: var(--accent-gold);
+    
+    .btn-ghost:hover { color: var(--text-primary); }
+    
+    .btn-icon {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border-radius: var(--radius-sm);
+      background: var(--bg-glass);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    
+    .btn-icon:hover {
+      background: var(--bg-glass-hover);
       color: var(--text-primary);
     }
 
-    .btn-glow {
-      background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-teal) 100%);
-      color: var(--bg-deep);
-      font-weight: 600;
+    /* ===== SCREENS ===== */
+    .screen {
+      display: none;
+      min-height: 100vh;
+      padding-top: 80px;
     }
+    
+    .screen.active { display: block; }
 
-    .btn-glow:hover {
-      box-shadow: 0 0 30px var(--accent-gold-dim);
+    /* ===== LOGIN SCREEN ===== */
+    #login-screen {
+      display: grid;
+      place-items: center;
+      padding: var(--space-xl);
     }
-
-    .btn-full {
+    
+    .login-card {
       width: 100%;
+      max-width: 400px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: var(--space-2xl);
+      text-align: center;
+    }
+    
+    .login-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: var(--space-sm);
+    }
+    
+    .login-subtitle {
+      color: var(--text-muted);
+      margin-bottom: var(--space-xl);
+    }
+    
+    .form-group { margin-bottom: var(--space-lg); }
+    
+    .form-input {
+      width: 100%;
+      padding: var(--space-md) var(--space-lg);
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 1rem;
+      transition: all var(--transition-fast);
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(240, 198, 116, 0.1);
+    }
+    
+    .form-input::placeholder { color: var(--text-muted); }
+    
+    .login-btn {
+      width: 100%;
+      padding: var(--space-md) var(--space-lg);
+      font-size: 1rem;
     }
 
-    /* === DASHBOARD === */
+    /* ===== DASHBOARD ===== */
+    #dashboard-screen {
+      padding: var(--space-xl);
+      padding-top: 100px;
+    }
+    
     .dashboard-container {
       max-width: 1400px;
       margin: 0 auto;
-      padding: 2rem;
     }
-
+    
     .dashboard-header {
-      margin-bottom: 3rem;
+      margin-bottom: var(--space-xl);
     }
-
+    
     .dashboard-title {
-      font-family: var(--font-display);
-      font-size: 2.5rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: var(--space-xs);
     }
-
+    
     .dashboard-subtitle {
       color: var(--text-muted);
-      font-size: 1.1rem;
     }
-
+    
     .dashboard-grid {
       display: grid;
-      grid-template-columns: 1fr 380px;
-      gap: 2rem;
+      grid-template-columns: 1fr 350px;
+      gap: var(--space-xl);
     }
-
+    
     @media (max-width: 1024px) {
-      .dashboard-grid {
-        grid-template-columns: 1fr;
-      }
+      .dashboard-grid { grid-template-columns: 1fr; }
     }
 
-    /* === UPLOAD SECTION === */
-    .upload-section {
-      background: var(--bg-card);
+    /* ===== CARDS ===== */
+    .card {
+      background: var(--bg-secondary);
       border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-xl);
-      padding: 2rem;
-      backdrop-filter: blur(20px);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
     }
+    
+    .card-header {
+      padding: var(--space-lg);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    
+    .card-title svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--accent-primary);
+    }
+    
+    .card-body { padding: var(--space-lg); }
 
+    /* ===== UPLOAD AREA ===== */
     .upload-tabs {
       display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1.5rem;
-      background: var(--surface);
-      padding: 0.5rem;
-      border-radius: var(--radius-md);
+      gap: var(--space-xs);
+      margin-bottom: var(--space-lg);
     }
-
+    
     .upload-tab {
       flex: 1;
-      padding: 0.75rem 1.5rem;
-      background: transparent;
-      border: none;
+      padding: var(--space-sm) var(--space-md);
+      background: var(--bg-glass);
+      border: 1px solid var(--border-subtle);
       border-radius: var(--radius-sm);
-      color: var(--text-muted);
-      font-family: var(--font-body);
-      font-size: 0.9rem;
-      font-weight: 500;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 0.875rem;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all var(--transition-fast);
     }
-
+    
+    .upload-tab:hover { color: var(--text-primary); }
     .upload-tab.active {
-      background: var(--accent-gold);
-      color: var(--bg-deep);
+      background: var(--bg-tertiary);
+      color: var(--accent-primary);
+      border-color: var(--accent-primary);
     }
-
-    .upload-tab:hover:not(.active) {
-      color: var(--text-primary);
-    }
-
-    .upload-content {
-      display: none;
-    }
-
-    .upload-content.active {
-      display: block;
-    }
-
+    
+    .upload-content { display: none; }
+    .upload-content.active { display: block; }
+    
     .dropzone {
       border: 2px dashed var(--border-subtle);
       border-radius: var(--radius-lg);
-      padding: 3rem 2rem;
+      padding: var(--space-2xl);
       text-align: center;
       cursor: pointer;
-      transition: all 0.3s;
-      background: var(--bg-glass);
+      transition: all var(--transition-fast);
     }
-
+    
     .dropzone:hover,
     .dropzone.dragover {
-      border-color: var(--accent-gold);
-      background: var(--accent-gold-dim);
+      border-color: var(--accent-primary);
+      background: rgba(240, 198, 116, 0.03);
     }
-
+    
     .dropzone-icon {
-      width: 64px;
-      height: 64px;
-      margin: 0 auto 1.5rem;
-      background: var(--accent-gold-dim);
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 48px;
+      height: 48px;
+      margin: 0 auto var(--space-md);
+      stroke: var(--text-muted);
     }
-
-    .dropzone-icon svg {
-      width: 32px;
-      height: 32px;
-      stroke: var(--accent-gold);
-    }
-
+    
     .dropzone-title {
-      font-size: 1.1rem;
-      font-weight: 500;
-      margin-bottom: 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: var(--space-xs);
     }
-
+    
     .dropzone-subtitle {
+      font-size: 0.875rem;
       color: var(--text-muted);
-      font-size: 0.9rem;
     }
-
+    
     .file-list {
-      margin-top: 1.5rem;
+      margin-top: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
     }
-
-    .file-preview {
+    
+    .file-item {
       display: flex;
       align-items: center;
-      gap: 1rem;
-      padding: 1rem;
-      background: var(--surface);
+      gap: var(--space-md);
+      padding: var(--space-md);
+      background: var(--bg-tertiary);
       border-radius: var(--radius-md);
-      margin-bottom: 0.75rem;
     }
-
+    
     .file-thumb {
       width: 48px;
       height: 48px;
       border-radius: var(--radius-sm);
       overflow: hidden;
-      background: var(--surface-2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: var(--bg-glass);
+      display: grid;
+      place-items: center;
     }
-
+    
     .file-thumb img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-
+    
     .file-thumb svg {
       width: 24px;
       height: 24px;
       stroke: var(--text-muted);
     }
-
-    .file-info {
-      flex: 1;
-    }
-
+    
+    .file-info { flex: 1; }
+    
     .file-name {
-      font-size: 0.9rem;
+      font-size: 0.875rem;
       font-weight: 500;
-      margin-bottom: 0.25rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-
+    
     .file-size {
+      font-size: 0.75rem;
       color: var(--text-muted);
-      font-size: 0.8rem;
     }
-
+    
     .file-remove {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
       background: transparent;
       border: none;
       color: var(--text-muted);
       cursor: pointer;
-      padding: 0.5rem;
-      border-radius: var(--radius-sm);
-      transition: all 0.2s;
-    }
-
-    .file-remove:hover {
-      background: var(--accent-rose-dim);
-      color: var(--accent-rose);
-    }
-
-    /* Data Type Badge */
-    .data-type-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.25rem 0.6rem;
-      border-radius: 100px;
-      font-size: 0.65rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .data-type-badge.lab {
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15));
-      color: #93c5fd;
-      border: 1px solid rgba(59, 130, 246, 0.3);
-    }
-
-    .data-type-badge.clinical {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(78, 205, 196, 0.15));
-      color: #6ee7b7;
-      border: 1px solid rgba(16, 185, 129, 0.3);
-    }
-
-    .data-type-badge.imaging {
-      background: linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(167, 139, 250, 0.15));
-      color: #f9a8d4;
-      border: 1px solid rgba(236, 72, 153, 0.3);
-    }
-
-    .text-input-area {
-      min-height: 200px;
-      resize: vertical;
-    }
-
-    .analyze-section {
-      margin-top: 1.5rem;
-      display: flex;
-      gap: 1rem;
-    }
-
-    .analyze-section .btn {
-      flex: 1;
-    }
-
-    /* === SIDEBAR === */
-    .sidebar {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-
-    .sidebar-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-xl);
-      padding: 1.5rem;
-      backdrop-filter: blur(20px);
-    }
-
-    .sidebar-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1.25rem;
-    }
-
-    .sidebar-title {
-      font-family: var(--font-display);
-      font-size: 1.25rem;
-      font-weight: 600;
-    }
-
-    .metrics-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
+      place-items: center;
+      transition: all var(--transition-fast);
     }
-
-    .metric-card {
-      background: var(--surface);
+    
+    .file-remove:hover {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--status-critical);
+    }
+    
+    .text-input {
+      width: 100%;
+      min-height: 200px;
+      padding: var(--space-lg);
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
-      padding: 1rem;
-      text-align: center;
-    }
-
-    .metric-value {
+      color: var(--text-primary);
       font-family: var(--font-mono);
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: var(--accent-gold);
-      margin-bottom: 0.25rem;
+      font-size: 0.875rem;
+      resize: vertical;
+      transition: all var(--transition-fast);
+    }
+    
+    .text-input:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+    }
+    
+    .text-input::placeholder { color: var(--text-muted); }
+    
+    .analyze-btn {
+      width: 100%;
+      margin-top: var(--space-lg);
+      padding: var(--space-md);
+      font-size: 1rem;
+    }
+    
+    .analyze-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
     }
 
-    .metric-label {
-      color: var(--text-muted);
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
+    /* ===== ACTIVITY LIST ===== */
     .activity-list {
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: var(--space-sm);
     }
-
+    
     .activity-item {
       display: flex;
       align-items: center;
-      gap: 1rem;
-      padding: 1rem;
-      background: var(--surface);
+      gap: var(--space-md);
+      padding: var(--space-md);
       border-radius: var(--radius-md);
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all var(--transition-fast);
     }
-
-    .activity-item:hover {
-      background: var(--surface-2);
-      transform: translateX(4px);
-    }
-
+    
+    .activity-item:hover { background: var(--bg-glass); }
+    
     .activity-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      display: grid;
+      place-items: center;
     }
-
+    
     .activity-icon.success {
-      background: var(--success-glow);
-      color: var(--success);
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--status-success);
     }
-
-    .activity-icon.warning {
-      background: var(--warning-glow);
-      color: var(--warning);
+    
+    .activity-icon svg {
+      width: 20px;
+      height: 20px;
     }
-
-    .activity-text {
-      flex: 1;
-    }
-
+    
+    .activity-text { flex: 1; }
+    
     .activity-title {
-      font-size: 0.9rem;
+      font-size: 0.875rem;
       font-weight: 500;
-      margin-bottom: 0.25rem;
     }
-
+    
     .activity-time {
+      font-size: 0.75rem;
       color: var(--text-muted);
-      font-size: 0.8rem;
     }
-
+    
     .activity-empty {
       text-align: center;
-      padding: 2rem;
+      padding: var(--space-2xl);
       color: var(--text-muted);
     }
-
+    
     .activity-empty svg {
       width: 48px;
       height: 48px;
-      margin-bottom: 1rem;
+      margin: 0 auto var(--space-md);
+      stroke: currentColor;
       opacity: 0.5;
     }
 
-    /* === MODAL === */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(8px);
-      z-index: 200;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s;
-    }
-
-    .modal-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .modal-container {
-      background: var(--bg-deep);
-      border: none;
-      border-radius: 0;
-      width: 100%;
-      height: 100%;
-      max-width: 100%;
-      max-height: 100%;
-      display: flex;
-      flex-direction: column;
-      transform: translateY(20px);
-      transition: transform 0.3s;
-      overflow: hidden;
-    }
-
-    .modal-overlay.active .modal-container {
-      transform: translateY(0);
-    }
-
-    /* Desktop: constrained modal */
-    @media (min-width: 768px) {
-      .modal-overlay {
-        padding: 2rem;
-      }
-      
-      .modal-container {
-        background: var(--bg-card);
-        border: 1px solid var(--border-subtle);
-        border-radius: var(--radius-xl);
-        max-width: 900px;
-        max-height: 90vh;
-        height: auto;
-      }
-      
-      .modal-sm {
-        max-width: 520px;
-      }
-
-      .modal-pres {
-        max-width: 1000px;
-      }
-    }
-
-    .modal-sm {
-      max-width: 100%;
-    }
-
-    .modal-pres {
-      max-width: 100%;
-    }
-
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 1.25rem;
-      border-bottom: 1px solid var(--border-subtle);
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent);
-      flex-shrink: 0;
-    }
-
-    @media (min-width: 768px) {
-      .modal-header {
-        padding: 1.5rem 2rem;
-      }
-    }
-
-    .modal-title-group {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    @media (min-width: 768px) {
-      .modal-title-group {
-        gap: 1rem;
-      }
-    }
-
-    .modal-icon {
-      width: 40px;
-      height: 40px;
-      background: var(--accent-gold-dim);
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    @media (min-width: 768px) {
-      .modal-icon {
-        width: 48px;
-        height: 48px;
-      }
-    }
-
-    .modal-icon svg {
-      width: 20px;
-      height: 20px;
-      stroke: var(--accent-gold);
-    }
-
-    @media (min-width: 768px) {
-      .modal-icon svg {
-        width: 24px;
-        height: 24px;
-      }
-    }
-
-    .modal-title {
-      font-family: var(--font-display);
-      font-size: 1.1rem;
-      font-weight: 600;
-    }
-
-    @media (min-width: 768px) {
-      .modal-title {
-        font-size: 1.5rem;
-      }
-    }
-
-    .modal-subtitle,
-    .modal-timestamp {
-      color: var(--text-muted);
-      font-size: 0.75rem;
-    }
-
-    @media (min-width: 768px) {
-      .modal-subtitle,
-      .modal-timestamp {
-        font-size: 0.85rem;
-      }
-    }
-
-    .modal-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    @media (min-width: 768px) {
-      .modal-actions {
-        gap: 0.75rem;
-      }
-    }
-
-    .modal-close {
-      width: 36px;
-      height: 36px;
-      background: var(--surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      color: var(--text-muted);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-      flex-shrink: 0;
-    }
-
-    @media (min-width: 768px) {
-      .modal-close {
-        width: 40px;
-        height: 40px;
-      }
-    }
-
-    .modal-close:hover {
-      background: var(--accent-rose-dim);
-      border-color: var(--accent-rose);
-      color: var(--accent-rose);
-    }
-
-    .modal-tabs {
-      display: flex;
-      gap: 0;
-      padding: 0 1rem;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border-subtle);
-      flex-shrink: 0;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    @media (min-width: 768px) {
-      .modal-tabs {
-        padding: 0 2rem;
-      }
-    }
-
-    .modal-tab {
-      padding: 0.875rem 1rem;
-      background: transparent;
-      border: none;
-      border-bottom: 2px solid transparent;
-      color: var(--text-muted);
-      font-family: var(--font-body);
-      font-size: 0.8rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-      position: relative;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    @media (min-width: 768px) {
-      .modal-tab {
-        padding: 1rem 1.5rem;
-        font-size: 0.9rem;
-      }
-    }
-
-    .modal-tab.active {
-      color: var(--accent-gold);
-      border-bottom-color: var(--accent-gold);
-    }
-
-    .modal-tab:hover:not(.active) {
-      color: var(--text-secondary);
-    }
-
-    /* Lab tab special styling */
-    .modal-tab[data-view="labs"]::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 0.5rem;
-      transform: translateY(-50%);
-      width: 6px;
-      height: 6px;
-      background: var(--accent-teal);
-      border-radius: 50%;
-      opacity: 0.7;
-    }
-
-    .modal-tab[data-view="labs"] {
-      padding-left: 1.25rem;
-    }
-
-    @media (min-width: 768px) {
-      .modal-tab[data-view="labs"]::before {
-        left: 0.75rem;
-      }
-      .modal-tab[data-view="labs"] {
-        padding-left: 1.75rem;
-      }
-    }
-
-    .modal-body {
-      flex: 1;
-      overflow-y: auto;
-      padding: 1rem;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    @media (min-width: 768px) {
-      .modal-body {
-        padding: 1.5rem 2rem;
-      }
-    }
-
-    .modal-view {
-      display: none;
-    }
-
-    .modal-view.active {
-      display: block;
-    }
-
-    /* === PATIENT PRESENTATION TABS === */
-    .pres-tabs {
-      display: flex;
-      gap: 0;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border-subtle);
-      margin: -1.5rem -2rem 1.5rem -2rem;
-      padding: 0 2rem;
-    }
-
-    .pres-tab {
-      padding: 1rem 1.5rem;
-      background: transparent;
-      border: none;
-      border-bottom: 2px solid transparent;
-      color: var(--text-muted);
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .pres-tab.active {
-      color: var(--accent-gold);
-      border-bottom-color: var(--accent-gold);
-    }
-
-    .pres-tab:hover:not(.active) {
-      color: var(--text-secondary);
-    }
-
-    .pres-tab svg {
-      width: 16px;
-      height: 16px;
-      opacity: 0.7;
-    }
-
-    .pres-tab-badge {
-      background: var(--accent-teal-dim);
-      color: var(--accent-teal);
-      font-size: 0.65rem;
-      font-weight: 700;
-      padding: 0.15rem 0.4rem;
-      border-radius: 100px;
-    }
-
-    .pres-content {
-      display: none;
-    }
-
-    .pres-content.active {
-      display: block;
-    }
-
-    /* === FORM STYLES === */
-    .form-row {
+    /* ===== METRICS ===== */
+    .metrics-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
+      gap: var(--space-md);
     }
-
-    .form-select {
-      width: 100%;
-      padding: 1rem 1.25rem;
-      background: var(--surface);
-      border: 1px solid var(--border-subtle);
+    
+    .metric-card {
+      padding: var(--space-md);
+      background: var(--bg-glass);
       border-radius: var(--radius-md);
-      color: var(--text-primary);
-      font-family: var(--font-body);
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ffffff40' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 1rem center;
-    }
-
-    .form-select:focus {
-      outline: none;
-      border-color: var(--accent-gold);
-      box-shadow: 0 0 0 3px var(--accent-gold-dim);
-    }
-
-    .form-select option {
-      background: var(--surface);
-    }
-
-    .form-textarea {
-      width: 100%;
-      padding: 1rem 1.25rem;
-      background: var(--surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      color: var(--text-primary);
-      font-family: var(--font-body);
-      font-size: 0.95rem;
-      line-height: 1.6;
-      resize: vertical;
-      min-height: 120px;
-      transition: all 0.2s;
-    }
-
-    .form-textarea:focus {
-      outline: none;
-      border-color: var(--accent-gold);
-      box-shadow: 0 0 0 3px var(--accent-gold-dim);
-    }
-
-    .form-textarea::placeholder {
-      color: var(--text-muted);
-    }
-
-    .form-actions {
-      display: flex;
-      gap: 1rem;
-      justify-content: flex-end;
-      margin-top: 2rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--border-subtle);
-    }
-
-    /* === PROCESSING OVERLAY === */
-    .processing-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(10, 10, 15, 0.95);
-      z-index: 300;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s;
-    }
-
-    .processing-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .processing-card {
-      text-align: center;
-      padding: 3rem;
-    }
-
-    .processing-animation {
-      position: relative;
-      width: 120px;
-      height: 120px;
-      margin: 0 auto 2rem;
-    }
-
-    .processing-ring {
-      position: absolute;
-      inset: 0;
-      border: 2px solid transparent;
-      border-top-color: var(--accent-gold);
-      border-radius: 50%;
-      animation: spin 1.5s linear infinite;
-    }
-
-    .processing-ring:nth-child(2) {
-      inset: 10px;
-      border-top-color: var(--accent-teal);
-      animation-duration: 2s;
-      animation-direction: reverse;
-    }
-
-    .processing-ring:nth-child(3) {
-      inset: 20px;
-      border-top-color: var(--accent-purple);
-      animation-duration: 2.5s;
-    }
-
-    .processing-core {
-      position: absolute;
-      inset: 30px;
-      background: linear-gradient(135deg, var(--accent-gold-dim), var(--accent-teal-dim));
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .processing-core svg {
-      width: 32px;
-      height: 32px;
-      stroke: var(--accent-gold);
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .processing-title {
-      font-family: var(--font-display);
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-    }
-
-    .processing-status {
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    .processing-dots span {
-      display: inline-block;
-      width: 6px;
-      height: 6px;
-      background: var(--accent-gold);
-      border-radius: 50%;
-      animation: pulse 1.4s ease-in-out infinite;
-    }
-
-    .processing-dots span:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-
-    .processing-dots span:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-
-    @keyframes pulse {
-      0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
-      40% { opacity: 1; transform: scale(1); }
-    }
-
-    /* === TOAST === */
-    .toast {
-      position: fixed;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: var(--surface-2);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 1rem 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      box-shadow: var(--shadow-float);
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s;
-      z-index: 400;
-    }
-
-    .toast.show {
-      opacity: 1;
-      visibility: visible;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .toast.success .toast-icon {
-      color: var(--success);
-    }
-
-    .toast.error .toast-icon {
-      color: var(--critical);
-    }
-
-    .toast-icon {
-      width: 20px;
-      height: 20px;
-    }
-
-    .toast-message {
-      font-size: 0.9rem;
-    }
-
-    /* === LAB TRENDS PANEL === */
-    .labs-panel {
-      background: linear-gradient(180deg, rgba(30, 58, 95, 0.2), rgba(15, 23, 42, 0.4));
-      border: 1px solid rgba(59, 130, 246, 0.15);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-    }
-
-    .labs-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 1.25rem;
-      background: linear-gradient(180deg, rgba(59, 130, 246, 0.1), transparent);
-      border-bottom: 1px solid rgba(59, 130, 246, 0.1);
-    }
-
-    .labs-title {
-      font-family: var(--font-display);
-      font-size: 1rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .labs-title svg {
-      width: 18px;
-      height: 18px;
-      stroke: var(--accent-teal);
-    }
-
-    .labs-count {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      background: var(--surface);
-      padding: 0.25rem 0.6rem;
-      border-radius: 100px;
-    }
-
-    .labs-category {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    }
-
-    .labs-category:last-child {
-      border-bottom: none;
-    }
-
-    .labs-category-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.875rem 1.25rem;
-      background: rgba(0, 0, 0, 0.2);
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .labs-category-header:hover {
-      background: rgba(0, 0, 0, 0.3);
-    }
-
-    .labs-category-name {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .labs-category-name .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-    }
-
-    .labs-category-count {
-      font-size: 0.65rem;
-      color: var(--text-muted);
-    }
-
-    .labs-category-count .abnormal {
-      color: #fca5a5;
-    }
-
-    .labs-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .labs-table th {
-      padding: 0.6rem 1rem;
-      text-align: left;
-      font-size: 0.6rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
-      background: rgba(0, 0, 0, 0.15);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    }
-
-    .labs-table td {
-      padding: 0.75rem 1rem;
-      font-size: 0.85rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-      vertical-align: middle;
-    }
-
-    .labs-table tr:last-child td {
-      border-bottom: none;
-    }
-
-    .labs-table tr.abnormal {
-      background: rgba(239, 68, 68, 0.04);
-    }
-
-    .labs-table tr:hover {
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    .lab-name {
-      font-weight: 500;
-      color: rgba(255, 255, 255, 0.9);
-    }
-
-    .lab-value {
-      font-family: var(--font-mono);
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-
-    .lab-value.high {
-      color: #fca5a5;
-    }
-
-    .lab-value.low {
-      color: #93c5fd;
-    }
-
-    .lab-value.critical {
-      color: #ef4444;
-      animation: criticalPulse 2s ease-in-out infinite;
-    }
-
-    .lab-value.normal {
-      color: #6ee7b7;
-    }
-
-    @keyframes criticalPulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.6; }
-    }
-
-    .lab-reference {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      font-family: var(--font-mono);
-    }
-
-    .lab-trend {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .trend-sparkline {
-      width: 60px;
-      height: 24px;
-    }
-
-    .trend-sparkline svg {
-      width: 100%;
-      height: 100%;
-    }
-
-    .trend-arrow {
-      width: 16px;
-      height: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 4px;
-      font-size: 0.7rem;
-    }
-
-    .trend-arrow.up {
-      background: rgba(239, 68, 68, 0.15);
-      color: #fca5a5;
-    }
-
-    .trend-arrow.down {
-      background: rgba(59, 130, 246, 0.15);
-      color: #93c5fd;
-    }
-
-    .trend-arrow.stable {
-      background: rgba(16, 185, 129, 0.15);
-      color: #6ee7b7;
-    }
-
-    .lab-status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      font-size: 0.6rem;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-
-    .lab-status-badge.high {
-      background: rgba(239, 68, 68, 0.15);
-      color: #fca5a5;
-    }
-
-    .lab-status-badge.low {
-      background: rgba(59, 130, 246, 0.15);
-      color: #93c5fd;
-    }
-
-    .lab-status-badge.critical {
-      background: rgba(239, 68, 68, 0.25);
-      color: #ef4444;
-    }
-
-    .lab-status-badge.normal {
-      background: rgba(16, 185, 129, 0.1);
-      color: #6ee7b7;
-    }
-
-    /* Labs summary cards */
-    .labs-summary {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0.75rem;
-      padding: 1rem 1.25rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    }
-
-    .labs-summary-card {
-      background: rgba(0, 0, 0, 0.2);
-      border-radius: var(--radius-sm);
-      padding: 0.875rem;
       text-align: center;
     }
-
-    .labs-summary-value {
-      font-family: var(--font-mono);
+    
+    .metric-value {
       font-size: 1.5rem;
       font-weight: 700;
-      line-height: 1;
-      margin-bottom: 0.35rem;
+      font-family: var(--font-mono);
+      color: var(--accent-primary);
     }
-
-    .labs-summary-card.total .labs-summary-value {
-      color: var(--accent-gold);
-    }
-
-    .labs-summary-card.abnormal .labs-summary-value {
-      color: #fca5a5;
-    }
-
-    .labs-summary-card.critical .labs-summary-value {
-      color: #ef4444;
-    }
-
-    .labs-summary-card.normal .labs-summary-value {
-      color: #6ee7b7;
-    }
-
-    .labs-summary-label {
-      font-size: 0.6rem;
+    
+    .metric-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: var(--text-muted);
     }
 
-    /* Empty lab state */
-    .labs-empty {
-      text-align: center;
-      padding: 3rem 2rem;
-      color: var(--text-muted);
-    }
-
-    .labs-empty svg {
-      width: 48px;
-      height: 48px;
-      margin-bottom: 1rem;
-      opacity: 0.4;
-    }
-
-    .labs-empty-title {
-      font-size: 1rem;
-      margin-bottom: 0.5rem;
-      color: var(--text-secondary);
-    }
-
-    .labs-empty-text {
-      font-size: 0.85rem;
-    }
-
-    /* Navigation tabs in header */
-    .nav-tabs {
-      display: none;
-      gap: 0.5rem;
-    }
-
-    .nav-tab {
-      padding: 0.5rem 1rem;
-      background: transparent;
-      border: 1px solid transparent;
-      border-radius: var(--radius-sm);
-      color: var(--text-muted);
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .nav-tab.active {
-      background: var(--accent-gold-dim);
-      border-color: var(--accent-gold);
-      color: var(--accent-gold);
-    }
-
-    .nav-tab:hover:not(.active) {
-      color: var(--text-primary);
-      border-color: var(--border-subtle);
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .nav {
-        padding: 1rem;
-      }
-      
-      .logo-text {
-        display: none;
-      }
-      
-      .dashboard-container {
-        padding: 1rem;
-      }
-      
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-
-      .labs-summary {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      
-      .hide-mobile {
-        display: none !important;
-      }
+    /* ===== PATIENTS SCREEN ===== */
+    #patients-screen {
+      padding: var(--space-xl);
+      padding-top: 100px;
     }
     
-    @media (min-width: 769px) {
-      .hide-desktop {
-        display: none !important;
-      }
+    .patients-container {
+      max-width: 1400px;
+      margin: 0 auto;
     }
-
-    /* === BATCH PROCESSING === */
-    .batch-header {
+    
+    .patients-header {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: center;
-      padding: 0.75rem 1rem;
-      background: linear-gradient(135deg, var(--accent-gold-dim), transparent);
-      border: 1px solid var(--accent-gold);
-      border-radius: var(--radius-md);
-      margin-bottom: 0.75rem;
-    }
-    
-    .batch-info {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-    }
-    
-    .batch-count {
-      font-weight: 700;
-      color: var(--accent-gold);
-      font-size: 1rem;
-    }
-    
-    .batch-size {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-    
-    .batch-clear {
-      background: transparent;
-      border: 1px solid var(--accent-rose);
-      color: var(--accent-rose);
-      padding: 0.35rem 0.75rem;
-      border-radius: var(--radius-sm);
-      font-size: 0.75rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    
-    .batch-clear:hover {
-      background: var(--accent-rose-dim);
-    }
-    
-    .batch-progress {
-      background: var(--surface);
-      border-radius: var(--radius-md);
-      padding: 0.75rem 1rem;
-      margin-bottom: 0.75rem;
-    }
-    
-    .batch-progress-bar {
-      height: 6px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 3px;
-      overflow: hidden;
-      margin-bottom: 0.5rem;
-    }
-    
-    .batch-progress-fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--accent-teal), var(--accent-gold));
-      border-radius: 3px;
-      transition: width 0.3s ease;
-    }
-    
-    .batch-progress-text {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      text-align: center;
-    }
-    
-    .file-preview.more {
-      justify-content: center;
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      background: transparent;
-      border: 1px dashed var(--border-subtle);
-    }
-    
-    /* Pattern Learning Stats */
-    .pattern-stats {
-      background: linear-gradient(135deg, rgba(78, 205, 196, 0.1), transparent);
-      border: 1px solid var(--accent-teal);
-      border-radius: var(--radius-md);
-      padding: 1rem;
-      margin-top: 1rem;
-    }
-    
-    .pattern-stats-title {
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: var(--accent-teal);
-      margin-bottom: 0.5rem;
-    }
-    
-    .pattern-stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.5rem;
-    }
-    
-    .pattern-stat {
-      text-align: center;
-    }
-    
-    .pattern-stat-value {
-      font-family: var(--font-mono);
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-    
-    .pattern-stat-label {
-      font-size: 0.65rem;
-      color: var(--text-muted);
-    }
-
-    /* === FLOATING BUG ANALYSIS BUTTON === */
-    .floating-bug-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 60px;
-      height: 60px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border: none;
-      border-radius: 50%;
-      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4), 0 0 0 0 rgba(102, 126, 234, 0.7);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.8rem;
-      color: white;
-      transition: all 0.3s ease;
-      z-index: 999;
-      animation: pulse-bug 2s infinite;
-    }
-
-    .floating-bug-btn:hover {
-      transform: scale(1.1);
-      box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6);
-    }
-
-    .floating-bug-btn:active {
-      transform: scale(0.95);
-    }
-
-    @keyframes pulse-bug {
-      0% {
-        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4), 0 0 0 0 rgba(102, 126, 234, 0.7);
-      }
-      50% {
-        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4), 0 0 0 10px rgba(102, 126, 234, 0);
-      }
-      100% {
-        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4), 0 0 0 0 rgba(102, 126, 234, 0);
-      }
-    }
-
-    @media (max-width: 768px) {
-      .floating-bug-btn {
-        width: 55px;
-        height: 55px;
-        bottom: 15px;
-        right: 15px;
-        font-size: 1.6rem;
-      }
-    }
-
-    /* === PATIENT MANAGEMENT STYLES === */
-    .dashboard-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 2rem;
+      margin-bottom: var(--space-xl);
       flex-wrap: wrap;
-      gap: 1.5rem;
+      gap: var(--space-md);
     }
-
-    .dashboard-title h1 {
-      font-family: var(--font-display);
-      font-size: 2rem;
-      font-weight: 600;
-      margin: 0 0 0.5rem 0;
-      color: var(--text-primary);
-    }
-
-    .dashboard-subtitle {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      margin: 0;
-    }
-
-    .dashboard-actions {
+    
+    .patients-filters {
       display: flex;
-      gap: 0.75rem;
+      gap: var(--space-sm);
       flex-wrap: wrap;
     }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .stat-card {
-      background: var(--bg-card);
+    
+    .filter-select {
+      padding: var(--space-sm) var(--space-md);
+      background: var(--bg-secondary);
       border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 1.5rem;
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+    
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+    }
+    
+    .patients-stats {
       display: flex;
-      align-items: center;
-      gap: 1.25rem;
-      backdrop-filter: blur(20px);
+      gap: var(--space-lg);
     }
-
-    .stat-icon {
-      width: 48px;
-      height: 48px;
-      background: var(--accent-gold-dim);
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--accent-gold);
-      flex-shrink: 0;
+    
+    .stat-item {
+      text-align: center;
     }
-
-    .stat-icon svg {
-      width: 24px;
-      height: 24px;
-    }
-
-    .stat-content {
-      flex: 1;
-    }
-
+    
     .stat-value {
-      font-size: 2rem;
+      font-size: 1.5rem;
       font-weight: 700;
-      color: var(--text-primary);
-      line-height: 1;
-      margin-bottom: 0.5rem;
+      font-family: var(--font-mono);
     }
-
+    
+    .stat-value.total { color: var(--accent-primary); }
+    .stat-value.active { color: var(--status-success); }
+    .stat-value.chronic { color: var(--accent-purple); }
+    
     .stat-label {
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
     }
-
-    .filters-section {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-      display: flex;
-      gap: 1.5rem;
-      flex-wrap: wrap;
-      align-items: flex-end;
-    }
-
-    .filter-group {
-      flex: 1;
-      min-width: 200px;
-    }
-
-    .filter-label {
-      display: block;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-      margin-bottom: 0.5rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .section-toggle {
-      display: flex;
-      gap: 0.5rem;
-      background: var(--surface);
-      padding: 0.25rem;
-      border-radius: var(--radius-md);
-    }
-
-    .section-toggle-btn {
-      flex: 1;
-      padding: 0.5rem 1rem;
-      background: transparent;
-      border: none;
-      border-radius: var(--radius-sm);
-      color: var(--text-muted);
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
-    }
-
-    .section-toggle-btn.active {
-      background: var(--accent-gold);
-      color: var(--bg-deep);
-    }
-
-    .section-toggle-btn:hover:not(.active) {
-      color: var(--text-primary);
-    }
-
+    
     .patients-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
+      display: grid;
+      gap: var(--space-xl);
     }
-
-    .ward-group {
-      background: var(--bg-card);
+    
+    .ward-section {
+      background: var(--bg-secondary);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-lg);
-      padding: 1.5rem;
-      backdrop-filter: blur(20px);
+      overflow: hidden;
     }
-
+    
     .ward-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
-      padding-bottom: 1rem;
+      padding: var(--space-md) var(--space-lg);
+      background: var(--bg-glass);
       border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-
-    .ward-header h3 {
-      font-size: 1.25rem;
+    
+    .ward-name {
       font-weight: 600;
-      margin: 0;
-      color: var(--accent-gold);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
     }
-
+    
     .ward-count {
-      font-size: 0.85rem;
+      font-size: 0.875rem;
       color: var(--text-muted);
-      background: var(--surface);
-      padding: 0.25rem 0.75rem;
-      border-radius: 100px;
     }
-
+    
     .ward-patients {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1rem;
+      gap: var(--space-md);
+      padding: var(--space-lg);
     }
-
+    
     .patient-card {
-      background: var(--surface);
+      background: var(--bg-tertiary);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
-      padding: 1.25rem;
-      transition: all 0.2s;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
+      padding: var(--space-md);
+      transition: all var(--transition-fast);
     }
-
+    
     .patient-card:hover {
-      border-color: var(--accent-gold);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      transform: translateY(-2px);
+      border-color: var(--accent-primary);
+      box-shadow: var(--shadow-md);
     }
-
+    
     .patient-header {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: flex-start;
-      gap: 0.75rem;
+      margin-bottom: var(--space-sm);
     }
-
+    
     .patient-info {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-      flex: 1;
+      gap: var(--space-sm);
     }
-
+    
     .patient-room {
-      background: var(--accent-gold-dim);
-      color: var(--accent-gold);
       font-size: 0.75rem;
-      font-weight: 700;
-      padding: 0.25rem 0.6rem;
-      border-radius: var(--radius-sm);
-      white-space: nowrap;
+      font-weight: 600;
+      padding: 2px 6px;
+      background: var(--bg-glass);
+      border-radius: 4px;
+      color: var(--text-muted);
     }
-
+    
     .patient-name {
       font-weight: 600;
-      font-size: 1.05rem;
-      color: var(--text-primary);
     }
-
+    
     .patient-status {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 600;
-      padding: 0.25rem 0.6rem;
-      border-radius: var(--radius-sm);
-      white-space: nowrap;
+      padding: 2px 8px;
+      border-radius: 100px;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
     }
-
+    
     .patient-status.active {
-      background: var(--accent-teal-dim);
-      color: var(--accent-teal);
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--status-success);
     }
-
+    
     .patient-status.chronic {
-      background: var(--accent-blue-dim);
-      color: var(--accent-blue);
+      background: rgba(167, 139, 250, 0.1);
+      color: var(--accent-purple);
     }
-
+    
     .patient-diagnosis {
+      font-size: 0.875rem;
       color: var(--text-secondary);
-      font-size: 0.9rem;
-      line-height: 1.5;
+      margin-bottom: var(--space-md);
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
-
-    .quick-pmh {
-      display: flex;
-      gap: 0.25rem;
-      flex-wrap: wrap;
-    }
-
-    .pmh-badge {
-      font-size: 1.1rem;
-      opacity: 0.9;
-      transition: all 0.2s;
-      cursor: help;
-    }
-
-    .pmh-badge:hover {
-      opacity: 1;
-      transform: scale(1.2);
-    }
-
-    .quick-vitals {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .qv-item {
-      font-size: 0.8rem;
-      padding: 0.25rem 0.5rem;
-      border-radius: var(--radius-sm);
-      background: var(--bg-card);
-      color: var(--text-secondary);
-      border: 1px solid var(--border-subtle);
-    }
-
-    .qv-item.high {
-      background: rgba(239, 68, 68, 0.1);
-      color: #ef4444;
-      border-color: rgba(239, 68, 68, 0.3);
-    }
-
-    .qv-item.low {
-      background: rgba(59, 130, 246, 0.1);
-      color: #3b82f6;
-      border-color: rgba(59, 130, 246, 0.3);
-    }
-
-    .quick-labs {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .ql-item {
-      font-size: 0.75rem;
-      padding: 0.25rem 0.5rem;
-      border-radius: var(--radius-sm);
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    .ql-item.high {
-      background: rgba(239, 68, 68, 0.15);
-      color: #ef4444;
-    }
-
-    .ql-item.low {
-      background: rgba(59, 130, 246, 0.15);
-      color: #3b82f6;
-    }
-
+    
     .patient-footer {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding-top: 1rem;
+      justify-content: space-between;
+      padding-top: var(--space-md);
       border-top: 1px solid var(--border-subtle);
     }
-
+    
     .patient-doctor {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: var(--space-xs);
+      font-size: 0.75rem;
       color: var(--text-muted);
-      font-size: 0.85rem;
     }
-
+    
     .patient-doctor svg {
-      opacity: 0.6;
+      width: 14px;
+      height: 14px;
     }
-
+    
     .patient-actions {
       display: flex;
-      gap: 0.5rem;
+      gap: var(--space-xs);
+    }
+    
+    .patient-actions .btn-icon {
+      width: 28px;
+      height: 28px;
+    }
+    
+    .patient-actions .btn-icon svg {
+      width: 14px;
+      height: 14px;
     }
 
-    .btn-icon {
-      width: 32px;
-      height: 32px;
-      padding: 0;
+    /* ===== MODALS ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      display: none;
+      place-items: center;
+      padding: var(--space-xl);
+      overflow-y: auto;
+    }
+    
+    .modal-overlay.active { display: grid; }
+    
+    .modal {
+      width: 100%;
+      max-width: 800px;
+      max-height: 90vh;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .modal-sm { max-width: 480px; }
+    .modal-lg { max-width: 1000px; }
+    
+    .modal-header {
+      padding: var(--space-lg);
+      border-bottom: 1px solid var(--border-subtle);
       display: flex;
       align-items: center;
-      justify-content: center;
-      background: var(--surface);
-      border: 1px solid var(--border-subtle);
+      justify-content: space-between;
+    }
+    
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    
+    .modal-close {
+      width: 36px;
+      height: 36px;
       border-radius: var(--radius-sm);
+      background: transparent;
+      border: none;
       color: var(--text-muted);
       cursor: pointer;
-      transition: all 0.2s;
+      display: grid;
+      place-items: center;
+      transition: all var(--transition-fast);
     }
-
-    .btn-icon:hover {
-      background: var(--accent-gold-dim);
-      border-color: var(--accent-gold);
-      color: var(--accent-gold);
-      transform: translateY(-2px);
+    
+    .modal-close:hover {
+      background: var(--bg-glass);
+      color: var(--text-primary);
     }
-
-    .btn-view:hover {
-      background: var(--accent-blue-dim);
-      border-color: var(--accent-blue);
-      color: var(--accent-blue);
+    
+    .modal-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border-subtle);
     }
-
-    .btn-discharge:hover {
-      background: rgba(239, 68, 68, 0.1);
-      border-color: #ef4444;
-      color: #ef4444;
+    
+    .modal-tab {
+      flex: 1;
+      padding: var(--space-md);
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      border-bottom: 2px solid transparent;
     }
-
-    .empty-state {
-      text-align: center;
-      padding: 4rem 2rem;
-      color: var(--text-muted);
+    
+    .modal-tab:hover { color: var(--text-primary); }
+    .modal-tab.active {
+      color: var(--accent-primary);
+      border-bottom-color: var(--accent-primary);
     }
-
-    .empty-state svg {
-      width: 64px;
-      height: 64px;
-      margin: 0 auto 1.5rem;
-      opacity: 0.5;
+    
+    .modal-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-lg);
     }
+    
+    .modal-view { display: none; }
+    .modal-view.active { display: block; }
 
-    .empty-state h3 {
-      font-size: 1.25rem;
-      margin: 0 0 0.5rem 0;
+    /* ===== FORMS ===== */
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-md);
+    }
+    
+    @media (max-width: 640px) {
+      .form-row { grid-template-columns: 1fr; }
+    }
+    
+    .form-group { margin-bottom: var(--space-md); }
+    
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: var(--space-xs);
       color: var(--text-secondary);
     }
-
-    .empty-state p {
-      margin: 0;
+    
+    .form-select {
+      width: 100%;
+      padding: var(--space-sm) var(--space-md);
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+    
+    .form-select:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+    }
+    
+    .form-textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: var(--space-md);
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.875rem;
+      resize: vertical;
+    }
+    
+    .form-textarea:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+    }
+    
+    .form-actions {
+      display: flex;
+      gap: var(--space-md);
+      justify-content: flex-end;
+      margin-top: var(--space-lg);
     }
 
-    .loading-state {
+    /* ===== PROCESSING OVERLAY ===== */
+    .processing-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      background: rgba(10, 10, 15, 0.95);
+      display: none;
+      place-items: center;
+    }
+    
+    .processing-overlay.active { display: grid; }
+    
+    .processing-card {
       text-align: center;
-      padding: 4rem 2rem;
-      color: var(--text-muted);
+      padding: var(--space-2xl);
     }
-
-    .spinner {
-      width: 48px;
-      height: 48px;
-      margin: 0 auto 1rem;
+    
+    .processing-spinner {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto var(--space-lg);
       border: 3px solid var(--border-subtle);
-      border-top-color: var(--accent-gold);
+      border-top-color: var(--accent-primary);
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
-
+    
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
+    
+    .processing-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: var(--space-sm);
+    }
+    
+    .processing-status {
+      color: var(--text-muted);
+    }
 
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: var(--space-xl);
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      padding: var(--space-md) var(--space-lg);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      box-shadow: var(--shadow-lg);
+      opacity: 0;
+      transition: all var(--transition-normal);
+      z-index: 400;
+    }
+    
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    
+    .toast.success { border-color: var(--status-success); }
+    .toast.error { border-color: var(--status-critical); }
+    
+    .toast-icon {
+      width: 20px;
+      height: 20px;
+    }
+    
+    .toast.success .toast-icon { stroke: var(--status-success); }
+    .toast.error .toast-icon { stroke: var(--status-critical); }
+
+    /* ===== LOADING STATES ===== */
+    .skeleton {
+      background: linear-gradient(
+        90deg,
+        var(--bg-glass) 0%,
+        var(--bg-glass-hover) 50%,
+        var(--bg-glass) 100%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: var(--radius-sm);
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: var(--space-2xl);
+      color: var(--text-muted);
+    }
+    
+    .empty-state svg {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto var(--space-lg);
+      opacity: 0.5;
+    }
+    
+    .empty-state h3 {
+      font-size: 1.125rem;
+      margin-bottom: var(--space-sm);
+    }
+    
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-2xl);
+    }
+    
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--border-subtle);
+      border-top-color: var(--accent-primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: var(--space-md);
+    }
+
+    /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
-      .dashboard-header {
-        flex-direction: column;
-      }
-
-      .ward-patients {
-        grid-template-columns: 1fr;
-      }
-
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .filters-section {
-        flex-direction: column;
-      }
-
-      .filter-group {
-        width: 100%;
-      }
+      .nav { padding: var(--space-md); }
+      .nav-tabs { display: none; }
+      .nav-user .btn { display: none; }
+      
+      .dashboard-grid { grid-template-columns: 1fr; }
+      
+      .patients-header { flex-direction: column; align-items: stretch; }
+      .patients-stats { justify-content: space-around; }
     }
   </style>
 </head>
@@ -2340,9 +1206,6 @@
   <div class="bg-wrapper">
     <div class="bg-gradient"></div>
     <div class="bg-grid"></div>
-    <div class="floating-orb orb-1"></div>
-    <div class="floating-orb orb-2"></div>
-    <div class="floating-orb orb-3"></div>
   </div>
 
   <!-- Navigation -->
@@ -2354,308 +1217,243 @@
             <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
           </svg>
         </div>
-        <div class="logo-text">
-          <span class="logo-name">MedWard</span>
-          <span class="logo-tagline">Clinical Intelligence</span>
-        </div>
+        <span class="logo-text">MedWard</span>
       </div>
-
-      <div class="nav-tabs" id="main-nav-tabs">
-        <button class="nav-tab active" id="analysis-tab" data-screen="dashboard">Analysis</button>
-        <button class="nav-tab" id="patients-tab" data-screen="patients">Patients</button>
+      
+      <div class="nav-tabs" id="main-nav">
+        <button class="nav-tab active" data-screen="dashboard">Dashboard</button>
+        <button class="nav-tab" data-screen="patients" id="patients-tab">Patients</button>
       </div>
-
+      
       <div class="nav-user" id="nav-user" hidden>
-        <div class="user-avatar" id="user-initial">U</div>
-        <span class="user-name" id="user-name">User</span>
-        <button class="btn-logout" id="logout-btn">Logout</button>
+        <div class="user-avatar" id="user-initial">B</div>
+        <span id="user-name">User</span>
+        <button class="btn btn-ghost" id="logout-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+        </button>
       </div>
     </div>
   </nav>
 
   <!-- Login Screen -->
-  <div class="screen active" id="login-screen">
-    <div class="login-container">
-      <div class="login-card">
-        <div class="login-header">
-          <h1 class="login-title">Welcome to MedWard</h1>
-          <p class="login-subtitle">AI-powered clinical intelligence platform</p>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Your Name</label>
-          <input type="text" id="username-input" class="form-input" placeholder="Enter your name" autocomplete="off">
-        </div>
-        
-        <button class="btn btn-primary btn-full" id="login-btn">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/>
-          </svg>
-          Enter Dashboard
-        </button>
+  <main class="screen active" id="login-screen">
+    <div class="login-card">
+      <h1 class="login-title">Welcome to MedWard</h1>
+      <p class="login-subtitle">Clinical Intelligence Platform</p>
+      <div class="form-group">
+        <input type="text" id="username-input" class="form-input" placeholder="Enter your name" autocomplete="name">
       </div>
+      <button class="btn btn-primary login-btn" id="login-btn">Continue</button>
     </div>
-  </div>
+  </main>
 
   <!-- Dashboard Screen -->
-  <div class="screen" id="dashboard-screen">
+  <main class="screen" id="dashboard-screen">
     <div class="dashboard-container">
-      <div class="dashboard-header">
+      <header class="dashboard-header">
         <h1 class="dashboard-title">Clinical Analysis</h1>
         <p class="dashboard-subtitle">Upload medical reports for AI-powered interpretation</p>
-      </div>
-
+      </header>
+      
       <div class="dashboard-grid">
-        <div class="upload-section">
-          <div class="upload-tabs">
-            <button class="upload-tab active" data-tab="image">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -2px; margin-right: 4px;">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5"/>
-                <path d="M21 15l-5-5L5 21"/>
+        <!-- Upload Section -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
               </svg>
-              Image Upload
-            </button>
-            <button class="upload-tab" data-tab="text">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -2px; margin-right: 4px;">
-                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-                <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
-              </svg>
-              Text Input
-            </button>
+              Upload Report
+            </h2>
           </div>
-
-          <!-- Image Upload -->
-          <div class="upload-content active" data-content="image">
-            <div class="dropzone" id="dropzone">
-              <div class="dropzone-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-                  <polyline points="17 8 12 3 7 8"/>
-                  <line x1="12" y1="3" x2="12" y2="15"/>
-                </svg>
-              </div>
-              <p class="dropzone-title">Drop lab reports or clinical images here</p>
-              <p class="dropzone-subtitle">Supports PNG, JPG, PDF (max 10MB)</p>
+          <div class="card-body">
+            <div class="upload-tabs">
+              <button class="upload-tab active" data-tab="image">Image/PDF</button>
+              <button class="upload-tab" data-tab="text">Text</button>
             </div>
-            <input type="file" id="file-input" accept="image/*,application/pdf" multiple hidden>
             
-            <div class="file-list" id="file-list"></div>
-            
-            <div class="analyze-section">
-              <button class="btn btn-glow" id="analyze-btn" disabled>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 2L2 7v10c0 5.5 3.8 9.7 10 11 6.2-1.3 10-5.5 10-11V7l-10-5z"/>
+            <div class="upload-content active" data-content="image">
+              <div class="dropzone" id="dropzone">
+                <svg class="dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <polyline points="21 15 16 10 5 21"/>
                 </svg>
-                Analyze Report
+                <p class="dropzone-title">Drop images here</p>
+                <p class="dropzone-subtitle">or click to browse (JPG, PNG, PDF)</p>
+              </div>
+              <input type="file" id="file-input" class="hidden" accept="image/*,.pdf" multiple>
+              <div class="file-list" id="file-list"></div>
+              <button class="btn btn-primary analyze-btn" id="analyze-btn" disabled>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/>
+                  <path d="M21 21l-4.35-4.35"/>
+                </svg>
+                Analyze
               </button>
             </div>
-          </div>
-
-          <!-- Text Input -->
-          <div class="upload-content" data-content="text">
-            <textarea id="text-input" class="form-textarea text-input-area" placeholder="Paste lab results or clinical notes here...
-
-Example:
-Na 142 mmol/L (136-145)
-K 5.8 mmol/L H (3.5-5.0)
-Cr 180 μmol/L H (60-110)
-Glucose 8.2 mmol/L H (3.9-5.6)
-WBC 15.2 x10⁹/L H (4.0-11.0)
-Hb 98 g/L L (120-170)
-
-Or paste clinical notes, history, examination findings..."></textarea>
             
-            <div class="analyze-section">
-              <button class="btn btn-glow" id="analyze-text-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 2L2 7v10c0 5.5 3.8 9.7 10 11 6.2-1.3 10-5.5 10-11V7l-10-5z"/>
+            <div class="upload-content" data-content="text">
+              <textarea class="text-input" id="text-input" placeholder="Paste medical report text here...&#10;&#10;Example:&#10;WBC: 12.5 K/uL (H)&#10;Hemoglobin: 10.2 g/dL (L)&#10;Platelets: 180 K/uL&#10;Creatinine: 1.8 mg/dL (H)"></textarea>
+              <button class="btn btn-primary analyze-btn" id="analyze-text-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/>
+                  <path d="M21 21l-4.35-4.35"/>
                 </svg>
                 Analyze Text
               </button>
             </div>
           </div>
         </div>
-
-        <div class="sidebar">
-          <div class="sidebar-card">
-            <div class="sidebar-header">
-              <h3 class="sidebar-title">Performance</h3>
+        
+        <!-- Sidebar -->
+        <div class="flex flex-col gap-lg">
+          <!-- Metrics -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 20V10"/>
+                  <path d="M12 20V4"/>
+                  <path d="M6 20v-6"/>
+                </svg>
+                Statistics
+              </h2>
             </div>
-            <div class="metrics-grid">
-              <div class="metric-card">
-                <div class="metric-value" id="metric-total">0</div>
-                <div class="metric-label">Analyses</div>
-              </div>
-              <div class="metric-card">
-                <div class="metric-value" id="metric-cache">0%</div>
-                <div class="metric-label">Cache Hit</div>
-              </div>
-              <div class="metric-card">
-                <div class="metric-value" id="metric-speed">0ms</div>
-                <div class="metric-label">Avg Time</div>
-              </div>
-              <div class="metric-card">
-                <div class="metric-value" id="metric-patterns">0</div>
-                <div class="metric-label">Patterns</div>
+            <div class="card-body">
+              <div class="metrics-grid">
+                <div class="metric-card">
+                  <div class="metric-value" id="metric-total">0</div>
+                  <div class="metric-label">Analyses</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-value" id="metric-cache">0%</div>
+                  <div class="metric-label">Cache Hit</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-value" id="metric-speed">0ms</div>
+                  <div class="metric-label">Avg Speed</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-value" id="metric-patterns">0</div>
+                  <div class="metric-label">Patterns</div>
+                </div>
               </div>
             </div>
           </div>
-
-          <div class="sidebar-card">
-            <div class="sidebar-header">
-              <h3 class="sidebar-title">Recent Activity</h3>
-            </div>
-            <div class="activity-list" id="activity-list">
-              <div class="activity-empty">
+          
+          <!-- Recent Activity -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
                 </svg>
-                <p>No analyses yet</p>
-                <p style="font-size: 0.8rem;">Upload a report to get started</p>
+                Recent Activity
+              </h2>
+            </div>
+            <div class="card-body">
+              <div class="activity-list" id="activity-list">
+                <div class="activity-empty">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+                    <rect x="9" y="3" width="6" height="4" rx="1"/>
+                  </svg>
+                  <p>No analyses yet</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </main>
 
   <!-- Patients Screen -->
-  <div class="screen" id="patients-screen">
-    <div class="dashboard-container" id="patients-container">
-
-      <!-- Patient Dashboard Header -->
-      <div class="dashboard-header">
-        <div class="dashboard-title">
-          <h1>Patient Management</h1>
-          <p class="dashboard-subtitle">Manage ward patients and clinical data</p>
+  <main class="screen" id="patients-screen">
+    <div class="patients-container">
+      <header class="patients-header">
+        <div>
+          <h1 class="dashboard-title">Patient Management</h1>
+          <p class="dashboard-subtitle">Ward rounds and patient tracking</p>
         </div>
-        <div class="dashboard-actions">
-          <button class="btn btn-secondary" id="refresh-patients-btn" title="Refresh">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
-            </svg>
-            Refresh
-          </button>
-          <button class="btn btn-secondary" id="open-sheet-btn" title="Open Google Sheet">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-              <polyline points="15 3 21 3 21 9"/>
-              <line x1="10" y1="14" x2="21" y2="3"/>
-            </svg>
-            Sheet
-          </button>
-          <button class="btn btn-primary" id="add-patient-btn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-              <circle cx="8.5" cy="7" r="4"/>
-              <line x1="20" y1="8" x2="20" y2="14"/>
-              <line x1="23" y1="11" x2="17" y2="11"/>
-            </svg>
-            Add Patient
-          </button>
+        
+        <div class="patients-filters">
+          <select class="filter-select" id="ward-filter">
+            <option value="">All Wards</option>
+          </select>
+          <select class="filter-select" id="doctor-filter">
+            <option value="">All Doctors</option>
+          </select>
+          <select class="filter-select" id="status-filter">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="chronic">Chronic</option>
+          </select>
         </div>
-      </div>
-
-      <!-- Stats Cards -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-              <circle cx="9" cy="7" r="4"/>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
+        
+        <div class="patients-stats">
+          <div class="stat-item">
+            <div class="stat-value total" id="stat-total">0</div>
+            <div class="stat-label">Total</div>
           </div>
-          <div class="stat-content">
-            <div class="stat-value" id="stat-total">0</div>
-            <div class="stat-label">Total Patients</div>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon" style="color: var(--accent-gold)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-            </svg>
-          </div>
-          <div class="stat-content">
-            <div class="stat-value" id="stat-active">0</div>
+          <div class="stat-item">
+            <div class="stat-value active" id="stat-active">0</div>
             <div class="stat-label">Active</div>
           </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon" style="color: var(--accent-blue)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 2v20M2 12h20"/>
-            </svg>
-          </div>
-          <div class="stat-content">
-            <div class="stat-value" id="stat-chronic">0</div>
+          <div class="stat-item">
+            <div class="stat-value chronic" id="stat-chronic">0</div>
             <div class="stat-label">Chronic</div>
           </div>
         </div>
-      </div>
-
-      <!-- Filters Section -->
-      <div class="filters-section">
-        <div class="filter-group">
-          <label class="filter-label">Ward</label>
-          <select id="ward-filter" class="form-select">
-            <option value="">All Wards</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <label class="filter-label">Doctor</label>
-          <select id="doctor-filter" class="form-select">
-            <option value="">All Doctors</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <label class="filter-label">Status</label>
-          <div class="section-toggle">
-            <button class="section-toggle-btn active" data-section="">All</button>
-            <button class="section-toggle-btn" data-section="active">Active</button>
-            <button class="section-toggle-btn" data-section="chronic">Chronic</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Patients Grid -->
-      <div class="patients-grid" id="patients-grid">
-        <div class="loading-state">
-          <div class="spinner"></div>
-          <p>Loading patients...</p>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- Results Modal -->
-  <div class="modal-overlay" id="results-modal">
-    <div class="modal-container">
-      <div class="modal-header">
-        <div class="modal-title-group">
-          <div class="modal-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-              <path d="M9 12l2 2 4-4"/>
+        
+        <div class="flex gap-sm">
+          <button class="btn btn-secondary" id="refresh-patients-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M23 4v6h-6"/>
+              <path d="M1 20v-6h6"/>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
             </svg>
-          </div>
-          <div>
-            <h2 class="modal-title">Analysis Results</h2>
-            <p class="modal-timestamp" id="modal-timestamp">--:--</p>
-          </div>
-        </div>
-        <div class="modal-actions">
-          <button class="btn btn-glow hide-mobile" id="new-analysis-btn">
+            Refresh
+          </button>
+          <button class="btn btn-primary" id="add-patient-btn">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="12" y1="5" x2="12" y2="19"/>
               <line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
-            New
+            Add Patient
+          </button>
+        </div>
+      </header>
+      
+      <div class="patients-grid" id="patients-grid">
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p class="text-muted">Loading patients...</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Results Modal -->
+  <div class="modal-overlay" id="results-modal">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h2 class="modal-title">Analysis Results</h2>
+        <div class="flex gap-sm">
+          <button class="btn btn-secondary" id="new-analysis-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            New Analysis
           </button>
           <button class="modal-close" id="modal-close">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2672,23 +1470,23 @@ Or paste clinical notes, history, examination findings..."></textarea>
       </div>
       <div class="modal-body">
         <div class="modal-view active" id="detailed-view">
-          <p style="color: rgba(255,255,255,0.5); text-align: center; padding: 2rem;">Loading analysis results...</p>
+          <p class="text-muted text-center">Loading...</p>
         </div>
         <div class="modal-view" id="labs-view">
-          <p style="color: rgba(255,255,255,0.5); text-align: center; padding: 2rem;">Loading lab values...</p>
+          <p class="text-muted text-center">Loading...</p>
         </div>
         <div class="modal-view" id="ward-view">
-          <p style="color: rgba(255,255,255,0.5); text-align: center; padding: 2rem;">Loading ward view...</p>
+          <p class="text-muted text-center">Loading...</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Add/Edit Patient Modal -->
+  <!-- Patient Modal -->
   <div class="modal-overlay" id="patient-modal">
-    <div class="modal-container modal-sm">
+    <div class="modal modal-sm">
       <div class="modal-header">
-        <h2 id="patient-modal-title">Add Patient</h2>
+        <h2 class="modal-title" id="patient-modal-title">Add Patient</h2>
         <button class="modal-close" id="patient-modal-close">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="18" y1="6" x2="6" y2="18"/>
@@ -2709,25 +1507,14 @@ Or paste clinical notes, history, examination findings..."></textarea>
             <input type="text" id="patient-room" class="form-input" placeholder="e.g., 12-2">
           </div>
         </div>
-
         <div class="form-group">
           <label class="form-label">Patient Name *</label>
-          <input type="text" id="patient-name" class="form-input" required placeholder="Enter patient name">
+          <input type="text" id="patient-name" class="form-input" required placeholder="Patient name">
         </div>
-
         <div class="form-group">
-          <label class="form-label">Clinical Info (Diagnosis, PMH, Meds, Labs, Vitals, Plan)</label>
-          <textarea id="patient-diagnosis" class="form-textarea" rows="6" 
-            placeholder="Paste all clinical info here - the app will automatically detect and organize:
-• Demographics: 71 yo male, smoker
-• PMH: DM, HTN, IHD, HF, CKD
-• Meds: Aspirin 100mg OD, Lasix 40mg OD
-• Labs: WBC 12, Hb 10 L, Cr 180 H, K 5.5 H
-• Vitals: BP 130/80, HR 92, SpO2 96%
-• ABG: pH 7.32, pCO2 28, HCO3 18
-• Assessment & Plan"></textarea>
+          <label class="form-label">Clinical Information</label>
+          <textarea id="patient-diagnosis" class="form-textarea" rows="4" placeholder="Diagnosis, PMH, medications, labs..."></textarea>
         </div>
-
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Assigned Doctor</label>
@@ -2736,14 +1523,13 @@ Or paste clinical notes, history, examination findings..."></textarea>
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Category</label>
+            <label class="form-label">Status</label>
             <select id="patient-section" class="form-select">
               <option value="active">Active</option>
               <option value="chronic">Chronic</option>
             </select>
           </div>
         </div>
-
         <div class="form-actions">
           <button type="button" class="btn btn-secondary" id="cancel-patient-btn">Cancel</button>
           <button type="submit" class="btn btn-primary">Save Patient</button>
@@ -2752,132 +1538,35 @@ Or paste clinical notes, history, examination findings..."></textarea>
     </div>
   </div>
 
-  <!-- Patient Presentation Modal -->
-  <div class="modal-overlay" id="pres-modal">
-    <div class="modal-container modal-pres">
-      <div class="modal-header">
-        <div class="modal-title-group">
-          <div class="modal-icon pres-icon-wrap">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-              <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
-            </svg>
-          </div>
-          <div>
-            <h2 class="modal-title">Patient Presentation</h2>
-            <p class="modal-subtitle" id="pres-patient-name">--</p>
-          </div>
-        </div>
-        <div class="modal-actions">
-          <button class="btn btn-secondary" id="pres-copy-btn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-            </svg>
-            Copy
-          </button>
-          <button class="modal-close" id="pres-modal-close">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="18" y1="6" x2="6" y2="18"/>
-              <line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-      <div class="modal-body" id="pres-container">
-        <p style="color: var(--text-muted); text-align: center; padding: 2rem;">Select a patient to view presentation</p>
-      </div>
-    </div>
-  </div>
-
   <!-- Processing Overlay -->
   <div class="processing-overlay" id="processing-overlay">
     <div class="processing-card">
-      <div class="processing-animation">
-        <div class="processing-ring"></div>
-        <div class="processing-ring"></div>
-        <div class="processing-ring"></div>
-        <div class="processing-core">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2L2 7v10c0 5.5 3.8 9.7 10 11 6.2-1.3 10-5.5 10-11V7l-10-5z"/>
-          </svg>
-        </div>
-      </div>
+      <div class="processing-spinner"></div>
       <h2 class="processing-title">Analyzing Report</h2>
-      <p class="processing-status">
-        <span id="processing-text">Processing with AI</span>
-        <span class="processing-dots">
-          <span></span><span></span><span></span>
-        </span>
-      </p>
+      <p class="processing-status" id="processing-text">Processing with AI...</p>
     </div>
   </div>
 
   <!-- Toast -->
   <div class="toast" id="toast">
     <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
       <polyline points="22 4 12 14.01 9 11.01"/>
     </svg>
-    <span class="toast-message" id="toast-message">Success!</span>
+    <span id="toast-message">Success!</span>
   </div>
 
-  <!-- Floating Bug Analysis Button -->
-  <button class="floating-bug-btn" id="floating-bug-btn" title="Bug Analysis" onclick="window.location.href='bug-analysis.html'">
-    🐛
-  </button>
-
-  <!-- Scripts -->
+  <!-- Configuration -->
   <script>
-    // MedWard Backend Configuration
-    window.MEDWARD_BACKEND_URL = 'https://script.google.com/macros/s/AKfycby-3iNSD4CquZiyg0inXQ_sGs3IxNrSx1WzRREIv2ABKnyPP5GjvSYZdzClkZqWZ9M7Og/exec';
+    window.MEDWARD_CONFIG = {
+      BACKEND_URL: 'https://script.google.com/macros/s/AKfycby-3iNSD4CquZiyg0inXQ_sGs3IxNrSx1WzRREIv2ABKnyPP5GjvSYZdzClkZqWZ9M7Og/exec',
+      PATIENT_API_URL: 'https://script.google.com/macros/s/AKfycbx-l2xdsAHTZu7bcueN83Yz8xbCwtKbHfUSJuhIgtWVR5XyeJYh9TrfMgzznTYX4Z0kww/exec'
+    };
   </script>
-  <script src="js/bug-tracker.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0"></script>
-  <script src="js/medward-neural.js"></script>
-  <script src="js/clinical-components.js"></script>
-  <script src="js/data-classifier.js"></script>
-  <script src="js/lab-trends.js"></script>
-  <script src="js/batch-processor.js"></script>
-  <script src="js/patient-presentation.js"></script>
-
-  <!-- Patient Management Configuration -->
-  <script>
-    // Patient Manager Backend URL
-    window.MEDWARD_PATIENT_API_URL = 'https://script.google.com/macros/s/AKfycbx-l2xdsAHTZu7bcueN83Yz8xbCwtKbHfUSJuhIgtWVR5XyeJYh9TrfMgzznTYX4Z0kww/exec';
-  </script>
-  <script src="js/patient-manager.js"></script>
   
-  <!-- Main App - Load Last (depends on all above modules) -->
-  <script src="js/app.js"></script>
-
-  <!-- Service Worker Registration -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', async () => {
-        try {
-          // Force update by unregistering old workers first
-          const registrations = await navigator.serviceWorker.getRegistrations();
-          for (const reg of registrations) {
-            await reg.unregister();
-            console.log('[MedWard] Unregistered old SW');
-          }
-          
-          // Clear all caches
-          const cacheNames = await caches.keys();
-          for (const name of cacheNames) {
-            await caches.delete(name);
-            console.log('[MedWard] Deleted cache:', name);
-          }
-          
-          // Register new service worker
-          const registration = await navigator.serviceWorker.register('sw.js');
-          console.log('[MedWard] Service Worker registered:', registration.scope);
-        } catch (error) {
-          console.error('[MedWard] Service Worker error:', error);
-        }
-      });
-    }
-  </script>
+  <!-- Core Application -->
+  <script src="js/core.js"></script>
+  <script src="js/clinical.js"></script>
+  <script src="js/patients.js"></script>
 </body>
 </html>
