@@ -174,13 +174,30 @@ const MedWard = (() => {
   // ============================================
   const UI = {
     showScreen(screenId) {
-      Utils.$$('.screen').forEach(s => s.classList.remove('active'));
-      const screen = Utils.$(`${screenId}-screen`);
-      if (screen) screen.classList.add('active');
+      console.log('[UI] showScreen called with:', screenId);
       
-      Utils.$$('.nav-tab').forEach(t => t.classList.remove('active'));
-      const tab = document.querySelector(`.nav-tab[data-screen="${screenId}"]`);
-      if (tab) tab.classList.add('active');
+      // Hide all screens
+      const allScreens = document.querySelectorAll('.screen');
+      console.log('[UI] Found screens:', allScreens.length);
+      allScreens.forEach(function(s) {
+        s.classList.remove('active');
+      });
+      
+      // Show target screen
+      const targetScreen = document.getElementById(screenId + '-screen');
+      console.log('[UI] Target screen element:', targetScreen);
+      if (targetScreen) {
+        targetScreen.classList.add('active');
+        console.log('[UI] Added active class to:', screenId + '-screen');
+      } else {
+        console.error('[UI] ERROR: Screen not found:', screenId + '-screen');
+      }
+      
+      // Update nav tabs
+      const allTabs = document.querySelectorAll('.nav-tab');
+      allTabs.forEach(function(t) { t.classList.remove('active'); });
+      const targetTab = document.querySelector('.nav-tab[data-screen="' + screenId + '"]');
+      if (targetTab) targetTab.classList.add('active');
     },
     
     showToast(message, type = 'success') {
@@ -328,20 +345,24 @@ const MedWard = (() => {
   function login(username) {
     console.log('[MedWard] Login attempt with username:', username);
     
-    if (!username?.trim()) {
-      UI.showToast('Please enter a username', 'error');
+    const trimmedUsername = (username || '').trim();
+    
+    if (!trimmedUsername) {
+      console.log('[MedWard] Username empty, showing error toast');
+      UI.showToast('Please enter your name', 'error');
       return false;
     }
     
     state.user = { 
-      name: username.trim(), 
-      initial: username.trim()[0].toUpperCase() 
+      name: trimmedUsername, 
+      initial: trimmedUsername[0].toUpperCase() 
     };
     Storage.set(STORAGE_KEYS.USER, state.user);
     
-    console.log('[MedWard] Login successful, showing dashboard');
+    console.log('[MedWard] Login successful, user:', state.user);
+    console.log('[MedWard] Calling showDashboard...');
     showDashboard();
-    UI.showToast(`Welcome, ${state.user.name}!`);
+    UI.showToast('Welcome, ' + state.user.name + '!');
     return true;
   }
 
@@ -354,11 +375,31 @@ const MedWard = (() => {
   }
 
   function showDashboard() {
-    if (dom.userInitial) dom.userInitial.textContent = state.user.initial;
-    if (dom.userName) dom.userName.textContent = state.user.name;
-    dom.navUser?.removeAttribute('hidden');
+    console.log('[MedWard] showDashboard called');
+    console.log('[MedWard] state.user:', state.user);
     
+    // Update user display
+    const userInitial = document.getElementById('user-initial');
+    const userName = document.getElementById('user-name');
+    const navUser = document.getElementById('nav-user');
+    
+    if (userInitial && state.user) {
+      userInitial.textContent = state.user.initial;
+      console.log('[MedWard] Set user initial:', state.user.initial);
+    }
+    if (userName && state.user) {
+      userName.textContent = state.user.name;
+      console.log('[MedWard] Set user name:', state.user.name);
+    }
+    if (navUser) {
+      navUser.removeAttribute('hidden');
+      console.log('[MedWard] Showed nav-user');
+    }
+    
+    // Switch screens
+    console.log('[MedWard] Switching to dashboard screen...');
     UI.showScreen('dashboard');
+    console.log('[MedWard] Dashboard should now be visible');
   }
 
   // ============================================
@@ -580,22 +621,44 @@ const MedWard = (() => {
   // EVENT HANDLERS
   // ============================================
   function setupEventListeners() {
-    // Login
-    console.log('[MedWard] Setting up login listeners, loginBtn:', dom.loginBtn, 'usernameInput:', dom.usernameInput);
+    // Login - get fresh references
+    const loginBtn = document.getElementById('login-btn');
+    const usernameInput = document.getElementById('username-input');
     
-    dom.loginBtn?.addEventListener('click', () => {
-      console.log('[MedWard] Login button clicked');
-      login(dom.usernameInput?.value);
-    });
-    dom.usernameInput?.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        console.log('[MedWard] Enter pressed in username input');
-        login(dom.usernameInput?.value);
-      }
-    });
+    console.log('[MedWard] Setting up login listeners');
+    console.log('[MedWard] loginBtn element:', loginBtn);
+    console.log('[MedWard] usernameInput element:', usernameInput);
+    
+    if (loginBtn) {
+      loginBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('[MedWard] Login button clicked!');
+        const username = usernameInput ? usernameInput.value : '';
+        console.log('[MedWard] Username value:', username);
+        login(username);
+      });
+      console.log('[MedWard] Login click listener added');
+    } else {
+      console.error('[MedWard] ERROR: login-btn not found!');
+    }
+    
+    if (usernameInput) {
+      usernameInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          console.log('[MedWard] Enter pressed in username input');
+          login(usernameInput.value);
+        }
+      });
+      console.log('[MedWard] Username keypress listener added');
+    } else {
+      console.error('[MedWard] ERROR: username-input not found!');
+    }
     
     // Logout
-    dom.logoutBtn?.addEventListener('click', logout);
+    if (dom.logoutBtn) {
+      dom.logoutBtn.addEventListener('click', logout);
+    }
     
     // Navigation
     Utils.$$('.nav-tab').forEach(tab => {
@@ -737,17 +800,11 @@ const MedWard = (() => {
     console.log('[MedWard] Initialized v2.0 with Neural Pattern Learning');
   }
 
-  // Initialize on DOM ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
   // ============================================
   // PUBLIC API
   // ============================================
   return {
+    init,
     Utils,
     Storage,
     API,
@@ -761,5 +818,15 @@ const MedWard = (() => {
   };
 })();
 
-// Export for modules
-if (typeof window !== 'undefined') window.MedWard = MedWard;
+// Export and auto-initialize ONCE
+if (typeof window !== 'undefined') {
+  window.MedWard = MedWard;
+}
+
+// Single initialization point
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('[MedWard] DOM loaded, initializing...');
+  if (window.MedWard && typeof window.MedWard.init === 'function') {
+    window.MedWard.init();
+  }
+});
