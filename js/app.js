@@ -115,13 +115,17 @@
       tab.addEventListener('click', () => switchModalView(tab.dataset.view));
     });
     
-    // Add Labs tab click handler
+    // Add Labs tab click handler - ensure content is rendered
     const labsTab = document.querySelector('.modal-tab[data-view="labs"]');
     if (labsTab) {
       labsTab.addEventListener('click', () => {
-        // Trigger re-render of labs view if needed
-        if (typeof ClinicalComponents !== 'undefined' && ClinicalComponents.currentLabValues) {
-          ClinicalComponents.renderLabsView(ClinicalComponents.currentLabValues);
+        const labsView = document.getElementById('labs-view');
+        // If still showing loading text, force re-render
+        if (labsView && labsView.innerHTML.includes('Loading lab values')) {
+          if (typeof ClinicalComponents !== 'undefined') {
+            const labs = ClinicalComponents.currentLabValues || [];
+            ClinicalComponents.renderLabsView(labs);
+          }
         }
       });
     }
