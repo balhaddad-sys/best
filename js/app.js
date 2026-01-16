@@ -378,7 +378,46 @@
     return result.fileId;
   }
 
-  // Analyze image via backend (Claude Vision)
+  // OPTIMIZED: Combined upload + analyze in single request
+  async function uploadAndAnalyzeImage(file, documentType = 'lab') {
+    if (!BACKEND_URL) {
+      throw new Error('Backend URL not configured');
+    }
+
+    if (elements.processingText) elements.processingText.textContent = 'Processing image...';
+    
+    const base64Data = await fileToBase64(file);
+    
+    // Single request that uploads AND analyzes
+    const response = await fetch(BACKEND_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({
+        action: 'uploadAndInterpret', // Combined action
+        image: base64Data,
+        documentType: documentType,
+        username: currentUser?.name || 'User',
+        provider: 'claude'
+      })
+    });
+
+    const result = await response.json();
+    
+    // Fallback to legacy two-step if combined not supported
+    if (result.error === 'Unknown action' || result.error?.includes('action')) {
+      console.log('[App] Falling back to two-step upload+analyze');
+      const fileId = await uploadImageToBackend(file);
+      return await analyzeImageViaBackend(fileId, documentType);
+    }
+    
+    if (!result.success) {
+      throw new Error(result.error || 'Analysis failed');
+    }
+    
+    return result;
+  }
+
+  // Analyze image via backend (Claude Vision) - kept for fallback
   async function analyzeImageViaBackend(fileId, documentType = 'lab') {
     if (!BACKEND_URL) {
       throw new Error('Backend URL not configured');
@@ -412,9 +451,11 @@
     // Close any open modal first
     closeModal();
     
-    // Clear previous results
+    // Clear previous results - show modal immediately with loading state
     if (elements.detailedView) elements.detailedView.innerHTML = '<p style="color: rgba(255,255,255,0.5); text-align: center; padding: 2rem;">Analyzing...</p>';
     if (elements.wardView) elements.wardView.innerHTML = '<p style="color: rgba(255,255,255,0.5); text-align: center; padding: 2rem;">Analyzing...</p>';
+    const labsView = document.getElementById('labs-view');
+    if (labsView) labsView.innerHTML = '<p style="color: rgba(255,255,255,0.5); text-align: center; padding: 2rem;">Analyzing...</p>';
     
     const startTime = Date.now();
     let results = null;
@@ -425,18 +466,15 @@
     
     try {
       if (type === 'image' && uploadedFiles.length > 0) {
-        // IMAGE WORKFLOW: Upload to Drive, then analyze with Claude Vision
+        // IMAGE WORKFLOW: OPTIMIZED - Single combined upload+analyze call
         if (!BACKEND_URL) {
           showProcessing(false);
           showToast('Backend not configured. Please set up Google Apps Script backend.', 'error');
           return;
         }
         
-        // Step 1: Upload image to Google Drive
-        const fileId = await uploadImageToBackend(uploadedFiles[0]);
-        
-        // Step 2: Analyze with Claude Vision via backend
-        const backendResult = await analyzeImageViaBackend(fileId);
+        // Single optimized call - uploads and analyzes in one request
+        const backendResult = await uploadAndAnalyzeImage(uploadedFiles[0]);
         
         // Convert backend response to display format
         results = convertBackendToDisplay(backendResult);
@@ -452,7 +490,7 @@
           return;
         }
         
-        // Initialize neural if needed
+        // Initialize neural if needed (cached after first init)
         await initNeural();
         
         if (neural) {
@@ -468,8 +506,8 @@
           metrics.cacheHits = neuralMetrics.local || 0;
           
         } else {
+          // Fast fallback - no artificial delay
           if (elements.processingText) elements.processingText.textContent = 'Parsing medical data...';
-          await sleep(500);
           results = parseBasicLabResults(inputText);
           metrics.total++;
         }
@@ -480,6 +518,7 @@
       }
       
       metrics.totalTime += (Date.now() - startTime);
+      console.log('[App] Analysis completed in', Date.now() - startTime, 'ms');
       
     } catch (error) {
       console.error('[App] Analysis error:', error);
@@ -487,6 +526,9 @@
       showToast('Analysis failed: ' + error.message, 'error');
       return;
     }
+    
+    // Hide processing immediately
+    showProcessing(false);
     
     saveMetrics();
     updateMetricsDisplay();
