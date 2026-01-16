@@ -1,3 +1,5 @@
+importScripts("https://progressier.app/bzedaNn1n4Otlh0BMPkZ/sw.js" );
+
 /**
  * MedWard Master - Service Worker
  * Version: 1.0.0
