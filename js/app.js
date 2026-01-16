@@ -16,6 +16,10 @@
     totalTime: 0,
     patterns: 0
   };
+  
+  // Batch processing state
+  let batchMode = false;
+  let batchResults = [];
 
   // DOM Elements - will be populated on init
   let elements = {};
@@ -251,7 +255,12 @@
   }
 
   function processFiles(files) {
-    files.forEach(file => {
+    const fileArray = Array.from(files);
+    
+    // Check if batch mode needed (more than 1 file)
+    batchMode = fileArray.length > 1;
+    
+    fileArray.forEach(file => {
       if (file.size > 10 * 1024 * 1024) {
         showToast(`${file.name} is too large (max 10MB)`, 'error');
         return;
@@ -265,8 +274,37 @@
       uploadedFiles.push(file);
     });
     
+    // If batch mode and MedWardBatch available, add to batch queue
+    if (batchMode && typeof MedWardBatch !== 'undefined') {
+      MedWardBatch.clearQueue();
+      MedWardBatch.addFiles(uploadedFiles);
+    }
+    
     renderFileList();
-    if (elements.analyzeBtn) elements.analyzeBtn.disabled = uploadedFiles.length === 0;
+    updateAnalyzeButton();
+  }
+  
+  function updateAnalyzeButton() {
+    if (!elements.analyzeBtn) return;
+    
+    elements.analyzeBtn.disabled = uploadedFiles.length === 0;
+    
+    // Update button text for batch mode
+    if (uploadedFiles.length > 1) {
+      elements.analyzeBtn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+        </svg>
+        Analyze ${uploadedFiles.length} Images
+      `;
+    } else {
+      elements.analyzeBtn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+        </svg>
+        Analyze
+      `;
+    }
   }
 
   function renderFileList() {
@@ -277,7 +315,29 @@
       return;
     }
     
-    elements.fileList.innerHTML = uploadedFiles.map((file, index) => `
+    // Show batch header if multiple files
+    let html = '';
+    if (uploadedFiles.length > 1) {
+      html += `
+        <div class="batch-header">
+          <div class="batch-info">
+            <span class="batch-count">${uploadedFiles.length} files</span>
+            <span class="batch-size">${formatFileSize(uploadedFiles.reduce((a, f) => a + f.size, 0))} total</span>
+          </div>
+          <button class="batch-clear" onclick="window.MedWard.resetUpload()">Clear All</button>
+        </div>
+        <div class="batch-progress" id="batch-progress" style="display:none;">
+          <div class="batch-progress-bar"><div class="batch-progress-fill" id="batch-progress-fill"></div></div>
+          <div class="batch-progress-text" id="batch-progress-text">0 / ${uploadedFiles.length}</div>
+        </div>
+      `;
+    }
+    
+    // Show files (limit display for large batches)
+    const displayFiles = uploadedFiles.length > 10 ? uploadedFiles.slice(0, 8) : uploadedFiles;
+    const hiddenCount = uploadedFiles.length - displayFiles.length;
+    
+    html += displayFiles.map((file, index) => `
       <div class="file-preview">
         <div class="file-thumb">
           ${file.type.startsWith('image/') 
@@ -300,20 +360,46 @@
         </button>
       </div>
     `).join('');
+    
+    // Show hidden count
+    if (hiddenCount > 0) {
+      html += `<div class="file-preview more">+ ${hiddenCount} more files</div>`;
+    }
+    
+    elements.fileList.innerHTML = html;
   }
 
   function removeFile(index) {
     uploadedFiles.splice(index, 1);
+    batchMode = uploadedFiles.length > 1;
+    
+    // Update batch queue if available
+    if (typeof MedWardBatch !== 'undefined') {
+      MedWardBatch.clearQueue();
+      if (uploadedFiles.length > 0) {
+        MedWardBatch.addFiles(uploadedFiles);
+      }
+    }
+    
     renderFileList();
-    if (elements.analyzeBtn) elements.analyzeBtn.disabled = uploadedFiles.length === 0;
+    updateAnalyzeButton();
   }
 
   function resetUpload() {
     uploadedFiles = [];
+    batchMode = false;
+    batchResults = [];
+    
+    // Clear batch queue
+    if (typeof MedWardBatch !== 'undefined') {
+      MedWardBatch.clearQueue();
+    }
+    
     if (elements.fileList) elements.fileList.innerHTML = '';
     if (elements.fileInput) elements.fileInput.value = '';
     if (elements.textInput) elements.textInput.value = '';
-    if (elements.analyzeBtn) elements.analyzeBtn.disabled = true;
+    updateAnalyzeButton();
+  }
   }
 
   // Neural system instance
@@ -446,7 +532,7 @@
     return result;
   }
 
-  // Analysis - handles both text and images
+  // Analysis - handles both text and images (including batch)
   async function runAnalysis(type) {
     // Close any open modal first
     closeModal();
@@ -466,15 +552,27 @@
     
     try {
       if (type === 'image' && uploadedFiles.length > 0) {
-        // IMAGE WORKFLOW: OPTIMIZED - Single combined upload+analyze call
+        // IMAGE WORKFLOW
         if (!BACKEND_URL) {
           showProcessing(false);
           showToast('Backend not configured. Please set up Google Apps Script backend.', 'error');
           return;
         }
         
-        // Single optimized call - uploads and analyzes in one request
-        const backendResult = await uploadAndAnalyzeImage(uploadedFiles[0]);
+        // Check if batch mode (multiple files)
+        if (uploadedFiles.length > 1 && typeof MedWardBatch !== 'undefined') {
+          // BATCH PROCESSING
+          await runBatchAnalysis();
+          return;
+        }
+        
+        // SINGLE IMAGE PROCESSING
+        
+        // Step 1: Upload image to Google Drive
+        const fileId = await uploadImageToBackend(uploadedFiles[0]);
+        
+        // Step 2: Analyze with Claude Vision via backend
+        const backendResult = await analyzeImageViaBackend(fileId);
         
         // Convert backend response to display format
         results = convertBackendToDisplay(backendResult);
@@ -555,6 +653,164 @@
     // Hide processing, show results
     showProcessing(false);
     showResults(results);
+  }
+
+  /**
+   * Run batch analysis for multiple images
+   */
+  async function runBatchAnalysis() {
+    console.log(`[App] Starting batch analysis of ${uploadedFiles.length} files`);
+    
+    batchResults = [];
+    const startTime = Date.now();
+    
+    // Show batch progress UI
+    const progressEl = document.getElementById('batch-progress');
+    const progressFill = document.getElementById('batch-progress-fill');
+    const progressText = document.getElementById('batch-progress-text');
+    if (progressEl) progressEl.style.display = 'block';
+    
+    // Configure batch processor
+    MedWardBatch.config.maxConcurrent = 3; // Process 3 at a time
+    
+    // Set up progress callback
+    MedWardBatch.onProgress = (progress) => {
+      const percent = Math.round((progress.completed / progress.total) * 100);
+      if (progressFill) progressFill.style.width = `${percent}%`;
+      if (progressText) progressText.textContent = `${progress.completed} / ${progress.total} - ${progress.current}`;
+      if (elements.processingText) {
+        elements.processingText.textContent = `Analyzing ${progress.completed + 1} of ${progress.total}: ${progress.current}`;
+      }
+    };
+    
+    // Set up completion callback
+    MedWardBatch.onComplete = (result) => {
+      console.log(`[App] Batch complete:`, result);
+      
+      batchResults = result.results;
+      
+      // Hide progress
+      if (progressEl) progressEl.style.display = 'none';
+      showProcessing(false);
+      
+      // Calculate metrics
+      const totalTime = Date.now() - startTime;
+      metrics.total += result.completed;
+      metrics.totalTime += totalTime;
+      
+      // Show combined results
+      showBatchResults(result);
+      
+      // Learn patterns from results
+      if (typeof MedWardBatch !== 'undefined' && MedWardBatch.config.learningEnabled) {
+        const patternStats = MedWardBatch.getStats().patterns;
+        metrics.patterns = patternStats.labValues + patternStats.abnormalities;
+        updateMetricsDisplay();
+      }
+      
+      showToast(`Analyzed ${result.completed} images (${result.failed} failed) in ${(totalTime/1000).toFixed(1)}s`, 'success');
+    };
+    
+    // Set up error callback
+    MedWardBatch.onError = (error) => {
+      console.error('[App] Batch error:', error);
+      showProcessing(false);
+      if (progressEl) progressEl.style.display = 'none';
+      showToast('Batch analysis failed: ' + error.message, 'error');
+    };
+    
+    // Clear and add files to queue
+    MedWardBatch.clearQueue();
+    MedWardBatch.addFiles(uploadedFiles);
+    
+    // Start processing
+    await MedWardBatch.startProcessing({
+      backendUrl: BACKEND_URL,
+      documentType: 'lab'
+    });
+  }
+
+  /**
+   * Show batch results in a combined view
+   */
+  function showBatchResults(batchResult) {
+    // Combine all results
+    const combinedFindings = [];
+    const combinedAlerts = [];
+    const allLabValues = [];
+    const allExtractedText = [];
+    
+    for (const result of batchResult.results) {
+      // Collect extracted text
+      if (result.extractedText) {
+        allExtractedText.push(`--- ${result.file} ---\n${result.extractedText}`);
+      }
+      
+      // Collect abnormalities
+      const interp = result.interpretation || {};
+      if (interp.abnormalities) {
+        interp.abnormalities.forEach(a => {
+          const text = typeof a === 'string' ? a : a.text || '';
+          combinedAlerts.push({
+            severity: 'warning',
+            title: result.file,
+            text: text
+          });
+        });
+      }
+      
+      // Collect key findings
+      if (interp.keyFindings) {
+        interp.keyFindings.forEach(f => {
+          combinedFindings.push({
+            file: result.file,
+            finding: typeof f === 'string' ? f : f.text || ''
+          });
+        });
+      }
+    }
+    
+    // Create combined display result
+    const combinedResult = {
+      diagnosis: `Batch Analysis: ${batchResult.completed} images`,
+      summary: `Analyzed ${batchResult.completed} medical reports. Found ${combinedAlerts.length} abnormalities across all images.`,
+      extractedText: allExtractedText.join('\n\n'),
+      interpretation: {
+        summary: `Batch analysis of ${batchResult.completed} images completed. ${combinedAlerts.length} abnormalities found.`,
+        keyFindings: combinedFindings.map(f => `[${f.file}] ${f.finding}`),
+        abnormalities: combinedAlerts.map(a => `[${a.title}] ${a.text}`)
+      },
+      presentation: {
+        recommendations: [
+          'Review each image individually for detailed findings',
+          'Critical values require immediate attention',
+          'Compare trends across multiple reports'
+        ]
+      },
+      alerts: combinedAlerts,
+      batchMode: true,
+      batchResults: batchResult.results
+    };
+    
+    // Show results
+    showResults(combinedResult);
+    
+    // Add to history
+    const historyItem = {
+      id: Date.now(),
+      timestamp: new Date().toISOString(),
+      type: `Batch Analysis (${batchResult.completed} images)`,
+      summary: combinedResult.summary,
+      results: combinedResult
+    };
+    analysisHistory.unshift(historyItem);
+    if (analysisHistory.length > 10) analysisHistory.pop();
+    
+    try {
+      localStorage.setItem('medward_history', JSON.stringify(analysisHistory));
+    } catch (e) {}
+    
+    renderActivityList();
   }
 
   /**
