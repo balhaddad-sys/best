@@ -186,6 +186,11 @@
     if (elements.userInitial) elements.userInitial.textContent = currentUser.initial;
     if (elements.userName) elements.userName.textContent = currentUser.name;
     if (elements.navUser) elements.navUser.hidden = false;
+
+    // Show navigation tabs
+    const navTabs = document.getElementById('main-nav-tabs');
+    if (navTabs) navTabs.style.display = 'flex';
+
     showScreen('dashboard');
   }
 
