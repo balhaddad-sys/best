@@ -350,6 +350,8 @@
       font-family: inherit;
       font-size: 1rem;
       transition: all var(--transition-fast);
+      -webkit-appearance: none;
+      appearance: none;
     }
     
     .form-input:focus {
@@ -364,6 +366,15 @@
       width: 100%;
       padding: var(--space-md) var(--space-lg);
       font-size: 1rem;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: rgba(240, 198, 116, 0.3);
+      position: relative;
+      z-index: 10;
+    }
+    
+    #login-form {
+      width: 100%;
     }
 
     /* ===== DASHBOARD ===== */
@@ -1391,79 +1402,66 @@
     <div class="login-card">
       <h1 class="login-title">Welcome to MedWard</h1>
       <p class="login-subtitle">Clinical Intelligence Platform</p>
-      <div class="form-group">
-        <input type="text" id="username-input" class="form-input" placeholder="Enter your name" autocomplete="name" onkeypress="if(event.key==='Enter'){document.getElementById('login-btn').click();}">
-      </div>
-      <button type="button" class="btn btn-primary login-btn" id="login-btn" onclick="handleLogin()">Continue</button>
+      <form id="login-form" onsubmit="return handleLoginSubmit(event);">
+        <div class="form-group">
+          <input type="text" id="username-input" class="form-input" placeholder="Enter your name" autocomplete="name" required>
+        </div>
+        <input type="submit" class="btn btn-primary login-btn" id="login-btn" value="Continue">
+      </form>
     </div>
   </main>
   
-  <!-- Inline Login Function (guaranteed to work) -->
+  <!-- Inline Login Function -->
   <script>
-    function handleLogin() {
-      console.log('handleLogin called');
+    function handleLoginSubmit(e) {
+      if (e) e.preventDefault();
+      
       var input = document.getElementById('username-input');
       var username = input ? input.value.trim() : '';
       
       if (!username) {
         alert('Please enter your name');
-        input && input.focus();
-        return;
+        return false;
       }
-      
-      console.log('Logging in as:', username);
       
       // Save to localStorage
       var user = { name: username, initial: username[0].toUpperCase() };
-      localStorage.setItem('medward_user', JSON.stringify(user));
+      try {
+        localStorage.setItem('medward_user', JSON.stringify(user));
+      } catch(err) {}
       
       // Switch screens
-      var loginScreen = document.getElementById('login-screen');
-      var dashboardScreen = document.getElementById('dashboard-screen');
-      
-      if (loginScreen) loginScreen.classList.remove('active');
-      if (dashboardScreen) dashboardScreen.classList.add('active');
+      document.getElementById('login-screen').className = 'screen';
+      document.getElementById('dashboard-screen').className = 'screen active';
       
       // Update user display
-      var userInitial = document.getElementById('user-initial');
-      var userName = document.getElementById('user-name');
-      var navUser = document.getElementById('nav-user');
+      var el;
+      if (el = document.getElementById('user-initial')) el.textContent = user.initial;
+      if (el = document.getElementById('user-name')) el.textContent = user.name;
+      if (el = document.getElementById('nav-user')) el.hidden = false;
       
-      if (userInitial) userInitial.textContent = user.initial;
-      if (userName) userName.textContent = user.name;
-      if (navUser) navUser.removeAttribute('hidden');
-      
-      console.log('Login complete, dashboard should be visible');
+      return false;
     }
     
-    // Auto-login if user exists
-    document.addEventListener('DOMContentLoaded', function() {
-      var saved = localStorage.getItem('medward_user');
-      if (saved) {
-        try {
+    // Auto-login check
+    (function() {
+      try {
+        var saved = localStorage.getItem('medward_user');
+        if (saved) {
           var user = JSON.parse(saved);
           if (user && user.name) {
-            console.log('Auto-login for:', user.name);
-            
-            var loginScreen = document.getElementById('login-screen');
-            var dashboardScreen = document.getElementById('dashboard-screen');
-            
-            if (loginScreen) loginScreen.classList.remove('active');
-            if (dashboardScreen) dashboardScreen.classList.add('active');
-            
-            var userInitial = document.getElementById('user-initial');
-            var userName = document.getElementById('user-name');
-            var navUser = document.getElementById('nav-user');
-            
-            if (userInitial) userInitial.textContent = user.initial;
-            if (userName) userName.textContent = user.name;
-            if (navUser) navUser.removeAttribute('hidden');
+            document.addEventListener('DOMContentLoaded', function() {
+              document.getElementById('login-screen').className = 'screen';
+              document.getElementById('dashboard-screen').className = 'screen active';
+              var el;
+              if (el = document.getElementById('user-initial')) el.textContent = user.initial;
+              if (el = document.getElementById('user-name')) el.textContent = user.name;
+              if (el = document.getElementById('nav-user')) el.hidden = false;
+            });
           }
-        } catch (e) {
-          console.error('Auto-login failed:', e);
         }
-      }
-    });
+      } catch(e) {}
+    })();
   </script>
 
   <!-- Dashboard Screen -->
