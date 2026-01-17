@@ -254,7 +254,25 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:va
   <h1 class="landing-title">MedWard Enterprise</h1>
   <p class="landing-subtitle">Select your unit to continue</p>
   <div class="units-grid" id="unitsGrid">
-    <!-- Units rendered by JS -->
+    <!-- Default units - will be replaced by JS if it loads successfully -->
+    <div class="unit-card" data-id="neuro" style="--unit-color:#a855f7" onclick="if(typeof openAccessModal==='function')openAccessModal('neuro')">
+      <div class="unit-card-lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+      <div class="unit-card-icon">🧠</div>
+      <div class="unit-card-name">Neurology</div>
+      <div class="unit-card-desc">Stroke & Neurological Disorders</div>
+    </div>
+    <div class="unit-card" data-id="cardio" style="--unit-color:#ef4444" onclick="if(typeof openAccessModal==='function')openAccessModal('cardio')">
+      <div class="unit-card-lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+      <div class="unit-card-icon">❤️</div>
+      <div class="unit-card-name">Cardiology</div>
+      <div class="unit-card-desc">Cardiac Care Unit</div>
+    </div>
+    <div class="unit-card" data-id="icu" style="--unit-color:#f97316" onclick="if(typeof openAccessModal==='function')openAccessModal('icu')">
+      <div class="unit-card-lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+      <div class="unit-card-icon">🏥</div>
+      <div class="unit-card-name">ICU</div>
+      <div class="unit-card-desc">Intensive Care Unit</div>
+    </div>
   </div>
   <div class="admin-fab" id="adminFab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
 </div>
@@ -670,32 +688,47 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:va
   }
 
   function loadState() {
+    // Always start with defaults
+    state.units = DEFAULT_UNITS.slice();
+    
     try {
       var saved = localStorage.getItem(CONFIG.STORAGE_KEY);
       if (saved) {
         var data = JSON.parse(saved);
-        state.units = data.units && data.units.length > 0 ? data.units : DEFAULT_UNITS.slice();
-        state.settings = Object.assign({}, state.settings, data.settings);
-      } else {
-        state.units = DEFAULT_UNITS.slice();
+        if (data.units && Array.isArray(data.units) && data.units.length > 0) {
+          state.units = data.units;
+        }
+        if (data.settings) {
+          state.settings = {
+            adminPassword: data.settings.adminPassword || CONFIG.DEFAULT_ADMIN_PWD,
+            claudeApiUrl: data.settings.claudeApiUrl || CONFIG.DEFAULT_API
+          };
+        }
       }
     } catch(e) {
-      console.warn('Load failed:', e);
+      console.warn('Load failed, using defaults:', e);
       state.units = DEFAULT_UNITS.slice();
     }
     console.log('[MedWard] Loaded ' + state.units.length + ' units');
   }
 
-  // RENDER UNITS
+  // RENDER UNITS - Called on page load
   function renderUnits() {
-    var grid = $('unitsGrid');
-    if (!grid) { console.error('unitsGrid not found'); return; }
+    console.log('[MedWard] renderUnits called');
+    var grid = document.getElementById('unitsGrid');
     
+    if (!grid) { 
+      console.error('[MedWard] unitsGrid element not found!'); 
+      return; 
+    }
+    
+    // Ensure we have units
     if (!state.units || state.units.length === 0) {
+      console.log('[MedWard] No units in state, using defaults');
       state.units = DEFAULT_UNITS.slice();
     }
     
-    console.log('[MedWard] Rendering ' + state.units.length + ' units');
+    console.log('[MedWard] Rendering ' + state.units.length + ' units:', state.units);
     
     var html = '';
     for (var i = 0; i < state.units.length; i++) {
@@ -707,12 +740,21 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:va
         '<div class="unit-card-desc">' + (u.desc || 'No description') + '</div>' +
       '</div>';
     }
-    grid.innerHTML = html;
     
-    var cards = $$('.unit-card');
+    grid.innerHTML = html;
+    console.log('[MedWard] Grid HTML set, length: ' + html.length);
+    
+    // Attach click handlers
+    var cards = document.querySelectorAll('.unit-card');
+    console.log('[MedWard] Found ' + cards.length + ' unit cards');
+    
     for (var j = 0; j < cards.length; j++) {
       (function(card) {
-        card.onclick = function() { openAccessModal(card.getAttribute('data-id')); };
+        card.onclick = function() { 
+          var id = card.getAttribute('data-id');
+          console.log('[MedWard] Card clicked:', id);
+          openAccessModal(id); 
+        };
       })(cards[j]);
     }
   }
@@ -1774,6 +1816,9 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:va
     removeFile: removeFile,
     setScore: setScore
   };
+  
+  // Expose openAccessModal for inline onclick handlers
+  window.openAccessModal = openAccessModal;
 
   // START
   if (document.readyState === 'loading') {
