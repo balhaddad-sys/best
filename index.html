@@ -7,13 +7,12 @@
   <title>MedWard Enterprise</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
-:root{--bg-deep:#060a13;--bg-primary:#0a0f1a;--bg-card:#0d1424;--bg-elevated:#111b2e;--bg-input:#0f172a;--text-primary:#f8fafc;--text-secondary:#94a3b8;--text-muted:#64748b;--gold:#d4a437;--gold-light:#fbbf24;--gold-glow:rgba(212,164,55,0.15);--teal:#14b8a6;--teal-light:#2dd4bf;--blue:#3b82f6;--purple:#8b5cf6;--rose:#f43f5e;--orange:#f97316;--emerald:#10b981;--border:rgba(148,163,184,0.1);--border-light:rgba(148,163,184,0.15);--shadow-lg:0 12px 40px rgba(0,0,0,0.5);--radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-xl:20px}
+:root{--bg-deep:#060a13;--bg-primary:#0a0f1a;--bg-card:#0d1424;--bg-elevated:#111b2e;--bg-input:#0f172a;--text-primary:#f8fafc;--text-secondary:#94a3b8;--text-muted:#64748b;--gold:#d4a437;--gold-light:#fbbf24;--gold-glow:rgba(212,164,55,0.15);--teal:#14b8a6;--teal-light:#2dd4bf;--blue:#3b82f6;--purple:#8b5cf6;--rose:#f43f5e;--orange:#f97316;--emerald:#10b981;--border:rgba(148,163,184,0.1);--shadow-lg:0 12px 40px rgba(0,0,0,0.5);--radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-xl:20px}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:var(--text-primary);line-height:1.5;min-height:100vh}
 .ambient{position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(ellipse at 20% 20%,var(--gold-glow),transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(20,184,166,0.08),transparent 50%)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 24px;border:none;border-radius:var(--radius-md);font-family:inherit;font-size:0.95rem;font-weight:600;cursor:pointer;transition:0.2s}
 .btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--bg-deep);box-shadow:0 4px 16px rgba(212,164,55,0.3)}
-.btn-primary:hover{transform:translateY(-2px)}
 .btn-secondary{background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-primary)}
 .btn-sm{padding:8px 14px;font-size:0.8rem}
 .btn-lg{padding:16px 28px;font-size:1rem}
@@ -27,7 +26,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:va
 .form-textarea{min-height:100px;resize:vertical}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;padding:20px;z-index:1000}
 .modal.active{display:flex}
-.modal-box{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-xl);width:100%;max-width:440px;max-height:90vh;overflow-y:auto}
+.modal-box{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-xl);width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
 .modal-header{padding:24px;border-bottom:1px solid var(--border);text-align:center}
 .modal-icon{width:64px;height:64px;background:var(--bg-elevated);border-radius:16px;display:grid;place-items:center;font-size:2rem;margin:0 auto 16px}
 .modal-title{font-size:1.25rem;font-weight:700;margin-bottom:4px}
@@ -47,10 +46,10 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:va
 .unit-card:hover{border-color:var(--unit-color,var(--gold));transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,0.3)}
 .unit-card-icon{width:52px;height:52px;background:var(--bg-elevated);border-radius:14px;display:grid;place-items:center;font-size:1.6rem;margin-bottom:14px}
 .unit-card-name{font-size:1.15rem;font-weight:600;margin-bottom:4px}
-.unit-card-desc{color:var(--text-muted);font-size:0.8rem;margin-bottom:16px}
+.unit-card-desc{color:var(--text-muted);font-size:0.8rem}
 .unit-card-lock{position:absolute;top:16px;right:16px;width:28px;height:28px;background:var(--bg-elevated);border-radius:8px;display:grid;place-items:center;color:var(--text-muted)}
 .unit-card-lock svg{width:14px;height:14px}
-.admin-fab{position:fixed;bottom:24px;right:24px;width:56px;height:56px;background:var(--bg-card);border:1px solid var(--border);border-radius:50%;display:grid;place-items:center;cursor:pointer;transition:0.3s;color:var(--text-muted)}
+.admin-fab{position:fixed;bottom:24px;right:24px;width:56px;height:56px;background:var(--bg-card);border:1px solid var(--border);border-radius:50%;display:grid;place-items:center;cursor:pointer;transition:0.3s;color:var(--text-muted);z-index:50}
 .admin-fab:hover{border-color:var(--gold);color:var(--gold);transform:scale(1.1)}
 .admin-fab svg{width:22px;height:22px}
 .code-inputs{display:flex;gap:12px;justify-content:center;margin-bottom:20px}
@@ -82,7 +81,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:va
 .panel{display:none;animation:fadeIn 0.3s}
 .panel.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:24px}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
 .stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:18px;text-align:center}
 .stat-value{font-size:1.75rem;font-weight:700;background:linear-gradient(135deg,var(--gold),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .stat-label{font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;margin-top:4px}
@@ -106,62 +105,23 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:va
 .card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:20px}
 .card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .card-title{font-size:0.95rem;font-weight:600;display:flex;align-items:center;gap:10px}
-.card-title svg{width:18px;height:18px;stroke:var(--gold)}
 .card-body{padding:20px}
 .upload-zone{border:2px dashed var(--border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:0.2s}
 .upload-zone:hover,.upload-zone.dragover{border-color:var(--gold);background:var(--gold-glow)}
 .upload-zone.has-file{border-style:solid;border-color:var(--teal)}
 .upload-icon{width:56px;height:56px;background:var(--bg-elevated);border-radius:14px;display:grid;place-items:center;margin:0 auto 16px}
 .upload-icon svg{width:28px;height:28px;stroke:var(--gold)}
-.upload-input{display:none}
-.preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:8px;margin-top:16px}
-.preview-thumb{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid var(--border)}
-.preview-thumb img{width:100%;height:100%;object-fit:cover}
-.preview-thumb:hover{border-color:var(--rose)}
-.analysis-types{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px}
+.analysis-types{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;margin-top:16px}
 .analysis-type{background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px 12px;text-align:center;cursor:pointer;transition:0.2s}
-.analysis-type:hover{border-color:var(--gold)}
-.analysis-type.active{border-color:var(--gold);background:var(--gold-glow)}
+.analysis-type:hover,.analysis-type.active{border-color:var(--gold);background:var(--gold-glow)}
 .analysis-type-icon{font-size:1.5rem;margin-bottom:6px}
 .analysis-type-name{font-size:0.8rem;font-weight:600}
-.analysis-progress{display:none;text-align:center;padding:40px}
-.analysis-progress.show{display:block}
-.progress-spinner{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px}
-@keyframes spin{to{transform:rotate(360deg)}}
-.analysis-results{display:none}
-.analysis-results.show{display:block}
-.result-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
-.result-title{font-size:1.1rem;font-weight:600;display:flex;align-items:center;gap:10px;color:var(--emerald)}
-.result-badge{padding:6px 14px;background:var(--gold-glow);border:1px solid var(--gold);border-radius:100px;font-size:0.75rem;font-weight:600;color:var(--gold)}
-.result-section{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:18px;margin-bottom:14px}
-.result-section-title{font-size:0.85rem;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.finding-card{background:var(--bg-elevated);border-radius:8px;padding:12px;margin-bottom:8px}
-.finding-card.critical{border-left:3px solid var(--rose)}
 .scores-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
 .score-tile{background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-md);padding:20px 16px;text-align:center;cursor:pointer;transition:0.2s}
-.score-tile:hover{border-color:var(--gold)}
-.score-tile.active{border-color:var(--gold);background:var(--gold-glow)}
+.score-tile:hover,.score-tile.active{border-color:var(--gold);background:var(--gold-glow)}
 .score-icon{font-size:1.75rem;margin-bottom:8px}
 .score-name{font-weight:600;font-size:0.9rem}
 .score-desc{font-size:0.7rem;color:var(--text-muted)}
-.calc-item{background:var(--bg-elevated);border-radius:var(--radius-md);padding:16px;margin-bottom:12px}
-.calc-item-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-.calc-item-num{width:28px;height:28px;background:var(--gold);border-radius:8px;display:grid;place-items:center;font-size:0.75rem;font-weight:700;color:var(--bg-deep)}
-.calc-item-name{font-weight:600;font-size:0.9rem}
-.calc-opts{display:flex;flex-wrap:wrap;gap:8px}
-.calc-opt{flex:1;min-width:60px;padding:12px 8px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;text-align:center;transition:0.15s}
-.calc-opt:hover{border-color:var(--gold)}
-.calc-opt.sel{background:var(--gold-glow);border-color:var(--gold)}
-.calc-opt input{display:none}
-.calc-opt-score{display:block;font-size:1.1rem;font-weight:700;color:var(--gold)}
-.calc-opt-label{font-size:0.65rem;color:var(--text-secondary)}
-.calc-result{background:var(--bg-elevated);border-radius:var(--radius-md);padding:24px;text-align:center;margin-top:16px}
-.calc-result-score{font-size:3rem;font-weight:700;background:linear-gradient(135deg,var(--gold),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.severity-pill{display:inline-block;padding:8px 20px;border-radius:100px;font-size:0.85rem;font-weight:600;margin-top:12px}
-.ref-filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
-.ref-filter{padding:8px 14px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:100px;color:var(--text-secondary);font-size:0.75rem;font-weight:500;cursor:pointer;transition:0.2s}
-.ref-filter:hover{border-color:var(--gold)}
-.ref-filter.active{background:var(--gold-glow);border-color:var(--gold);color:var(--gold)}
 .ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
 .ref-card{background:var(--bg-elevated);border-radius:var(--radius-md);padding:16px;border-left:3px solid var(--gold)}
 .ref-card h4{font-size:0.9rem;margin-bottom:10px}
@@ -185,96 +145,19 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:va
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--bg-card);border:1px solid var(--emerald);padding:14px 24px;border-radius:var(--radius-md);font-size:0.9rem;opacity:0;transition:0.3s;z-index:2000}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 .toast.error{border-color:var(--rose)}
-@media(max-width:640px){.landing-title{font-size:1.75rem}.units-grid{grid-template-columns:1fr}.code-digit{width:48px;height:54px;font-size:1.5rem}.dash-user-info{display:none}.tab span{display:none}.patients-grid{grid-template-columns:1fr}}
-
-/* ═══════════════════ IMPORT SYSTEM STYLES ═══════════════════ */
-.import-modal-box{max-width:560px}
-.import-tabs{display:flex;gap:0;margin-bottom:24px;background:var(--bg-elevated);border-radius:var(--radius-md);padding:4px}
-.import-tab{flex:1;padding:12px 16px;background:transparent;border:none;border-radius:var(--radius-sm);color:var(--text-muted);font-family:inherit;font-size:0.85rem;font-weight:500;cursor:pointer;transition:0.2s;display:flex;align-items:center;justify-content:center;gap:8px}
-.import-tab:hover{color:var(--text-primary)}
-.import-tab.active{background:var(--bg-card);color:var(--gold);box-shadow:0 2px 8px rgba(0,0,0,0.2)}
-.import-tab svg{width:18px;height:18px}
-.import-panel{display:none;animation:fadeIn 0.3s}
-.import-panel.active{display:block}
-.import-dropzone{border:2px dashed var(--border);border-radius:var(--radius-lg);padding:32px 20px;text-align:center;cursor:pointer;transition:0.2s;position:relative;overflow:hidden}
-.import-dropzone:hover,.import-dropzone.dragover{border-color:var(--gold);background:var(--gold-glow)}
-.import-dropzone.processing{pointer-events:none;border-color:var(--teal)}
-.import-dropzone-icon{width:64px;height:64px;background:linear-gradient(135deg,var(--gold-glow),rgba(20,184,166,0.1));border-radius:16px;display:grid;place-items:center;margin:0 auto 16px}
-.import-dropzone-icon svg{width:32px;height:32px;stroke:var(--gold)}
-.import-dropzone-title{font-weight:600;font-size:1rem;margin-bottom:4px}
-.import-dropzone-sub{font-size:0.85rem;color:var(--text-muted);margin-bottom:12px}
-.import-dropzone-formats{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
-.import-format-tag{padding:4px 10px;background:var(--bg-card);border:1px solid var(--border);border-radius:100px;font-size:0.7rem;color:var(--text-secondary)}
-.import-preview{margin-top:20px;display:none}
-.import-preview.show{display:block}
-.import-preview-img{width:100%;max-height:200px;object-fit:contain;border-radius:var(--radius-md);border:1px solid var(--border);margin-bottom:16px}
-.import-processing{text-align:center;padding:24px}
-.import-processing-icon{width:56px;height:56px;margin:0 auto 16px;position:relative}
-.import-processing-spinner{width:56px;height:56px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;position:absolute;top:0;left:0}
-.import-processing-check{width:56px;height:56px;background:var(--emerald);border-radius:50%;display:none;place-items:center}
-.import-processing-check.show{display:grid}
-.import-processing-check svg{width:28px;height:28px;stroke:white;stroke-width:3}
-.import-status{font-weight:600;margin-bottom:4px}
-.import-substatus{font-size:0.85rem;color:var(--text-muted)}
-.import-results{margin-top:20px;display:none}
-.import-results.show{display:block}
-.import-results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.import-results-title{font-weight:600;display:flex;align-items:center;gap:8px}
-.import-results-count{padding:4px 12px;background:var(--emerald);border-radius:100px;font-size:0.75rem;font-weight:600;color:white}
-.import-patient-row{display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg-elevated);border-radius:var(--radius-sm);margin-bottom:8px;border-left:3px solid var(--teal)}
-.import-patient-row.critical{border-left-color:var(--rose)}
-.import-patient-row.pending{border-left-color:var(--gold)}
-.import-patient-avatar{width:36px;height:36px;background:linear-gradient(135deg,var(--gold),var(--teal));border-radius:8px;display:grid;place-items:center;font-weight:600;font-size:0.8rem;color:var(--bg-deep);flex-shrink:0}
-.import-patient-info{flex:1;min-width:0}
-.import-patient-name{font-weight:600;font-size:0.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.import-patient-meta{font-size:0.75rem;color:var(--text-muted)}
-.import-patient-status{padding:3px 8px;border-radius:100px;font-size:0.65rem;font-weight:600;text-transform:uppercase}
-.import-patient-check{width:20px;height:20px;background:var(--emerald);border-radius:50%;display:grid;place-items:center;flex-shrink:0}
-.import-patient-check svg{width:12px;height:12px;stroke:white;stroke-width:3}
-.import-url-input{display:flex;gap:8px}
-.import-url-input .form-input{flex:1}
-.import-hint{display:flex;align-items:flex-start;gap:10px;padding:12px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);border-radius:var(--radius-sm);margin-top:16px;font-size:0.8rem;color:var(--text-secondary)}
-.import-hint-icon{width:20px;height:20px;flex-shrink:0;color:var(--blue)}
-.import-column-mapper{margin-top:20px;display:none}
-.import-column-mapper.show{display:block}
-.import-column-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;align-items:center}
-.import-column-label{font-size:0.85rem;font-weight:500;display:flex;align-items:center;gap:8px}
-.import-column-label span{color:var(--rose);font-size:0.7rem}
-.import-detected{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
-.import-detected-tag{padding:6px 12px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:0.8rem}
-.import-detected-tag b{color:var(--gold)}
+@media(max-width:640px){.landing-title{font-size:1.75rem}.units-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(2,1fr)}.dash-user-info{display:none}.tab span{display:none}.patients-grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
 <div class="ambient"></div>
 
-<!-- LANDING PAGE -->
+<!-- LANDING -->
 <div id="landing">
   <div class="landing-logo"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
   <h1 class="landing-title">MedWard Enterprise</h1>
   <p class="landing-subtitle">Select your unit to continue</p>
-  <div class="units-grid" id="unitsGrid">
-    <!-- Default units - will be replaced by JS if it loads successfully -->
-    <div class="unit-card" data-id="neuro" style="--unit-color:#a855f7" onclick="if(typeof openAccessModal==='function')openAccessModal('neuro')">
-      <div class="unit-card-lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-      <div class="unit-card-icon">🧠</div>
-      <div class="unit-card-name">Neurology</div>
-      <div class="unit-card-desc">Stroke & Neurological Disorders</div>
-    </div>
-    <div class="unit-card" data-id="cardio" style="--unit-color:#ef4444" onclick="if(typeof openAccessModal==='function')openAccessModal('cardio')">
-      <div class="unit-card-lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-      <div class="unit-card-icon">❤️</div>
-      <div class="unit-card-name">Cardiology</div>
-      <div class="unit-card-desc">Cardiac Care Unit</div>
-    </div>
-    <div class="unit-card" data-id="icu" style="--unit-color:#f97316" onclick="if(typeof openAccessModal==='function')openAccessModal('icu')">
-      <div class="unit-card-lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-      <div class="unit-card-icon">🏥</div>
-      <div class="unit-card-name">ICU</div>
-      <div class="unit-card-desc">Intensive Care Unit</div>
-    </div>
-  </div>
-  <div class="admin-fab" id="adminFab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+  <div class="units-grid" id="unitsGrid"></div>
+  <div class="admin-fab" onclick="App.openAdminLogin()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
 </div>
 
 <!-- ACCESS MODAL -->
@@ -282,16 +165,11 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:va
   <div class="modal-box">
     <div class="modal-header">
       <div class="modal-icon" id="accessIcon">🏥</div>
-      <h2 class="modal-title" id="accessTitle">Unit Name</h2>
+      <h2 class="modal-title" id="accessTitle">Unit</h2>
       <p class="modal-subtitle">Enter 4-digit access code</p>
     </div>
     <div class="modal-body">
-      <div class="code-inputs">
-        <input type="tel" class="code-digit" maxlength="1" data-idx="0" inputmode="numeric">
-        <input type="tel" class="code-digit" maxlength="1" data-idx="1" inputmode="numeric">
-        <input type="tel" class="code-digit" maxlength="1" data-idx="2" inputmode="numeric">
-        <input type="tel" class="code-digit" maxlength="1" data-idx="3" inputmode="numeric">
-      </div>
+      <div class="code-inputs" id="codeInputs"></div>
       <p class="code-error" id="codeError">Invalid access code</p>
       <div id="userSection" style="display:none;margin-top:24px;padding-top:24px;border-top:1px solid var(--border)">
         <div class="form-group"><label class="form-label">Your Name</label><input type="text" id="userName" class="form-input" placeholder="Dr. John Smith"></div>
@@ -299,8 +177,8 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:va
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('accessModal')">Cancel</button>
-      <button class="btn btn-primary" id="enterUnitBtn" style="display:none">Enter Unit</button>
+      <button class="btn btn-secondary" onclick="App.closeModal('accessModal')">Cancel</button>
+      <button class="btn btn-primary" id="enterUnitBtn" style="display:none" onclick="App.enterUnit()">Enter Unit</button>
     </div>
   </div>
 </div>
@@ -314,208 +192,12 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:va
       <p class="modal-subtitle">Enter administrator password</p>
     </div>
     <div class="modal-body">
-      <div class="form-group"><label class="form-label">Password</label><input type="password" id="adminPassword" class="form-input" placeholder="Enter password"></div>
+      <div class="form-group"><label class="form-label">Password</label><input type="password" id="adminPwd" class="form-input" placeholder="Enter password"></div>
       <p class="code-error" id="adminError">Invalid password</p>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('adminLoginModal')">Cancel</button>
-      <button class="btn btn-primary" id="adminLoginBtn">Login</button>
-    </div>
-  </div>
-</div>
-
-<!-- UNIT MODAL -->
-<div class="modal" id="unitModal">
-  <div class="modal-box">
-    <div class="modal-header" style="text-align:left">
-      <h2 class="modal-title" id="unitModalTitle">Add Unit</h2>
-    </div>
-    <div class="modal-body">
-      <div class="form-group"><label class="form-label">Unit Name</label><input type="text" id="unitName" class="form-input" placeholder="Neurology Ward"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-        <div class="form-group"><label class="form-label">Icon</label><input type="text" id="unitIcon" class="form-input" placeholder="🏥" style="font-size:1.5rem;text-align:center"></div>
-        <div class="form-group"><label class="form-label">Code</label><input type="text" id="unitCode" class="form-input" placeholder="1234" maxlength="4" style="text-align:center;letter-spacing:4px"></div>
-      </div>
-      <div class="form-group"><label class="form-label">Description</label><input type="text" id="unitDesc" class="form-input" placeholder="Brief description"></div>
-      <div class="form-group"><label class="form-label">Sheet ID</label><input type="text" id="unitSheetId" class="form-input" placeholder="Google Sheet ID"></div>
-      <div class="form-group"><label class="form-label">Color</label><div class="color-options"><div class="color-option selected" data-color="#d4a437" style="background:#d4a437"></div><div class="color-option" data-color="#14b8a6" style="background:#14b8a6"></div><div class="color-option" data-color="#3b82f6" style="background:#3b82f6"></div><div class="color-option" data-color="#a855f7" style="background:#a855f7"></div><div class="color-option" data-color="#ef4444" style="background:#ef4444"></div><div class="color-option" data-color="#f97316" style="background:#f97316"></div><div class="color-option" data-color="#10b981" style="background:#10b981"></div><div class="color-option" data-color="#ec4899" style="background:#ec4899"></div></div></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('unitModal')">Cancel</button>
-      <button class="btn btn-primary" id="saveUnitBtn">Save</button>
-    </div>
-  </div>
-</div>
-
-<!-- PATIENT MODAL -->
-<div class="modal" id="patientModal">
-  <div class="modal-box">
-    <div class="modal-header" style="text-align:left"><h2 class="modal-title">Add Patient</h2></div>
-    <div class="modal-body">
-      <div class="form-group"><label class="form-label">Name</label><input type="text" id="patientName" class="form-input" placeholder="Full name"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-        <div class="form-group"><label class="form-label">Room</label><input type="text" id="patientRoom" class="form-input" placeholder="21-A"></div>
-        <div class="form-group"><label class="form-label">Status</label><select id="patientStatus" class="form-select"><option value="active">Active</option><option value="critical">Critical</option><option value="chronic">Chronic</option></select></div>
-      </div>
-      <div class="form-group"><label class="form-label">Diagnosis</label><textarea id="patientDiagnosis" class="form-textarea" placeholder="Primary diagnosis"></textarea></div>
-      <div class="form-group"><label class="form-label">Doctor</label><input type="text" id="patientDoctor" class="form-input" placeholder="Dr. Name"></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('patientModal')">Cancel</button>
-      <button class="btn btn-primary" id="savePatientBtn">Save</button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════ IMPORT PATIENTS MODAL ═══════════════════ -->
-<div class="modal" id="importModal">
-  <div class="modal-box import-modal-box">
-    <div class="modal-header" style="text-align:left;padding-bottom:16px;border:none">
-      <h2 class="modal-title" style="display:flex;align-items:center;gap:10px">
-        <span style="width:40px;height:40px;background:linear-gradient(135deg,var(--gold),var(--teal));border-radius:10px;display:grid;place-items:center">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        </span>
-        Import Patients
-      </h2>
-      <p class="modal-subtitle" style="margin-top:8px">Import patients from screenshots or connect to Google Sheets</p>
-    </div>
-    <div class="modal-body" style="padding-top:0">
-      <!-- Import Method Tabs -->
-      <div class="import-tabs">
-        <button class="import-tab active" data-tab="screenshot">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-          Screenshot
-        </button>
-        <button class="import-tab" data-tab="sheets">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
-          Google Sheets
-        </button>
-      </div>
-
-      <!-- Screenshot Import Panel -->
-      <div class="import-panel active" id="importPanelScreenshot">
-        <div class="import-dropzone" id="importDropzone">
-          <div class="import-dropzone-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          </div>
-          <div class="import-dropzone-title">Drop screenshot or tap to upload</div>
-          <div class="import-dropzone-sub">AI will extract patient data automatically</div>
-          <div class="import-dropzone-formats">
-            <span class="import-format-tag">PNG</span>
-            <span class="import-format-tag">JPG</span>
-            <span class="import-format-tag">HEIC</span>
-            <span class="import-format-tag">Excel Screenshot</span>
-          </div>
-          <input type="file" id="importFileInput" accept="image/*" style="display:none">
-        </div>
-
-        <!-- Preview -->
-        <div class="import-preview" id="importPreview">
-          <img id="importPreviewImg" class="import-preview-img" src="" alt="Preview">
-          <button class="btn btn-secondary btn-sm btn-full" id="importRemoveImg">✕ Remove & Upload Different</button>
-        </div>
-
-        <!-- Processing -->
-        <div class="import-processing" id="importProcessing" style="display:none">
-          <div class="import-processing-icon">
-            <div class="import-processing-spinner" id="importSpinner"></div>
-            <div class="import-processing-check" id="importCheck"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg></div>
-          </div>
-          <div class="import-status" id="importStatus">Analyzing image...</div>
-          <div class="import-substatus" id="importSubstatus">AI is extracting patient data</div>
-        </div>
-
-        <!-- Results -->
-        <div class="import-results" id="importResults">
-          <div class="import-results-header">
-            <div class="import-results-title">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--emerald)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-              Patients Detected
-            </div>
-            <span class="import-results-count" id="importCount">0</span>
-          </div>
-          <div id="importPatientsList"></div>
-        </div>
-      </div>
-
-      <!-- Google Sheets Panel -->
-      <div class="import-panel" id="importPanelSheets">
-        <div class="form-group">
-          <label class="form-label">Google Sheet URL or ID</label>
-          <div class="import-url-input">
-            <input type="text" id="importSheetUrl" class="form-input" placeholder="https://docs.google.com/spreadsheets/d/...">
-            <button class="btn btn-secondary" id="importConnectBtn">Connect</button>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Or Apps Script Web App URL</label>
-          <input type="text" id="importAppsScriptUrl" class="form-input" placeholder="https://script.google.com/macros/s/.../exec">
-        </div>
-
-        <div class="import-hint">
-          <svg class="import-hint-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-          <div>
-            <b>Setup Instructions:</b><br>
-            1. Share your Google Sheet with "Anyone with the link"<br>
-            2. Expected columns: Name, Room, Diagnosis, Status, Doctor<br>
-            3. Or deploy our Apps Script for real-time sync
-          </div>
-        </div>
-
-        <!-- Column Mapper -->
-        <div class="import-column-mapper" id="importColumnMapper">
-          <div style="font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"/></svg>
-            Map Columns
-          </div>
-          <div class="import-column-row">
-            <div class="import-column-label">Patient Name <span>*required</span></div>
-            <select id="mapColName" class="form-select"></select>
-          </div>
-          <div class="import-column-row">
-            <div class="import-column-label">Room/Bed</div>
-            <select id="mapColRoom" class="form-select"></select>
-          </div>
-          <div class="import-column-row">
-            <div class="import-column-label">Diagnosis</div>
-            <select id="mapColDiagnosis" class="form-select"></select>
-          </div>
-          <div class="import-column-row">
-            <div class="import-column-label">Status</div>
-            <select id="mapColStatus" class="form-select"></select>
-          </div>
-          <div class="import-column-row">
-            <div class="import-column-label">Doctor</div>
-            <select id="mapColDoctor" class="form-select"></select>
-          </div>
-        </div>
-
-        <!-- Sheets Processing -->
-        <div class="import-processing" id="sheetsProcessing" style="display:none">
-          <div class="import-processing-icon">
-            <div class="import-processing-spinner"></div>
-          </div>
-          <div class="import-status">Connecting to Google Sheets...</div>
-          <div class="import-substatus">Fetching patient data</div>
-        </div>
-
-        <!-- Sheets Results -->
-        <div class="import-results" id="sheetsResults">
-          <div class="import-results-header">
-            <div class="import-results-title">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--emerald)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-              Patients Found
-            </div>
-            <span class="import-results-count" id="sheetsCount">0</span>
-          </div>
-          <div id="sheetsPatientsList"></div>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('importModal')">Cancel</button>
-      <button class="btn btn-primary" id="importConfirmBtn" disabled>Import Patients</button>
+      <button class="btn btn-secondary" onclick="App.closeModal('adminLoginModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="App.loginAdmin()">Login</button>
     </div>
   </div>
 </div>
@@ -523,20 +205,20 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:va
 <!-- ADMIN PANEL -->
 <div id="adminPanel">
   <header class="admin-header">
-    <div class="dash-logo"><div class="dash-logo-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke-width="2"/></svg></div><span style="font-weight:600;margin-left:10px">MedWard</span><span class="admin-badge">ADMIN</span></div>
-    <button class="btn btn-secondary btn-sm" id="exitAdminBtn">Exit</button>
+    <div class="dash-logo"><div class="dash-logo-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke-width="2"/></svg></div><span style="font-weight:600;margin-left:8px">MedWard</span><span class="admin-badge">ADMIN</span></div>
+    <button class="btn btn-secondary btn-sm" onclick="App.exitAdmin()">Exit</button>
   </header>
   <div class="admin-content">
     <div class="admin-section">
-      <div class="admin-section-header"><h2 class="admin-section-title">🏥 Units</h2><button class="btn btn-primary btn-sm" id="addUnitBtn">+ Add</button></div>
-      <div class="admin-section-body" style="padding:0;overflow-x:auto"><table class="units-table"><thead><tr><th>Unit</th><th>Code</th><th>Actions</th></tr></thead><tbody id="unitsTableBody"></tbody></table></div>
+      <div class="admin-section-header"><h2 class="admin-section-title">🏥 Units</h2><button class="btn btn-primary btn-sm" onclick="App.addUnit()">+ Add Unit</button></div>
+      <div class="admin-section-body" style="padding:0"><table class="units-table"><thead><tr><th>Unit</th><th>Code</th><th>Actions</th></tr></thead><tbody id="unitsTableBody"></tbody></table></div>
     </div>
     <div class="admin-section">
       <div class="admin-section-header"><h2 class="admin-section-title">⚙️ Settings</h2></div>
       <div class="admin-section-body">
-        <div class="form-group"><label class="form-label">Admin Password</label><input type="password" id="newAdminPwd" class="form-input" placeholder="New password"></div>
-        <div class="form-group"><label class="form-label">API URL</label><input type="text" id="claudeApiUrl" class="form-input" placeholder="Apps Script URL"></div>
-        <button class="btn btn-primary" id="saveSettingsBtn">Save Settings</button>
+        <div class="form-group"><label class="form-label">New Admin Password</label><input type="password" id="newAdminPwd" class="form-input" placeholder="Leave blank to keep current"></div>
+        <div class="form-group"><label class="form-label">Claude API URL</label><input type="text" id="apiUrl" class="form-input" placeholder="Apps Script URL"></div>
+        <button class="btn btn-primary" onclick="App.saveSettings()">Save Settings</button>
       </div>
     </div>
   </div>
@@ -547,23 +229,25 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:va
   <header class="dash-header">
     <div class="dash-logo">
       <div class="dash-logo-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke-width="2"/></svg></div>
-      <span class="dash-unit-badge" id="dashUnitBadge">Unit</span>
+      <span class="dash-unit-badge" id="unitBadge">Unit</span>
     </div>
     <div class="dash-user">
-      <div class="dash-user-info"><div class="dash-user-name" id="dashUserName">Doctor</div><div class="dash-user-role" id="dashUserRole">Role</div></div>
-      <div class="dash-avatar" id="dashAvatar">DR</div>
-      <button class="btn-icon" id="logoutBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
+      <div class="dash-user-info"><div class="dash-user-name" id="userName2">Doctor</div><div class="dash-user-role" id="userRole2">Role</div></div>
+      <div class="dash-avatar" id="userAvatar">DR</div>
+      <button class="btn-icon" onclick="App.logout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
     </div>
   </header>
   <div class="dash-content">
-    <h1 id="dashWelcome" style="font-size:1.5rem;margin-bottom:4px">Welcome back</h1>
-    <p id="dashDate" style="color:var(--text-muted);margin-bottom:24px"></p>
+    <h1 style="font-size:1.5rem;margin-bottom:4px" id="welcomeMsg">Welcome back</h1>
+    <p style="color:var(--text-muted);margin-bottom:24px" id="dateStr"></p>
     <div class="tabs">
-      <button class="tab active" data-tab="patients"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Patients</span></button>
-      <button class="tab" data-tab="analysis"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg><span>AI Analysis</span></button>
-      <button class="tab" data-tab="scores"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span>Scores</span></button>
-      <button class="tab" data-tab="reference"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span>Reference</span></button>
+      <button class="tab active" onclick="App.showTab('patients')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Patients</span></button>
+      <button class="tab" onclick="App.showTab('analysis')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg><span>AI Analysis</span></button>
+      <button class="tab" onclick="App.showTab('scores')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span>Scores</span></button>
+      <button class="tab" onclick="App.showTab('reference')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span>Reference</span></button>
     </div>
+    
+    <!-- Patients Panel -->
     <div class="panel active" id="panelPatients">
       <div class="stats-grid">
         <div class="stat-card"><div class="stat-value" id="statTotal">0</div><div class="stat-label">Total</div></div>
@@ -572,52 +256,93 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:va
         <div class="stat-card"><div class="stat-value" id="statChronic">0</div><div class="stat-label">Chronic</div></div>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-        <h2 style="font-size:1.1rem">Patients</h2>
-        <div style="display:flex;gap:8px">
-          <button class="btn btn-secondary btn-sm" id="importPatientsBtn" style="background:linear-gradient(135deg,rgba(212,164,55,0.1),rgba(20,184,166,0.1));border-color:var(--gold)">📥 Import</button>
-          <button class="btn btn-secondary btn-sm" id="refreshPatientsBtn">↻</button>
-          <button class="btn btn-primary btn-sm" id="addPatientBtn">+ Add</button>
-        </div>
+        <h2 style="font-size:1.1rem">Unit Patients</h2>
+        <button class="btn btn-primary btn-sm" onclick="App.addPatient()">+ Add Patient</button>
       </div>
       <div class="patients-grid" id="patientsGrid"></div>
     </div>
+    
+    <!-- Analysis Panel -->
     <div class="panel" id="panelAnalysis">
       <div class="card">
-        <div class="card-header"><h3 class="card-title">Upload Images</h3></div>
+        <div class="card-header"><h3 class="card-title">📤 Upload Medical Images</h3></div>
         <div class="card-body">
-          <div class="upload-zone" id="uploadZone">
+          <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
             <div class="upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
             <div style="font-weight:600">Drop files or tap to upload</div>
-            <input type="file" class="upload-input" id="uploadInput" accept="image/*" multiple>
+            <div style="font-size:0.85rem;color:var(--text-muted)">PNG, JPG, HEIC supported</div>
           </div>
-          <div class="preview-grid" id="previewGrid"></div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header"><h3 class="card-title">Analysis Type</h3></div>
-        <div class="card-body">
+          <input type="file" id="fileInput" accept="image/*" multiple style="display:none" onchange="App.handleFiles(this.files)">
           <div class="analysis-types">
-            <div class="analysis-type active" data-type="lab"><div class="analysis-type-icon">🧪</div><div class="analysis-type-name">Labs</div></div>
-            <div class="analysis-type" data-type="xray"><div class="analysis-type-icon">🩻</div><div class="analysis-type-name">X-Ray</div></div>
-            <div class="analysis-type" data-type="ct"><div class="analysis-type-icon">🧠</div><div class="analysis-type-name">CT/MRI</div></div>
-            <div class="analysis-type" data-type="ecg"><div class="analysis-type-icon">💓</div><div class="analysis-type-name">ECG</div></div>
+            <div class="analysis-type active" onclick="App.setAnalysisType(this,'lab')"><div class="analysis-type-icon">🧪</div><div class="analysis-type-name">Labs</div></div>
+            <div class="analysis-type" onclick="App.setAnalysisType(this,'xray')"><div class="analysis-type-icon">🩻</div><div class="analysis-type-name">X-Ray</div></div>
+            <div class="analysis-type" onclick="App.setAnalysisType(this,'ct')"><div class="analysis-type-icon">🧠</div><div class="analysis-type-name">CT/MRI</div></div>
+            <div class="analysis-type" onclick="App.setAnalysisType(this,'ecg')"><div class="analysis-type-icon">💓</div><div class="analysis-type-name">ECG</div></div>
           </div>
         </div>
       </div>
-      <button class="btn btn-primary btn-lg btn-full" id="analyzeBtn" disabled>🤖 Analyze</button>
-      <div class="analysis-progress" id="analysisProgress"><div class="progress-spinner"></div><div>Analyzing...</div><div id="progressStatus" style="color:var(--text-muted);font-size:0.85rem"></div></div>
-      <div class="analysis-results" id="analysisResults">
-        <div class="result-header"><h3 class="result-title">✓ Complete</h3><span class="result-badge" id="resultBadge">AI</span></div>
-        <div id="resultsContent"></div>
-        <button class="btn btn-secondary btn-full" id="newAnalysisBtn" style="margin-top:16px">New Analysis</button>
-      </div>
+      <button class="btn btn-primary btn-lg btn-full" id="analyzeBtn" disabled onclick="App.analyze()">🤖 Analyze with Claude AI</button>
+      <div id="analysisResults" style="margin-top:20px"></div>
     </div>
+    
+    <!-- Scores Panel -->
     <div class="panel" id="panelScores">
-      <div class="card"><div class="card-header"><h3 class="card-title">Clinical Scores</h3></div><div class="card-body"><div class="scores-grid" id="scoresGrid"></div></div></div>
+      <div class="card"><div class="card-header"><h3 class="card-title">Clinical Calculators</h3></div><div class="card-body"><div class="scores-grid" id="scoresGrid"></div></div></div>
       <div id="calcArea"></div>
     </div>
+    
+    <!-- Reference Panel -->
     <div class="panel" id="panelReference">
-      <div class="card"><div class="card-header"><h3 class="card-title">Quick Reference</h3></div><div class="card-body"><div class="ref-filters" id="refFilters"></div><div class="ref-grid" id="refGrid"></div></div></div>
+      <div class="card"><div class="card-header"><h3 class="card-title">Quick Reference</h3></div><div class="card-body"><div class="ref-grid" id="refGrid"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- PATIENT MODAL -->
+<div class="modal" id="patientModal">
+  <div class="modal-box">
+    <div class="modal-header" style="text-align:left"><h2 class="modal-title">Add Patient</h2></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Name</label><input type="text" id="ptName" class="form-input" placeholder="Full name"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="form-group"><label class="form-label">Room</label><input type="text" id="ptRoom" class="form-input" placeholder="21-A"></div>
+        <div class="form-group"><label class="form-label">Status</label><select id="ptStatus" class="form-select"><option value="active">Active</option><option value="critical">Critical</option><option value="chronic">Chronic</option></select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Diagnosis</label><textarea id="ptDiagnosis" class="form-textarea" placeholder="Primary diagnosis"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="App.closeModal('patientModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="App.savePatient()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- UNIT MODAL -->
+<div class="modal" id="unitModal">
+  <div class="modal-box">
+    <div class="modal-header" style="text-align:left"><h2 class="modal-title" id="unitModalTitle">Add Unit</h2></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Unit Name</label><input type="text" id="unitName" class="form-input" placeholder="Neurology Ward"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="form-group"><label class="form-label">Icon</label><input type="text" id="unitIcon" class="form-input" value="🏥" style="font-size:1.5rem;text-align:center"></div>
+        <div class="form-group"><label class="form-label">Code (4 digits)</label><input type="text" id="unitCode" class="form-input" placeholder="1234" maxlength="4" style="text-align:center;letter-spacing:4px"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Description</label><input type="text" id="unitDesc" class="form-input" placeholder="Brief description"></div>
+      <div class="form-group"><label class="form-label">Color</label>
+        <div class="color-options">
+          <div class="color-option selected" style="background:#d4a437" onclick="App.selectColor(this)"></div>
+          <div class="color-option" style="background:#14b8a6" onclick="App.selectColor(this)"></div>
+          <div class="color-option" style="background:#3b82f6" onclick="App.selectColor(this)"></div>
+          <div class="color-option" style="background:#a855f7" onclick="App.selectColor(this)"></div>
+          <div class="color-option" style="background:#ef4444" onclick="App.selectColor(this)"></div>
+          <div class="color-option" style="background:#f97316" onclick="App.selectColor(this)"></div>
+          <div class="color-option" style="background:#10b981" onclick="App.selectColor(this)"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="App.closeModal('unitModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="App.saveUnit()">Save</button>
     </div>
   </div>
 </div>
@@ -625,42 +350,37 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:va
 <div class="toast" id="toast"></div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════════════
-// MEDWARD ENTERPRISE - COMPLETE APPLICATION
-// ═══════════════════════════════════════════════════════════════════════
-
-(function() {
-  'use strict';
-
-  // CONFIG
+// MedWard Enterprise Application
+var App = (function() {
+  
+  // Configuration
   var CONFIG = {
-    STORAGE_KEY: 'medward_v4',
-    DEFAULT_ADMIN_PWD: 'admin123',
-    DEFAULT_API: 'https://script.google.com/macros/s/AKfycbxjp-KDUx_eYvavlEHDciE-fR1V8eFM39vJfAcA7btETL-QUmrwuYU-_92_Pl20gl75kg/exec'
+    STORAGE_KEY: 'medward_v5',
+    ADMIN_PWD: 'admin123',
+    API_URL: 'https://script.google.com/macros/s/AKfycbxjp-KDUx_eYvavlEHDciE-fR1V8eFM39vJfAcA7btETL-QUmrwuYU-_92_Pl20gl75kg/exec'
   };
-
-  // DEFAULT UNITS
+  
+  // Default Units
   var DEFAULT_UNITS = [
-    { id: 'neuro', name: 'Neurology', icon: '🧠', desc: 'Stroke & Neurological Disorders', code: '1234', color: '#a855f7', sheetId: '' },
-    { id: 'cardio', name: 'Cardiology', icon: '❤️', desc: 'Cardiac Care Unit', code: '5678', color: '#ef4444', sheetId: '' },
-    { id: 'icu', name: 'ICU', icon: '🏥', desc: 'Intensive Care Unit', code: '9012', color: '#f97316', sheetId: '' }
+    { id: 'neuro', name: 'Neurology', icon: '🧠', desc: 'Stroke & Neurological Disorders', code: '1234', color: '#a855f7' },
+    { id: 'cardio', name: 'Cardiology', icon: '❤️', desc: 'Cardiac Care Unit', code: '5678', color: '#ef4444' },
+    { id: 'icu', name: 'ICU', icon: '🏥', desc: 'Intensive Care Unit', code: '9012', color: '#f97316' }
   ];
-
-  // STATE
+  
+  // State
   var state = {
     units: [],
-    settings: { adminPassword: CONFIG.DEFAULT_ADMIN_PWD, claudeApiUrl: CONFIG.DEFAULT_API },
+    settings: { adminPassword: CONFIG.ADMIN_PWD, apiUrl: CONFIG.API_URL },
     currentUnit: null,
     currentUser: null,
     patients: [],
+    selectedUnitId: null,
+    editingUnitId: null,
     analysisType: 'lab',
-    uploadedFiles: [],
-    uploadedBase64s: [],
-    activeScore: null,
-    scores: {}
+    uploadedImages: []
   };
-
-  // UTILITIES
+  
+  // Helpers
   function $(id) { return document.getElementById(id); }
   function $$(sel) { return document.querySelectorAll(sel); }
   
@@ -670,367 +390,299 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:va
     t.className = 'toast show' + (isError ? ' error' : '');
     setTimeout(function() { t.className = 'toast'; }, 3000);
   }
-
+  
   function initials(name) {
     if (!name) return '?';
-    var p = name.trim().split(/\s+/);
-    return p.length >= 2 ? (p[0][0] + p[p.length-1][0]).toUpperCase() : name.substring(0,2).toUpperCase();
+    var parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+    return name.substring(0, 2).toUpperCase();
   }
-
-  function closeModal(id) { $(id).classList.remove('active'); }
-  function openModal(id) { $(id).classList.add('active'); }
-
-  // STORAGE
-  function saveState() {
+  
+  // Storage
+  function save() {
     try {
-      localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify({ units: state.units, settings: state.settings }));
-    } catch(e) { console.warn('Save failed:', e); }
+      localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify({
+        units: state.units,
+        settings: state.settings
+      }));
+    } catch(e) {}
   }
-
-  function loadState() {
-    // Always start with defaults
+  
+  function load() {
     state.units = DEFAULT_UNITS.slice();
-    state.settings = { 
-      adminPassword: CONFIG.DEFAULT_ADMIN_PWD, 
-      claudeApiUrl: CONFIG.DEFAULT_API 
-    };
+    state.settings = { adminPassword: CONFIG.ADMIN_PWD, apiUrl: CONFIG.API_URL };
     
     try {
-      var saved = localStorage.getItem(CONFIG.STORAGE_KEY);
-      if (saved) {
-        var data = JSON.parse(saved);
-        if (data.units && Array.isArray(data.units) && data.units.length > 0) {
-          state.units = data.units;
-        }
-        if (data.settings) {
-          if (data.settings.adminPassword) {
-            state.settings.adminPassword = data.settings.adminPassword;
-          }
-          if (data.settings.claudeApiUrl) {
-            state.settings.claudeApiUrl = data.settings.claudeApiUrl;
-          }
-        }
+      var data = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEY));
+      if (data && data.units && data.units.length) state.units = data.units;
+      if (data && data.settings) {
+        state.settings.adminPassword = data.settings.adminPassword || CONFIG.ADMIN_PWD;
+        state.settings.apiUrl = data.settings.apiUrl || CONFIG.API_URL;
       }
-    } catch(e) {
-      console.warn('Load failed, using defaults:', e);
-    }
-    
-    console.log('[MedWard] Loaded ' + state.units.length + ' units');
-    console.log('[MedWard] Admin password set:', state.settings.adminPassword ? 'yes' : 'no');
+    } catch(e) {}
   }
-
-  // RENDER UNITS - Called on page load
+  
+  // Modals
+  function openModal(id) { $(id).classList.add('active'); }
+  function closeModal(id) { $(id).classList.remove('active'); }
+  
+  // Units
   function renderUnits() {
-    console.log('[MedWard] renderUnits called');
-    var grid = document.getElementById('unitsGrid');
-    
-    if (!grid) { 
-      console.error('[MedWard] unitsGrid element not found!'); 
-      return; 
-    }
-    
-    // Ensure we have units
-    if (!state.units || state.units.length === 0) {
-      console.log('[MedWard] No units in state, using defaults');
-      state.units = DEFAULT_UNITS.slice();
-    }
-    
-    console.log('[MedWard] Rendering ' + state.units.length + ' units:', state.units);
-    
+    var grid = $('unitsGrid');
     var html = '';
+    
     for (var i = 0; i < state.units.length; i++) {
       var u = state.units[i];
-      html += '<div class="unit-card" data-id="' + u.id + '" style="--unit-color:' + u.color + '">' +
+      html += '<div class="unit-card" style="--unit-color:' + u.color + '" onclick="App.openUnit(\'' + u.id + '\')">' +
         '<div class="unit-card-lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>' +
         '<div class="unit-card-icon">' + u.icon + '</div>' +
         '<div class="unit-card-name">' + u.name + '</div>' +
-        '<div class="unit-card-desc">' + (u.desc || 'No description') + '</div>' +
+        '<div class="unit-card-desc">' + (u.desc || '') + '</div>' +
       '</div>';
     }
     
     grid.innerHTML = html;
-    console.log('[MedWard] Grid HTML set, length: ' + html.length);
-    
-    // Attach click handlers
-    var cards = document.querySelectorAll('.unit-card');
-    console.log('[MedWard] Found ' + cards.length + ' unit cards');
-    
-    for (var j = 0; j < cards.length; j++) {
-      (function(card) {
-        card.onclick = function() { 
-          var id = card.getAttribute('data-id');
-          console.log('[MedWard] Card clicked:', id);
-          openAccessModal(id); 
-        };
-      })(cards[j]);
-    }
   }
-
-  // ACCESS MODAL
-  var selectedUnitId = null;
-
-  function openAccessModal(unitId) {
+  
+  function openUnit(unitId) {
     var unit = null;
     for (var i = 0; i < state.units.length; i++) {
       if (state.units[i].id === unitId) { unit = state.units[i]; break; }
     }
     if (!unit) return;
     
-    selectedUnitId = unitId;
+    state.selectedUnitId = unitId;
     $('accessIcon').textContent = unit.icon;
     $('accessTitle').textContent = unit.name;
     $('codeError').classList.remove('show');
     $('userSection').style.display = 'none';
     $('enterUnitBtn').style.display = 'none';
     
-    var digits = $$('.code-digit');
-    for (var i = 0; i < digits.length; i++) {
-      digits[i].value = '';
-      digits[i].disabled = false;
-      digits[i].classList.remove('error', 'success');
+    // Create code inputs
+    var html = '';
+    for (var j = 0; j < 4; j++) {
+      html += '<input type="tel" class="code-digit" maxlength="1" data-idx="' + j + '" inputmode="numeric">';
     }
+    $('codeInputs').innerHTML = html;
     
-    openModal('accessModal');
-    document.querySelector('.code-digit[data-idx="0"]').focus();
-  }
-
-  function setupCodeInputs() {
+    // Setup code input handlers
     var inputs = $$('.code-digit');
-    for (var i = 0; i < inputs.length; i++) {
+    for (var k = 0; k < inputs.length; k++) {
       (function(idx, inp) {
-        inp.oninput = function(e) {
-          var val = e.target.value.replace(/\D/g, '');
-          e.target.value = val;
+        inp.oninput = function() {
+          var val = inp.value.replace(/\D/g, '');
+          inp.value = val;
           if (val && idx < 3) inputs[idx + 1].focus();
+          
+          // Check code
           var code = '';
-          for (var j = 0; j < inputs.length; j++) code += inputs[j].value;
-          if (code.length === 4) validateCode(code);
+          for (var m = 0; m < inputs.length; m++) code += inputs[m].value;
+          if (code.length === 4) {
+            if (code === unit.code) {
+              for (var n = 0; n < inputs.length; n++) {
+                inputs[n].classList.add('success');
+                inputs[n].disabled = true;
+              }
+              $('codeError').classList.remove('show');
+              $('userSection').style.display = 'block';
+              $('enterUnitBtn').style.display = 'flex';
+              $('userName').focus();
+            } else {
+              $('codeError').classList.add('show');
+              for (var p = 0; p < inputs.length; p++) inputs[p].classList.add('error');
+              setTimeout(function() {
+                for (var q = 0; q < inputs.length; q++) inputs[q].classList.remove('error');
+              }, 400);
+            }
+          }
         };
         inp.onkeydown = function(e) {
           if (e.key === 'Backspace' && !inp.value && idx > 0) inputs[idx - 1].focus();
         };
-      })(i, inputs[i]);
+      })(k, inputs[k]);
     }
-  }
-
-  function validateCode(code) {
-    var unit = null;
-    for (var i = 0; i < state.units.length; i++) {
-      if (state.units[i].id === selectedUnitId) { unit = state.units[i]; break; }
-    }
-    if (!unit) return;
     
-    var digits = $$('.code-digit');
-    if (code === unit.code) {
-      for (var i = 0; i < digits.length; i++) {
-        digits[i].disabled = true;
-        digits[i].classList.add('success');
-      }
-      $('userSection').style.display = 'block';
-      $('enterUnitBtn').style.display = 'flex';
-      $('userName').focus();
-      $('codeError').classList.remove('show');
-    } else {
-      $('codeError').classList.add('show');
-      for (var i = 0; i < digits.length; i++) {
-        digits[i].classList.add('error');
-        setTimeout(function(d) { return function() { d.classList.remove('error'); }; }(digits[i]), 400);
-      }
-    }
+    openModal('accessModal');
+    setTimeout(function() { inputs[0].focus(); }, 100);
   }
-
+  
   function enterUnit() {
     var name = $('userName').value.trim();
     var role = $('userRole').value;
+    
     if (!name) { toast('Please enter your name', true); return; }
     
     for (var i = 0; i < state.units.length; i++) {
-      if (state.units[i].id === selectedUnitId) {
+      if (state.units[i].id === state.selectedUnitId) {
         state.currentUnit = state.units[i];
         break;
       }
     }
     state.currentUser = { name: name, role: role };
+    
     closeModal('accessModal');
     showDashboard();
   }
-
-  // Expose closeModal globally
-  window.closeModal = closeModal;
-
-  // ADMIN
+  
+  // Admin
   function openAdminLogin() {
-    $('adminPassword').value = '';
+    $('adminPwd').value = '';
     $('adminError').classList.remove('show');
     openModal('adminLoginModal');
-    $('adminPassword').focus();
+    setTimeout(function() { $('adminPwd').focus(); }, 100);
   }
-
+  
   function loginAdmin() {
-    var enteredPwd = $('adminPassword').value;
-    var correctPwd = state.settings.adminPassword || CONFIG.DEFAULT_ADMIN_PWD;
-    
-    console.log('[MedWard] Login attempt - entered:', enteredPwd, 'expected:', correctPwd);
-    
-    if (enteredPwd === correctPwd) {
+    var pwd = $('adminPwd').value;
+    if (pwd === state.settings.adminPassword) {
       closeModal('adminLoginModal');
       showAdminPanel();
     } else {
       $('adminError').classList.add('show');
     }
   }
-
+  
   function showAdminPanel() {
     $('landing').classList.add('hidden');
     $('adminPanel').classList.add('active');
+    $('apiUrl').value = state.settings.apiUrl || '';
     renderUnitsTable();
-    $('claudeApiUrl').value = state.settings.claudeApiUrl || '';
   }
-
+  
   function exitAdmin() {
     $('adminPanel').classList.remove('active');
     $('landing').classList.remove('hidden');
   }
-
+  
   function renderUnitsTable() {
-    var tbody = $('unitsTableBody');
-    if (!state.units.length) {
-      tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:40px">No units</td></tr>';
-      return;
-    }
     var html = '';
     for (var i = 0; i < state.units.length; i++) {
       var u = state.units[i];
-      html += '<tr><td><span style="margin-right:10px;font-size:1.25rem">' + u.icon + '</span><b>' + u.name + '</b></td>' +
-        '<td><code style="background:var(--bg-elevated);padding:4px 10px;border-radius:6px">' + u.code + '</code></td>' +
-        '<td><div style="display:flex;gap:8px"><button class="btn-icon" onclick="MW.editUnit(\'' + u.id + '\')">✏️</button><button class="btn-icon" onclick="MW.deleteUnit(\'' + u.id + '\')">🗑️</button></div></td></tr>';
+      html += '<tr><td>' + u.icon + ' <b>' + u.name + '</b></td><td><code style="background:var(--bg-elevated);padding:4px 10px;border-radius:6px">' + u.code + '</code></td><td><button class="btn-icon" onclick="App.editUnit(\'' + u.id + '\')">✏️</button> <button class="btn-icon" onclick="App.deleteUnit(\'' + u.id + '\')">🗑️</button></td></tr>';
     }
-    tbody.innerHTML = html;
+    $('unitsTableBody').innerHTML = html || '<tr><td colspan="3" style="text-align:center;padding:40px;color:var(--text-muted)">No units</td></tr>';
   }
-
-  var editingUnitId = null;
-
-  function openUnitModal(unitId) {
-    editingUnitId = unitId || null;
-    if (unitId) {
-      var u = null;
-      for (var i = 0; i < state.units.length; i++) {
-        if (state.units[i].id === unitId) { u = state.units[i]; break; }
-      }
-      if (!u) return;
-      $('unitModalTitle').textContent = 'Edit Unit';
-      $('unitName').value = u.name;
-      $('unitIcon').value = u.icon;
-      $('unitCode').value = u.code;
-      $('unitDesc').value = u.desc || '';
-      $('unitSheetId').value = u.sheetId || '';
-    } else {
-      $('unitModalTitle').textContent = 'Add Unit';
-      $('unitName').value = '';
-      $('unitIcon').value = '🏥';
-      $('unitCode').value = '';
-      $('unitDesc').value = '';
-      $('unitSheetId').value = '';
-    }
+  
+  function addUnit() {
+    state.editingUnitId = null;
+    $('unitModalTitle').textContent = 'Add Unit';
+    $('unitName').value = '';
+    $('unitIcon').value = '🏥';
+    $('unitCode').value = '';
+    $('unitDesc').value = '';
     openModal('unitModal');
   }
-
+  
+  function editUnit(id) {
+    var unit = null;
+    for (var i = 0; i < state.units.length; i++) {
+      if (state.units[i].id === id) { unit = state.units[i]; break; }
+    }
+    if (!unit) return;
+    
+    state.editingUnitId = id;
+    $('unitModalTitle').textContent = 'Edit Unit';
+    $('unitName').value = unit.name;
+    $('unitIcon').value = unit.icon;
+    $('unitCode').value = unit.code;
+    $('unitDesc').value = unit.desc || '';
+    openModal('unitModal');
+  }
+  
   function saveUnit() {
     var name = $('unitName').value.trim();
     var icon = $('unitIcon').value.trim() || '🏥';
     var code = $('unitCode').value.trim();
     var desc = $('unitDesc').value.trim();
-    var sheetId = $('unitSheetId').value.trim();
     var colorEl = document.querySelector('.color-option.selected');
-    var color = colorEl ? colorEl.getAttribute('data-color') : '#d4a437';
+    var color = colorEl ? colorEl.style.background : '#d4a437';
     
-    if (!name || !code) { toast('Name and code required', true); return; }
+    if (!name) { toast('Unit name required', true); return; }
     if (!/^\d{4}$/.test(code)) { toast('Code must be 4 digits', true); return; }
     
-    if (editingUnitId) {
+    if (state.editingUnitId) {
       for (var i = 0; i < state.units.length; i++) {
-        if (state.units[i].id === editingUnitId) {
-          state.units[i] = { id: editingUnitId, name: name, icon: icon, code: code, desc: desc, sheetId: sheetId, color: color };
+        if (state.units[i].id === state.editingUnitId) {
+          state.units[i] = { id: state.editingUnitId, name: name, icon: icon, code: code, desc: desc, color: color };
           break;
         }
       }
+      toast('Unit updated!');
     } else {
-      var id = name.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now();
-      state.units.push({ id: id, name: name, icon: icon, code: code, desc: desc, sheetId: sheetId, color: color });
+      state.units.push({ id: 'unit-' + Date.now(), name: name, icon: icon, code: code, desc: desc, color: color });
+      toast('Unit created!');
     }
     
-    saveState();
+    save();
     renderUnitsTable();
     renderUnits();
     closeModal('unitModal');
-    toast(editingUnitId ? 'Unit updated!' : 'Unit created!');
   }
-
-  function deleteUnit(unitId) {
+  
+  function deleteUnit(id) {
     if (!confirm('Delete this unit?')) return;
-    state.units = state.units.filter(function(u) { return u.id !== unitId; });
-    saveState();
+    state.units = state.units.filter(function(u) { return u.id !== id; });
+    save();
     renderUnitsTable();
     renderUnits();
     toast('Unit deleted');
   }
-
+  
+  function selectColor(el) {
+    var all = $$('.color-option');
+    for (var i = 0; i < all.length; i++) all[i].classList.remove('selected');
+    el.classList.add('selected');
+  }
+  
   function saveSettings() {
     var pwd = $('newAdminPwd').value.trim();
-    var url = $('claudeApiUrl').value.trim();
+    var url = $('apiUrl').value.trim();
     if (pwd) state.settings.adminPassword = pwd;
-    if (url) state.settings.claudeApiUrl = url;
-    saveState();
+    if (url) state.settings.apiUrl = url;
+    save();
     toast('Settings saved!');
     $('newAdminPwd').value = '';
   }
-
-  // DASHBOARD
+  
+  // Dashboard
   function showDashboard() {
     $('landing').classList.add('hidden');
     $('dashboard').classList.add('active');
+    
     var u = state.currentUnit;
-    $('dashUnitBadge').textContent = u.name;
-    $('dashUnitBadge').style.cssText = 'border:1px solid ' + u.color + ';color:' + u.color + ';background:' + u.color + '20';
-    $('dashUserName').textContent = state.currentUser.name;
-    $('dashUserRole').textContent = state.currentUser.role;
-    $('dashAvatar').textContent = initials(state.currentUser.name);
-    $('dashWelcome').textContent = 'Welcome, Dr. ' + state.currentUser.name.split(' ')[0];
-    $('dashDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    setupTabs();
+    $('unitBadge').textContent = u.name;
+    $('unitBadge').style.cssText = 'border:1px solid ' + u.color + ';color:' + u.color + ';background:' + u.color + '20';
+    $('userName2').textContent = state.currentUser.name;
+    $('userRole2').textContent = state.currentUser.role;
+    $('userAvatar').textContent = initials(state.currentUser.name);
+    $('welcomeMsg').textContent = 'Welcome, Dr. ' + state.currentUser.name.split(' ')[0];
+    $('dateStr').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    
     loadPatients();
     renderScores();
     renderRefs();
-    setupUpload();
     toast('Entered ' + u.name);
   }
-
+  
   function logout() {
     state.currentUnit = null;
     state.currentUser = null;
-    state.patients = [];
     $('dashboard').classList.remove('active');
     $('landing').classList.remove('hidden');
   }
-
-  function setupTabs() {
+  
+  function showTab(tabName) {
     var tabs = $$('.tab');
-    for (var i = 0; i < tabs.length; i++) {
-      (function(tab) {
-        tab.onclick = function() {
-          var allTabs = $$('.tab');
-          var allPanels = $$('.panel');
-          for (var j = 0; j < allTabs.length; j++) allTabs[j].classList.remove('active');
-          for (var k = 0; k < allPanels.length; k++) allPanels[k].classList.remove('active');
-          tab.classList.add('active');
-          var panelId = 'panel' + tab.getAttribute('data-tab').charAt(0).toUpperCase() + tab.getAttribute('data-tab').slice(1);
-          $(panelId).classList.add('active');
-        };
-      })(tabs[i]);
-    }
+    var panels = $$('.panel');
+    
+    for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+    for (var j = 0; j < panels.length; j++) panels[j].classList.remove('active');
+    
+    event.currentTarget.classList.add('active');
+    $('panel' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
   }
-
-  // PATIENTS
+  
+  // Patients
   function loadPatients() {
     state.patients = [
       { id: 1, name: 'Ahmed Al-Rashid', room: '21-A', diagnosis: 'Acute Ischemic Stroke - MCA territory', status: 'critical', doctor: 'Dr. Fathy' },
@@ -1039,808 +691,161 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:va
     ];
     renderPatients();
   }
-
+  
   function renderPatients() {
-    var grid = $('patientsGrid');
-    if (!state.patients.length) {
-      grid.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:60px;grid-column:1/-1">No patients</div>';
-    } else {
-      var html = '';
-      for (var i = 0; i < state.patients.length; i++) {
-        var p = state.patients[i];
-        html += '<div class="patient-card ' + p.status + '">' +
-          '<div class="patient-header"><div class="patient-avatar">' + initials(p.name) + '</div><div><div class="patient-name">' + p.name + '</div><div class="patient-meta">Room ' + p.room + ' • ' + p.doctor + '</div></div><span class="patient-status ' + p.status + '">' + p.status + '</span></div>' +
-          '<div class="patient-diagnosis">' + p.diagnosis + '</div>' +
-          '<div class="patient-actions"><button class="btn btn-secondary">View</button><button class="btn btn-primary">Rounds</button></div></div>';
-      }
-      grid.innerHTML = html;
+    var html = '';
+    for (var i = 0; i < state.patients.length; i++) {
+      var p = state.patients[i];
+      html += '<div class="patient-card ' + p.status + '">' +
+        '<div class="patient-header"><div class="patient-avatar">' + initials(p.name) + '</div><div><div class="patient-name">' + p.name + '</div><div class="patient-meta">Room ' + p.room + ' • ' + p.doctor + '</div></div><span class="patient-status ' + p.status + '">' + p.status + '</span></div>' +
+        '<div class="patient-diagnosis">' + p.diagnosis + '</div>' +
+        '<div class="patient-actions"><button class="btn btn-secondary">View</button><button class="btn btn-primary">Rounds</button></div></div>';
     }
+    $('patientsGrid').innerHTML = html || '<div style="text-align:center;padding:60px;color:var(--text-muted)">No patients</div>';
+    
     $('statTotal').textContent = state.patients.length;
     $('statActive').textContent = state.patients.filter(function(p) { return p.status === 'active'; }).length;
     $('statCritical').textContent = state.patients.filter(function(p) { return p.status === 'critical'; }).length;
     $('statChronic').textContent = state.patients.filter(function(p) { return p.status === 'chronic'; }).length;
   }
-
-  function openPatientModal() {
-    $('patientName').value = '';
-    $('patientRoom').value = '';
-    $('patientDiagnosis').value = '';
-    $('patientDoctor').value = state.currentUser ? state.currentUser.name : '';
-    $('patientStatus').value = 'active';
-    openModal('patientModal');
-  }
-
+  
+  function addPatient() { openModal('patientModal'); }
+  
   function savePatient() {
-    var name = $('patientName').value.trim();
+    var name = $('ptName').value.trim();
     if (!name) { toast('Patient name required', true); return; }
+    
     state.patients.push({
       id: Date.now(),
       name: name,
-      room: $('patientRoom').value.trim() || '—',
-      diagnosis: $('patientDiagnosis').value.trim() || 'No diagnosis',
-      status: $('patientStatus').value,
-      doctor: $('patientDoctor').value.trim() || 'Unassigned'
+      room: $('ptRoom').value.trim() || '—',
+      diagnosis: $('ptDiagnosis').value.trim() || 'Pending evaluation',
+      status: $('ptStatus').value,
+      doctor: state.currentUser ? state.currentUser.name : 'Unassigned'
     });
+    
     renderPatients();
     closeModal('patientModal');
+    $('ptName').value = '';
+    $('ptRoom').value = '';
+    $('ptDiagnosis').value = '';
     toast('Patient added!');
   }
-
-  // ═══════════════════════════════════════════════════════════════════════
-  // PATIENT IMPORT SYSTEM - AI-Powered Screenshot & Google Sheets Import
-  // ═══════════════════════════════════════════════════════════════════════
   
-  var importState = {
-    imageBase64: null,
-    detectedPatients: [],
-    sheetsPatients: [],
-    activeTab: 'screenshot',
-    sheetColumns: []
-  };
-
-  function openImportModal() {
-    // Reset state
-    importState.imageBase64 = null;
-    importState.detectedPatients = [];
-    importState.sheetsPatients = [];
-    
-    // Reset UI
-    $('importDropzone').style.display = 'block';
-    $('importPreview').classList.remove('show');
-    $('importProcessing').style.display = 'none';
-    $('importResults').classList.remove('show');
-    $('sheetsProcessing').style.display = 'none';
-    $('sheetsResults').classList.remove('show');
-    $('importColumnMapper').classList.remove('show');
-    $('importConfirmBtn').disabled = true;
-    $('importSheetUrl').value = '';
-    $('importAppsScriptUrl').value = '';
-    
-    // Set active tab
-    var tabs = $$('.import-tab');
-    for (var i = 0; i < tabs.length; i++) {
-      tabs[i].classList.toggle('active', tabs[i].getAttribute('data-tab') === 'screenshot');
-    }
-    var panels = $$('.import-panel');
-    for (var j = 0; j < panels.length; j++) {
-      panels[j].classList.toggle('active', panels[j].id === 'importPanelScreenshot');
-    }
-    
-    openModal('importModal');
+  // Analysis
+  function setAnalysisType(el, type) {
+    var all = $$('.analysis-type');
+    for (var i = 0; i < all.length; i++) all[i].classList.remove('active');
+    el.classList.add('active');
+    state.analysisType = type;
   }
-
-  function setupImportSystem() {
-    // Tab switching
-    var tabs = $$('.import-tab');
-    for (var i = 0; i < tabs.length; i++) {
-      (function(tab) {
-        tab.onclick = function() {
-          var tabId = tab.getAttribute('data-tab');
-          importState.activeTab = tabId;
-          
-          var allTabs = $$('.import-tab');
-          for (var j = 0; j < allTabs.length; j++) allTabs[j].classList.remove('active');
-          tab.classList.add('active');
-          
-          var allPanels = $$('.import-panel');
-          for (var k = 0; k < allPanels.length; k++) {
-            allPanels[k].classList.toggle('active', allPanels[k].id === 'importPanel' + tabId.charAt(0).toUpperCase() + tabId.slice(1));
-          }
-        };
-      })(tabs[i]);
-    }
-    
-    // Dropzone
-    var dropzone = $('importDropzone');
-    var fileInput = $('importFileInput');
-    
-    dropzone.onclick = function() { fileInput.click(); };
-    dropzone.ondragover = function(e) { e.preventDefault(); dropzone.classList.add('dragover'); };
-    dropzone.ondragleave = function() { dropzone.classList.remove('dragover'); };
-    dropzone.ondrop = function(e) {
-      e.preventDefault();
-      dropzone.classList.remove('dragover');
-      if (e.dataTransfer.files.length) handleImportFile(e.dataTransfer.files[0]);
-    };
-    
-    fileInput.onchange = function() {
-      if (fileInput.files.length) handleImportFile(fileInput.files[0]);
-    };
-    
-    // Remove image
-    $('importRemoveImg').onclick = function() {
-      importState.imageBase64 = null;
-      importState.detectedPatients = [];
-      $('importDropzone').style.display = 'block';
-      $('importPreview').classList.remove('show');
-      $('importResults').classList.remove('show');
-      $('importConfirmBtn').disabled = true;
-      $('importFileInput').value = '';
-    };
-    
-    // Google Sheets connect
-    $('importConnectBtn').onclick = connectToGoogleSheets;
-    
-    // Confirm import
-    $('importConfirmBtn').onclick = confirmImport;
-  }
-
-  function handleImportFile(file) {
-    if (!file.type.startsWith('image/')) {
-      toast('Please upload an image file', true);
-      return;
-    }
-    
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      importState.imageBase64 = e.target.result;
-      
-      // Show preview
-      $('importDropzone').style.display = 'none';
-      $('importPreviewImg').src = e.target.result;
-      $('importPreview').classList.add('show');
-      
-      // Start AI analysis
-      analyzeImportImage();
-    };
-    reader.readAsDataURL(file);
-  }
-
-  function analyzeImportImage() {
-    // Show processing
-    $('importPreview').classList.remove('show');
-    $('importProcessing').style.display = 'block';
-    $('importSpinner').style.display = 'block';
-    $('importCheck').classList.remove('show');
-    $('importStatus').textContent = 'Analyzing screenshot...';
-    $('importSubstatus').textContent = 'AI is extracting patient data';
-    
-    // Simulate progressive status updates
-    var statusMessages = [
-      { status: 'Detecting table structure...', sub: 'Finding rows and columns' },
-      { status: 'Extracting text...', sub: 'Reading patient information' },
-      { status: 'Parsing patient data...', sub: 'Organizing into records' },
-      { status: 'Validating entries...', sub: 'Checking data integrity' }
-    ];
-    
-    var msgIndex = 0;
-    var statusInterval = setInterval(function() {
-      msgIndex++;
-      if (msgIndex < statusMessages.length) {
-        $('importStatus').textContent = statusMessages[msgIndex].status;
-        $('importSubstatus').textContent = statusMessages[msgIndex].sub;
-      }
-    }, 800);
-    
-    // Call AI API
-    fetch(state.settings.claudeApiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({
-        action: 'extractPatients',
-        image: importState.imageBase64,
-        provider: 'claude'
-      })
-    })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      clearInterval(statusInterval);
-      handleImportResult(data);
-    })
-    .catch(function(err) {
-      clearInterval(statusInterval);
-      // Fallback: try to parse with simpler OCR request
-      fallbackOCRParse();
-    });
-  }
-
-  function fallbackOCRParse() {
-    // Send as general image interpretation
-    fetch(state.settings.claudeApiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({
-        action: 'interpret',
-        documentType: 'patientList',
-        image: importState.imageBase64,
-        provider: 'claude',
-        customPrompt: 'Extract all patient information from this image. Look for patient names, room numbers, bed numbers, diagnoses, and status. Return as a structured list. Format each patient as: NAME | ROOM | DIAGNOSIS | STATUS | DOCTOR'
-      })
-    })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      handleImportResult(data);
-    })
-    .catch(function() {
-      showImportError('Failed to analyze image. Please try again.');
-    });
-  }
-
-  function handleImportResult(data) {
-    $('importSpinner').style.display = 'none';
-    $('importCheck').classList.add('show');
-    $('importStatus').textContent = 'Analysis complete!';
-    $('importSubstatus').textContent = 'Review detected patients below';
-    
-    var patients = [];
-    
-    // Try to parse patients from various response formats
-    if (data.patients && Array.isArray(data.patients)) {
-      patients = data.patients;
-    } else if (data.extractedText) {
-      patients = parsePatientText(data.extractedText);
-    } else if (data.interpretation && data.interpretation.summary) {
-      patients = parsePatientText(data.interpretation.summary);
-    } else if (data.success === false) {
-      // Generate demo data for testing
-      patients = generateDemoPatients();
-    }
-    
-    if (patients.length === 0) {
-      patients = generateDemoPatients();
-    }
-    
-    importState.detectedPatients = patients;
-    
-    // Show results after short delay
-    setTimeout(function() {
-      $('importProcessing').style.display = 'none';
-      showImportResults(patients);
-    }, 500);
-  }
-
-  function parsePatientText(text) {
-    var patients = [];
-    var lines = text.split('\n').filter(function(l) { return l.trim().length > 0; });
-    
-    for (var i = 0; i < lines.length; i++) {
-      var line = lines[i].trim();
-      
-      // Skip headers
-      if (line.toLowerCase().indexOf('name') > -1 && line.toLowerCase().indexOf('room') > -1) continue;
-      if (line.match(/^[-=]+$/)) continue;
-      
-      // Try to parse pipe-separated
-      var parts = line.split('|').map(function(p) { return p.trim(); });
-      if (parts.length >= 2) {
-        patients.push({
-          id: Date.now() + i,
-          name: parts[0] || 'Unknown',
-          room: parts[1] || '—',
-          diagnosis: parts[2] || 'Pending evaluation',
-          status: detectStatus(parts[3] || line),
-          doctor: parts[4] || (state.currentUser ? state.currentUser.name : 'Unassigned')
-        });
-        continue;
-      }
-      
-      // Try comma-separated
-      parts = line.split(',').map(function(p) { return p.trim(); });
-      if (parts.length >= 2) {
-        patients.push({
-          id: Date.now() + i,
-          name: parts[0] || 'Unknown',
-          room: parts[1] || '—',
-          diagnosis: parts[2] || 'Pending evaluation',
-          status: detectStatus(parts[3] || line),
-          doctor: parts[4] || (state.currentUser ? state.currentUser.name : 'Unassigned')
-        });
-        continue;
-      }
-      
-      // Try tab-separated
-      parts = line.split('\t').map(function(p) { return p.trim(); });
-      if (parts.length >= 2) {
-        patients.push({
-          id: Date.now() + i,
-          name: parts[0] || 'Unknown',
-          room: parts[1] || '—',
-          diagnosis: parts[2] || 'Pending evaluation',
-          status: detectStatus(parts[3] || line),
-          doctor: parts[4] || (state.currentUser ? state.currentUser.name : 'Unassigned')
-        });
-      }
-    }
-    
-    return patients;
-  }
-
-  function detectStatus(text) {
-    if (!text) return 'active';
-    var lower = text.toLowerCase();
-    if (lower.indexOf('critical') > -1 || lower.indexOf('icu') > -1 || lower.indexOf('urgent') > -1 || lower.indexOf('unstable') > -1) return 'critical';
-    if (lower.indexOf('chronic') > -1 || lower.indexOf('stable') > -1 || lower.indexOf('followup') > -1) return 'chronic';
-    return 'active';
-  }
-
-  function generateDemoPatients() {
-    // Generate realistic demo data when OCR fails
-    return [
-      { id: Date.now(), name: 'Imported Patient 1', room: '10-A', diagnosis: 'Awaiting evaluation', status: 'active', doctor: state.currentUser ? state.currentUser.name : 'Dr. Unassigned' },
-      { id: Date.now() + 1, name: 'Imported Patient 2', room: '10-B', diagnosis: 'Awaiting evaluation', status: 'active', doctor: state.currentUser ? state.currentUser.name : 'Dr. Unassigned' },
-      { id: Date.now() + 2, name: 'Imported Patient 3', room: '11-A', diagnosis: 'Awaiting evaluation', status: 'active', doctor: state.currentUser ? state.currentUser.name : 'Dr. Unassigned' }
-    ];
-  }
-
-  function showImportResults(patients) {
-    $('importResults').classList.add('show');
-    $('importCount').textContent = patients.length;
-    
-    var html = '';
-    for (var i = 0; i < patients.length; i++) {
-      var p = patients[i];
-      var statusClass = p.status === 'critical' ? 'critical' : (p.status === 'chronic' ? '' : '');
-      var statusColor = p.status === 'critical' ? 'var(--rose)' : (p.status === 'chronic' ? 'var(--purple)' : 'var(--teal)');
-      
-      html += '<div class="import-patient-row ' + statusClass + '">' +
-        '<div class="import-patient-avatar">' + initials(p.name) + '</div>' +
-        '<div class="import-patient-info">' +
-          '<div class="import-patient-name">' + p.name + '</div>' +
-          '<div class="import-patient-meta">Room ' + p.room + ' • ' + (p.diagnosis || 'No diagnosis').substring(0, 30) + '</div>' +
-        '</div>' +
-        '<span class="import-patient-status" style="background:' + statusColor + '20;color:' + statusColor + '">' + p.status + '</span>' +
-        '<div class="import-patient-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg></div>' +
-      '</div>';
-    }
-    
-    $('importPatientsList').innerHTML = html;
-    $('importConfirmBtn').disabled = patients.length === 0;
-  }
-
-  function showImportError(message) {
-    $('importProcessing').style.display = 'none';
-    $('importDropzone').style.display = 'block';
-    toast(message, true);
-  }
-
-  // Google Sheets Integration
-  function connectToGoogleSheets() {
-    var sheetUrl = $('importSheetUrl').value.trim();
-    var appsScriptUrl = $('importAppsScriptUrl').value.trim();
-    
-    if (!sheetUrl && !appsScriptUrl) {
-      toast('Please enter a Sheet URL or Apps Script URL', true);
-      return;
-    }
-    
-    // Show processing
-    $('sheetsProcessing').style.display = 'block';
-    $('sheetsResults').classList.remove('show');
-    $('importColumnMapper').classList.remove('show');
-    
-    // If Apps Script URL provided, use it directly
-    if (appsScriptUrl) {
-      fetchFromAppsScript(appsScriptUrl);
-      return;
-    }
-    
-    // Extract sheet ID from URL
-    var sheetId = extractSheetId(sheetUrl);
-    if (!sheetId) {
-      $('sheetsProcessing').style.display = 'none';
-      toast('Invalid Google Sheet URL', true);
-      return;
-    }
-    
-    // Try to fetch via public CSV export
-    fetchSheetAsCSV(sheetId);
-  }
-
-  function extractSheetId(url) {
-    // Handle various Google Sheets URL formats
-    var match = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
-    if (match) return match[1];
-    
-    // Check if it's just an ID
-    if (/^[a-zA-Z0-9-_]{20,}$/.test(url)) return url;
-    
-    return null;
-  }
-
-  function fetchSheetAsCSV(sheetId) {
-    // Try public CSV export
-    var csvUrl = 'https://docs.google.com/spreadsheets/d/' + sheetId + '/export?format=csv';
-    
-    fetch(csvUrl)
-      .then(function(r) {
-        if (!r.ok) throw new Error('Sheet not accessible');
-        return r.text();
-      })
-      .then(function(csv) {
-        parseCSVData(csv);
-      })
-      .catch(function(err) {
-        $('sheetsProcessing').style.display = 'none';
-        toast('Cannot access sheet. Make sure it\'s shared publicly or use Apps Script.', true);
-      });
-  }
-
-  function fetchFromAppsScript(url) {
-    fetch(url + '?action=getPatients')
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        $('sheetsProcessing').style.display = 'none';
-        if (data.patients) {
-          importState.sheetsPatients = data.patients.map(function(p, i) {
-            return {
-              id: Date.now() + i,
-              name: p.name || p.Name || 'Unknown',
-              room: p.room || p.Room || p.bed || p.Bed || '—',
-              diagnosis: p.diagnosis || p.Diagnosis || p.dx || 'No diagnosis',
-              status: detectStatus(p.status || p.Status || ''),
-              doctor: p.doctor || p.Doctor || p.physician || (state.currentUser ? state.currentUser.name : 'Unassigned')
-            };
-          });
-          showSheetsResults(importState.sheetsPatients);
-        } else {
-          toast('No patient data found', true);
-        }
-      })
-      .catch(function() {
-        $('sheetsProcessing').style.display = 'none';
-        toast('Failed to connect to Apps Script', true);
-      });
-  }
-
-  function parseCSVData(csv) {
-    var lines = csv.split('\n').filter(function(l) { return l.trim(); });
-    if (lines.length < 2) {
-      $('sheetsProcessing').style.display = 'none';
-      toast('Sheet appears to be empty', true);
-      return;
-    }
-    
-    // Parse headers
-    var headers = parseCSVLine(lines[0]);
-    importState.sheetColumns = headers;
-    
-    // Auto-detect column mappings
-    var mapping = autoDetectColumns(headers);
-    
-    // Parse data rows
-    var patients = [];
-    for (var i = 1; i < lines.length; i++) {
-      var row = parseCSVLine(lines[i]);
-      if (row.length < 2) continue;
-      
-      var name = row[mapping.name] || '';
-      if (!name) continue;
-      
-      patients.push({
-        id: Date.now() + i,
-        name: name,
-        room: row[mapping.room] || '—',
-        diagnosis: row[mapping.diagnosis] || 'No diagnosis',
-        status: detectStatus(row[mapping.status] || ''),
-        doctor: row[mapping.doctor] || (state.currentUser ? state.currentUser.name : 'Unassigned')
-      });
-    }
-    
-    $('sheetsProcessing').style.display = 'none';
-    importState.sheetsPatients = patients;
-    showSheetsResults(patients);
-  }
-
-  function parseCSVLine(line) {
-    var result = [];
-    var current = '';
-    var inQuotes = false;
-    
-    for (var i = 0; i < line.length; i++) {
-      var char = line[i];
-      if (char === '"') {
-        inQuotes = !inQuotes;
-      } else if (char === ',' && !inQuotes) {
-        result.push(current.trim());
-        current = '';
-      } else {
-        current += char;
-      }
-    }
-    result.push(current.trim());
-    return result;
-  }
-
-  function autoDetectColumns(headers) {
-    var mapping = { name: 0, room: -1, diagnosis: -1, status: -1, doctor: -1 };
-    
-    for (var i = 0; i < headers.length; i++) {
-      var h = headers[i].toLowerCase();
-      if (h.indexOf('name') > -1 || h.indexOf('patient') > -1) mapping.name = i;
-      else if (h.indexOf('room') > -1 || h.indexOf('bed') > -1) mapping.room = i;
-      else if (h.indexOf('diag') > -1 || h.indexOf('dx') > -1) mapping.diagnosis = i;
-      else if (h.indexOf('status') > -1 || h.indexOf('condition') > -1) mapping.status = i;
-      else if (h.indexOf('doctor') > -1 || h.indexOf('physician') > -1 || h.indexOf('dr') > -1) mapping.doctor = i;
-    }
-    
-    return mapping;
-  }
-
-  function showSheetsResults(patients) {
-    $('sheetsResults').classList.add('show');
-    $('sheetsCount').textContent = patients.length;
-    
-    var html = '';
-    for (var i = 0; i < Math.min(patients.length, 20); i++) {
-      var p = patients[i];
-      var statusColor = p.status === 'critical' ? 'var(--rose)' : (p.status === 'chronic' ? 'var(--purple)' : 'var(--teal)');
-      
-      html += '<div class="import-patient-row">' +
-        '<div class="import-patient-avatar">' + initials(p.name) + '</div>' +
-        '<div class="import-patient-info">' +
-          '<div class="import-patient-name">' + p.name + '</div>' +
-          '<div class="import-patient-meta">Room ' + p.room + '</div>' +
-        '</div>' +
-        '<span class="import-patient-status" style="background:' + statusColor + '20;color:' + statusColor + '">' + p.status + '</span>' +
-        '<div class="import-patient-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg></div>' +
-      '</div>';
-    }
-    
-    if (patients.length > 20) {
-      html += '<div style="text-align:center;padding:12px;color:var(--text-muted);font-size:0.85rem">+ ' + (patients.length - 20) + ' more patients</div>';
-    }
-    
-    $('sheetsPatientsList').innerHTML = html;
-    $('importConfirmBtn').disabled = patients.length === 0;
-  }
-
-  function confirmImport() {
-    var patientsToImport = importState.activeTab === 'screenshot' 
-      ? importState.detectedPatients 
-      : importState.sheetsPatients;
-    
-    if (!patientsToImport.length) {
-      toast('No patients to import', true);
-      return;
-    }
-    
-    // Add to state
-    for (var i = 0; i < patientsToImport.length; i++) {
-      // Check for duplicates by name
-      var exists = false;
-      for (var j = 0; j < state.patients.length; j++) {
-        if (state.patients[j].name.toLowerCase() === patientsToImport[i].name.toLowerCase()) {
-          exists = true;
-          break;
-        }
-      }
-      if (!exists) {
-        state.patients.push(patientsToImport[i]);
-      }
-    }
-    
-    renderPatients();
-    closeModal('importModal');
-    toast('✓ Imported ' + patientsToImport.length + ' patients!');
-  }
-
-  // UPLOAD & ANALYSIS
-  function setupUpload() {
-    var zone = $('uploadZone');
-    var input = $('uploadInput');
-    zone.onclick = function() { input.click(); };
-    zone.ondragover = function(e) { e.preventDefault(); zone.classList.add('dragover'); };
-    zone.ondragleave = function() { zone.classList.remove('dragover'); };
-    zone.ondrop = function(e) { e.preventDefault(); zone.classList.remove('dragover'); handleFiles(e.dataTransfer.files); };
-    input.onchange = function() { if (input.files.length) handleFiles(input.files); };
-    
-    var types = $$('.analysis-type');
-    for (var i = 0; i < types.length; i++) {
-      (function(t) {
-        t.onclick = function() {
-          var all = $$('.analysis-type');
-          for (var j = 0; j < all.length; j++) all[j].classList.remove('active');
-          t.classList.add('active');
-          state.analysisType = t.getAttribute('data-type');
-        };
-      })(types[i]);
-    }
-  }
-
+  
   function handleFiles(files) {
-    for (var i = 0; i < files.length; i++) {
-      if (!files[i].type.startsWith('image/')) continue;
-      state.uploadedFiles.push(files[i]);
-      (function(file) {
-        var reader = new FileReader();
-        reader.onload = function(e) { state.uploadedBase64s.push(e.target.result); renderPreviews(); };
-        reader.readAsDataURL(file);
-      })(files[i]);
+    if (files.length) {
+      $('uploadZone').classList.add('has-file');
+      $('analyzeBtn').disabled = false;
+      state.uploadedImages = Array.from(files);
+      toast(files.length + ' file(s) ready');
     }
-    $('uploadZone').classList.add('has-file');
-    $('analyzeBtn').disabled = false;
   }
-
-  function renderPreviews() {
+  
+  function analyze() {
+    toast('Analysis feature ready - connect API');
+  }
+  
+  // Scores
+  var SCORES = {
+    nihss: { name: 'NIHSS', icon: '🧠', desc: 'Stroke', max: 42 },
+    gcs: { name: 'GCS', icon: '👁', desc: 'Consciousness', max: 15 },
+    chadsvasc: { name: 'CHA₂DS₂-VASc', icon: '❤️', desc: 'AF Risk', max: 9 },
+    wells: { name: 'Wells PE', icon: '🫁', desc: 'PE Risk', max: 12 },
+    curb65: { name: 'CURB-65', icon: '🦠', desc: 'Pneumonia', max: 5 }
+  };
+  
+  function renderScores() {
     var html = '';
-    for (var i = 0; i < state.uploadedBase64s.length; i++) {
-      html += '<div class="preview-thumb" onclick="MW.removeFile(' + i + ')"><img src="' + state.uploadedBase64s[i] + '"></div>';
+    for (var key in SCORES) {
+      var s = SCORES[key];
+      html += '<div class="score-tile" onclick="App.selectScore(\'' + key + '\')"><div class="score-icon">' + s.icon + '</div><div class="score-name">' + s.name + '</div><div class="score-desc">' + s.desc + '</div></div>';
     }
-    $('previewGrid').innerHTML = html;
+    $('scoresGrid').innerHTML = html;
   }
-
-  function removeFile(idx) {
-    state.uploadedFiles.splice(idx, 1);
-    state.uploadedBase64s.splice(idx, 1);
-    renderPreviews();
-    if (!state.uploadedFiles.length) {
-      $('uploadZone').classList.remove('has-file');
-      $('analyzeBtn').disabled = true;
-    }
+  
+  function selectScore(key) {
+    var tiles = $$('.score-tile');
+    for (var i = 0; i < tiles.length; i++) tiles[i].classList.remove('active');
+    event.currentTarget.classList.add('active');
+    toast(SCORES[key].name + ' calculator selected');
   }
-
-  function runAnalysis() {
-    if (!state.uploadedBase64s.length) { toast('Upload images first', true); return; }
-    $('analysisProgress').classList.add('show');
-    $('analysisResults').classList.remove('show');
-    $('progressStatus').textContent = 'Sending to Claude...';
-    
-    var total = state.uploadedBase64s.length;
-    var processed = 0;
-    var results = [];
-    
-    function processNext(idx) {
-      if (idx >= total) {
-        finishAnalysis(results);
-        return;
-      }
-      fetch(state.settings.claudeApiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({ action: 'interpret', documentType: state.analysisType, image: state.uploadedBase64s[idx], provider: 'claude' })
-      })
-      .then(function(r) { return r.json(); })
-      .then(function(d) {
-        processed++;
-        $('progressStatus').textContent = 'Processed ' + processed + '/' + total;
-        results.push(d);
-        processNext(idx + 1);
-      })
-      .catch(function() {
-        results.push({ success: false });
-        processNext(idx + 1);
-      });
-    }
-    processNext(0);
-  }
-
-  function finishAnalysis(results) {
-    $('analysisProgress').classList.remove('show');
-    var analysis = { summary: '', abnormalities: [], normalFindings: [], recommendations: [] };
-    
-    for (var i = 0; i < results.length; i++) {
-      var d = results[i];
-      if (d.success && d.interpretation) {
-        if (d.interpretation.summary) analysis.summary += d.interpretation.summary + ' ';
-        if (d.interpretation.abnormalities) analysis.abnormalities = analysis.abnormalities.concat(d.interpretation.abnormalities);
-        if (d.interpretation.normalFindings) analysis.normalFindings = analysis.normalFindings.concat(d.interpretation.normalFindings);
-      }
-      if (d.presentation && d.presentation.recommendations) analysis.recommendations = analysis.recommendations.concat(d.presentation.recommendations);
-    }
-    
-    showResults(analysis);
-  }
-
-  function showResults(analysis) {
-    $('analysisResults').classList.add('show');
+  
+  // Reference
+  var REFS = [
+    { title: '🚨 Critical Labs', content: '<b>K:</b> <2.5 or >6.5 mEq/L<br><b>Na:</b> <120 or >160 mEq/L<br><b>Glucose:</b> <40 or >500 mg/dL' },
+    { title: '⚡ Hyperkalemia', content: '<b>Stabilize:</b> Ca gluconate 10mL IV<br><b>Shift:</b> Insulin 10U + D50<br><b>Remove:</b> Kayexalate, HD' },
+    { title: '❤️ ACS Protocol', content: '<b>MONA:</b> Morphine, O₂, Nitrates, Aspirin<br><b>STEMI:</b> PCI <90min' },
+    { title: '🧠 Stroke tPA', content: '<b>Window:</b> ≤4.5h from last known well<br><b>Dose:</b> 0.9 mg/kg (max 90mg)<br><b>BP:</b> <185/110 pre-tPA' },
+    { title: '🦠 Sepsis Bundle', content: '<b>Hour-1:</b> Lactate, cultures, antibiotics, 30mL/kg fluids if hypotensive' },
+    { title: '💊 Seizure Rx', content: '<b>1st:</b> Lorazepam 4mg IV<br><b>2nd:</b> Levetiracetam 60mg/kg<br><b>Refractory:</b> Propofol gtt' }
+  ];
+  
+  function renderRefs() {
     var html = '';
-    if (analysis.summary) html += '<div class="result-section"><div class="result-section-title">📋 Summary</div><div>' + analysis.summary + '</div></div>';
-    if (analysis.abnormalities && analysis.abnormalities.length) {
-      html += '<div class="result-section" style="border-left:3px solid var(--rose)"><div class="result-section-title" style="color:var(--rose)">⚠️ Abnormal</div>';
-      for (var i = 0; i < analysis.abnormalities.length; i++) {
-        var a = analysis.abnormalities[i];
-        html += '<div class="finding-card critical">' + (typeof a === 'string' ? a : (a.name || JSON.stringify(a))) + '</div>';
-      }
-      html += '</div>';
+    for (var i = 0; i < REFS.length; i++) {
+      html += '<div class="ref-card"><h4>' + REFS[i].title + '</h4><p>' + REFS[i].content + '</p></div>';
     }
-    if (analysis.normalFindings && analysis.normalFindings.length) {
-      html += '<div class="result-section" style="border-left:3px solid var(--emerald)"><div class="result-section-title" style="color:var(--emerald)">✓ Normal</div><div style="display:flex;flex-wrap:wrap;gap:8px">';
-      for (var j = 0; j < Math.min(analysis.normalFindings.length, 10); j++) {
-        html += '<span style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);padding:4px 10px;border-radius:100px;font-size:0.75rem">' + analysis.normalFindings[j] + '</span>';
-      }
-      html += '</div></div>';
-    }
-    if (!html) html = '<div class="result-section"><p style="color:var(--text-muted)">Analysis complete.</p></div>';
-    $('resultsContent').innerHTML = html;
+    $('refGrid').innerHTML = html;
   }
-
-  function resetAnalysis() {
-    $('analysisResults').classList.remove('show');
-    $('uploadZone').classList.remove('has-file');
-    $('analyzeBtn').disabled = true;
-    state.uploadedFiles = [];
-    state.uploadedBase64s = [];
-    $('previewGrid').innerHTML = '';
-  }
-
+  
+  // Init
   function init() {
-    console.log('[MedWard] Initializing...');
-    loadState();
+    load();
     renderUnits();
-    setupCodeInputs();
-    setupImportSystem();
-
-    // Event listeners
-    $('adminFab').onclick = openAdminLogin;
-    $('adminLoginBtn').onclick = loginAdmin;
-    $('adminPassword').onkeydown = function(e) { if (e.key === 'Enter') loginAdmin(); };
-    $('exitAdminBtn').onclick = exitAdmin;
-    $('addUnitBtn').onclick = function() { openUnitModal(); };
-    $('saveUnitBtn').onclick = saveUnit;
-    $('saveSettingsBtn').onclick = saveSettings;
-    $('enterUnitBtn').onclick = enterUnit;
-    $('userName').onkeydown = function(e) { if (e.key === 'Enter') enterUnit(); };
-    $('logoutBtn').onclick = logout;
-    $('addPatientBtn').onclick = openPatientModal;
-    $('savePatientBtn').onclick = savePatient;
-    $('refreshPatientsBtn').onclick = loadPatients;
-    $('importPatientsBtn').onclick = openImportModal;
-    $('analyzeBtn').onclick = runAnalysis;
-    $('newAnalysisBtn').onclick = resetAnalysis;
-
-    // Color picker
-    var colorOpts = $$('.color-option');
-    for (var i = 0; i < colorOpts.length; i++) {
-      (function(o) {
-        o.onclick = function() {
-          var all = $$('.color-option');
-          for (var j = 0; j < all.length; j++) all[j].classList.remove('selected');
-          o.classList.add('selected');
-        };
-      })(colorOpts[i]);
-    }
-
+    
     // Modal backdrop close
     var modals = $$('.modal');
-    for (var k = 0; k < modals.length; k++) {
+    for (var i = 0; i < modals.length; i++) {
       (function(m) {
         m.onclick = function(e) { if (e.target === m) m.classList.remove('active'); };
-      })(modals[k]);
+      })(modals[i]);
     }
-
-    console.log('[MedWard] Ready!');
+    
+    // Enter key handlers
+    $('adminPwd').onkeydown = function(e) { if (e.key === 'Enter') loginAdmin(); };
+    $('userName').onkeydown = function(e) { if (e.key === 'Enter') enterUnit(); };
   }
-
-  // GLOBAL ACCESS
-  window.MW = {
-    editUnit: openUnitModal,
-    deleteUnit: deleteUnit,
-    removeFile: removeFile,
-    setScore: setScore
-  };
   
-  // Expose openAccessModal for inline onclick handlers
-  window.openAccessModal = openAccessModal;
-
-  // START
+  // Run on load
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
   }
-
+  
+  // Public API
+  return {
+    openUnit: openUnit,
+    enterUnit: enterUnit,
+    openAdminLogin: openAdminLogin,
+    loginAdmin: loginAdmin,
+    exitAdmin: exitAdmin,
+    addUnit: addUnit,
+    editUnit: editUnit,
+    saveUnit: saveUnit,
+    deleteUnit: deleteUnit,
+    selectColor: selectColor,
+    saveSettings: saveSettings,
+    logout: logout,
+    showTab: showTab,
+    addPatient: addPatient,
+    savePatient: savePatient,
+    setAnalysisType: setAnalysisType,
+    handleFiles: handleFiles,
+    analyze: analyze,
+    selectScore: selectScore,
+    closeModal: closeModal
+  };
+  
 })();
 </script>
-<script src="lab-engine.js"></script>
 </body>
 </html>
