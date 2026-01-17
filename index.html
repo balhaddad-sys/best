@@ -248,17 +248,14 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
             <div style="font-weight:600">Upload Medical Images</div>
             <div style="font-size:0.8rem;color:var(--text-muted);margin-top:4px">Labs, X-Rays, CT/MRI, ECG</div>
           </div>
-          <input type="file" id="analysisFile" accept="image/*" style="display:none">
+          <input type="file" id="analysisFile" accept="image/*" multiple style="display:none">
           <div class="analysis-types">
             <div class="analysis-type active" data-type="lab" onclick="App.setAnalysisType('lab',this)"><div class="analysis-type-icon">🧪</div><div class="analysis-type-name">Labs</div></div>
             <div class="analysis-type" data-type="xray" onclick="App.setAnalysisType('xray',this)"><div class="analysis-type-icon">🩻</div><div class="analysis-type-name">X-Ray</div></div>
             <div class="analysis-type" data-type="ct" onclick="App.setAnalysisType('ct',this)"><div class="analysis-type-icon">🧠</div><div class="analysis-type-name">CT/MRI</div></div>
             <div class="analysis-type" data-type="ecg" onclick="App.setAnalysisType('ecg',this)"><div class="analysis-type-icon">💓</div><div class="analysis-type-name">ECG</div></div>
           </div>
-          <div id="analysisPreview" style="display:none;margin-top:16px">
-            <img id="analysisImg" src="" style="width:100%;max-height:200px;object-fit:contain;border-radius:8px">
-            <button class="btn btn-secondary btn-sm btn-full" onclick="App.clearAnalysis()" style="margin-top:10px">✕ Remove</button>
-          </div>
+          <div id="analysisPreview" style="display:none;margin-top:16px"></div>
         </div>
       </div>
       <button class="btn btn-primary btn-full" id="analyzeBtn" onclick="App.runAnalysis()" disabled>🤖 Analyze with Claude AI</button>
@@ -557,18 +554,137 @@ var App = (function() {
   }
   
   // Analysis
+  var analysisImages = [];
   function setAnalysisType(type,el){analysisState.type=type;var all=$$('.analysis-type');for(var i=0;i<all.length;i++)all[i].classList.remove('active');el.classList.add('active')}
-  function clearAnalysis(){analysisState.imageBase64=null;$('analysisPreview').style.display='none';$('analyzeBtn').disabled=true;$('analysisFile').value='';$('analysisResults').innerHTML=''}
+  function clearAnalysis(){analysisImages=[];analysisState.imageBase64=null;$('analysisPreview').style.display='none';$('analyzeBtn').disabled=true;$('analysisFile').value='';$('analysisResults').innerHTML='';renderAnalysisImages()}
+  
+  function compressImage(file, maxSize, callback) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = new Image();
+      img.onload = function() {
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        var width = img.width;
+        var height = img.height;
+        var quality = 0.8;
+        
+        // Calculate scale to fit within limits
+        var maxDim = 2000;
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round(height * maxDim / width);
+            width = maxDim;
+          } else {
+            width = Math.round(width * maxDim / height);
+            height = maxDim;
+          }
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Compress iteratively if needed
+        var dataUrl = canvas.toDataURL('image/jpeg', quality);
+        while (dataUrl.length > maxSize && quality > 0.3) {
+          quality -= 0.1;
+          dataUrl = canvas.toDataURL('image/jpeg', quality);
+        }
+        
+        // If still too large, reduce dimensions
+        while (dataUrl.length > maxSize && width > 800) {
+          width = Math.round(width * 0.8);
+          height = Math.round(height * 0.8);
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+          dataUrl = canvas.toDataURL('image/jpeg', quality);
+        }
+        
+        callback(dataUrl);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+  
+  function addAnalysisImage(file) {
+    if (analysisImages.length >= 5) {
+      toast('Maximum 5 images allowed', true);
+      return;
+    }
+    
+    // Max 4MB per image (base64 adds ~33% overhead, API limit is 5MB)
+    var maxSize = 4 * 1024 * 1024;
+    
+    compressImage(file, maxSize, function(dataUrl) {
+      analysisImages.push({
+        name: file.name,
+        data: dataUrl,
+        id: Date.now()
+      });
+      renderAnalysisImages();
+      $('analyzeBtn').disabled = false;
+      toast('Image added (' + analysisImages.length + '/5)');
+    });
+  }
+  
+  function removeAnalysisImage(id) {
+    analysisImages = analysisImages.filter(function(img) { return img.id !== id; });
+    renderAnalysisImages();
+    if (analysisImages.length === 0) {
+      $('analyzeBtn').disabled = true;
+    }
+  }
+  
+  function renderAnalysisImages() {
+    if (analysisImages.length === 0) {
+      $('analysisPreview').style.display = 'none';
+      return;
+    }
+    
+    var h = '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">';
+    for (var i = 0; i < analysisImages.length; i++) {
+      var img = analysisImages[i];
+      h += '<div style="position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;border:1px solid var(--border)">' +
+        '<img src="' + img.data + '" style="width:100%;height:100%;object-fit:cover">' +
+        '<button onclick="App.removeAnalysisImage(' + img.id + ')" style="position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,0.7);border:none;color:white;font-size:12px;cursor:pointer;display:grid;place-items:center">✕</button>' +
+      '</div>';
+    }
+    h += '</div>';
+    h += '<div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:8px">' + analysisImages.length + '/5 images • Click upload to add more</div>';
+    $('analysisPreview').innerHTML = h;
+    $('analysisPreview').style.display = 'block';
+  }
+  
   function runAnalysis(){
-    if(!analysisState.imageBase64)return;
+    if(analysisImages.length === 0)return;
     $('analyzeBtn').disabled=true;$('analysisLoading').style.display='block';$('analysisResults').innerHTML='';
     var typeNames={lab:'Laboratory Results',xray:'X-Ray',ct:'CT/MRI Scan',ecg:'ECG'};
-    fetch(state.settings.apiUrl,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'interpret',documentType:analysisState.type,image:analysisState.imageBase64})})
+    
+    // Build content array with multiple images
+    var content = [];
+    for (var i = 0; i < analysisImages.length; i++) {
+      content.push({
+        type: 'image',
+        data: analysisImages[i].data
+      });
+    }
+    
+    fetch(state.settings.apiUrl,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({
+      action:'interpret',
+      documentType:analysisState.type,
+      images: content,
+      image: analysisImages[0].data, // Fallback for single image
+      multiImage: analysisImages.length > 1
+    })})
     .then(function(r){return r.json()})
     .then(function(d){
       $('analysisLoading').style.display='none';$('analyzeBtn').disabled=false;
       if(d.error){$('analysisResults').innerHTML='<div class="result-card"><h4>⚠️ Error</h4><p>'+escHtml(d.error)+'</p></div>';return}
       var h='<div class="result-card"><h4>📋 '+typeNames[analysisState.type]+' Analysis</h4>';
+      if(analysisImages.length > 1) h+='<p style="color:var(--teal);font-size:0.8rem;margin-bottom:10px">Combined analysis of ' + analysisImages.length + ' images</p>';
       if(d.interpretation){
         var interp=d.interpretation;
         if(interp.summary)h+='<p><b>Summary:</b> '+escHtml(interp.summary)+'</p>';
@@ -603,8 +719,27 @@ var App = (function() {
   function init(){
     load();renderUnits();
     // File handlers
-    $('importFile').onchange=function(){if(this.files[0]){var r=new FileReader();r.onload=function(e){importState.imageBase64=e.target.result;$('importImg').src=e.target.result;$('importUpload').style.display='none';$('importPreview').style.display='block'};r.readAsDataURL(this.files[0])}};
-    $('analysisFile').onchange=function(){if(this.files[0]){var r=new FileReader();r.onload=function(e){analysisState.imageBase64=e.target.result;$('analysisImg').src=e.target.result;$('analysisPreview').style.display='block';$('analyzeBtn').disabled=false};r.readAsDataURL(this.files[0])}};
+    $('importFile').onchange=function(){
+      if(this.files[0]){
+        var file = this.files[0];
+        // Compress image before upload
+        compressImage(file, 4 * 1024 * 1024, function(dataUrl) {
+          importState.imageBase64=dataUrl;
+          $('importImg').src=dataUrl;
+          $('importUpload').style.display='none';
+          $('importPreview').style.display='block';
+        });
+      }
+    };
+    $('analysisFile').onchange=function(){
+      var files = this.files;
+      for (var i = 0; i < files.length; i++) {
+        if (files[i].type.startsWith('image/')) {
+          addAnalysisImage(files[i]);
+        }
+      }
+      this.value = '';
+    };
     // Modal clicks
     var modals=$$('.modal');for(var i=0;i<modals.length;i++)(function(m){m.onclick=function(e){if(e.target===m)m.classList.remove('active')}})(modals[i]);
     // Enter keys
@@ -615,7 +750,7 @@ var App = (function() {
   
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
   
-  return{openUnit:openUnit,enterUnit:enterUnit,openAdminLogin:openAdminLogin,loginAdmin:loginAdmin,exitAdmin:exitAdmin,addUnit:addUnit,editUnit:editUnit,saveUnit:saveUnit,deleteUnit:deleteUnit,saveSettings:saveSettings,logout:logout,showTab:showTab,addPatient:addPatient,savePatient:savePatient,openImport:openImport,resetImport:resetImport,analyzeImport:analyzeImport,confirmImport:confirmImport,setAnalysisType:setAnalysisType,clearAnalysis:clearAnalysis,runAnalysis:runAnalysis,closeModal:closeModal};
+  return{openUnit:openUnit,enterUnit:enterUnit,openAdminLogin:openAdminLogin,loginAdmin:loginAdmin,exitAdmin:exitAdmin,addUnit:addUnit,editUnit:editUnit,saveUnit:saveUnit,deleteUnit:deleteUnit,saveSettings:saveSettings,logout:logout,showTab:showTab,addPatient:addPatient,savePatient:savePatient,openImport:openImport,resetImport:resetImport,analyzeImport:analyzeImport,confirmImport:confirmImport,setAnalysisType:setAnalysisType,clearAnalysis:clearAnalysis,runAnalysis:runAnalysis,removeAnalysisImage:removeAnalysisImage,closeModal:closeModal};
 })();
 </script>
 </body>
