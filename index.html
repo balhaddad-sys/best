@@ -5,143 +5,135 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta name="theme-color" content="#060a13">
   <title>MedWard Enterprise</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-:root{--bg-deep:#060a13;--bg-primary:#0a0f1a;--bg-card:#0d1424;--bg-elevated:#111b2e;--bg-input:#0f172a;--text-primary:#f8fafc;--text-secondary:#94a3b8;--text-muted:#64748b;--gold:#d4a437;--gold-light:#fbbf24;--gold-glow:rgba(212,164,55,0.15);--teal:#14b8a6;--teal-light:#2dd4bf;--blue:#3b82f6;--purple:#8b5cf6;--rose:#f43f5e;--orange:#f97316;--emerald:#10b981;--border:rgba(148,163,184,0.1);--radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-xl:20px}
+:root{--bg:#060a13;--bg-card:#0d1424;--bg-elevated:#111b2e;--bg-input:#0f172a;--text:#f8fafc;--text-secondary:#94a3b8;--text-muted:#64748b;--gold:#d4a437;--gold-light:#fbbf24;--gold-glow:rgba(212,164,55,0.15);--teal:#14b8a6;--blue:#3b82f6;--purple:#8b5cf6;--rose:#f43f5e;--orange:#f97316;--emerald:#10b981;--border:rgba(148,163,184,0.1);--radius:12px}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:var(--text-primary);line-height:1.5;min-height:100vh;-webkit-tap-highlight-color:transparent}
-.ambient{position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(ellipse at 20% 20%,var(--gold-glow),transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(20,184,166,0.08),transparent 50%)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 24px;border:none;border-radius:var(--radius-md);font-family:inherit;font-size:0.95rem;font-weight:600;cursor:pointer;transition:all 0.2s}
-.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--bg-deep)}
-.btn-secondary{background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-primary)}
-.btn-sm{padding:10px 16px;font-size:0.85rem}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border:none;border-radius:var(--radius);font-family:inherit;font-size:0.9rem;font-weight:600;cursor:pointer;transition:all 0.2s}
+.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--bg)}
+.btn-secondary{background:var(--bg-elevated);border:1px solid var(--border);color:var(--text)}
+.btn-sm{padding:8px 14px;font-size:0.8rem}
 .btn-full{width:100%}
-.btn-icon{width:44px;height:44px;padding:0;background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-secondary);cursor:pointer;display:grid;place-items:center}
-.form-group{margin-bottom:20px}
-.form-label{display:block;font-size:0.75rem;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px}
-.form-input,.form-select,.form-textarea{width:100%;padding:14px 16px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-primary);font-family:inherit;font-size:0.95rem}
+.btn-icon{width:40px;height:40px;padding:0;background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;color:var(--text-secondary);cursor:pointer;display:grid;place-items:center}
+.form-group{margin-bottom:18px}
+.form-label{display:block;font-size:0.75rem;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px}
+.form-input,.form-select,.form-textarea{width:100%;padding:12px 14px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:0.9rem}
 .form-input:focus,.form-select:focus{outline:none;border-color:var(--gold)}
-.form-textarea{min-height:100px;resize:vertical}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;padding:20px;z-index:1000}
+.form-textarea{min-height:80px;resize:vertical}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;padding:20px;z-index:1000}
 .modal.active{display:flex}
-.modal-box{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-xl);width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
-.modal-header{padding:24px;border-bottom:1px solid var(--border)}
-.modal-title{font-size:1.25rem;font-weight:700}
-.modal-body{padding:24px}
-.modal-footer{padding:16px 24px 24px;display:flex;gap:12px}
+.modal-box{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.modal-header{padding:20px;border-bottom:1px solid var(--border)}
+.modal-title{font-size:1.15rem;font-weight:700}
+.modal-body{padding:20px}
+.modal-footer{padding:16px 20px 20px;display:flex;gap:12px}
 .modal-footer .btn{flex:1}
 #landing{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
 #landing.hidden{display:none}
-.landing-logo{width:88px;height:88px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:22px;display:grid;place-items:center;margin-bottom:28px}
-.landing-logo svg{width:48px;height:48px;stroke:var(--bg-deep);stroke-width:2.5;fill:none}
-.landing-title{font-size:2rem;font-weight:800;margin-bottom:8px;background:linear-gradient(135deg,var(--gold),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.landing-subtitle{color:var(--text-secondary);margin-bottom:48px}
-.units-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;width:100%;max-width:880px}
-.unit-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden}
-.unit-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--unit-color,var(--gold))}
-.unit-card:hover{border-color:var(--unit-color,var(--gold));transform:translateY(-4px)}
-.unit-card-icon{width:52px;height:52px;background:var(--bg-elevated);border-radius:14px;display:grid;place-items:center;font-size:1.6rem;margin-bottom:14px}
-.unit-card-name{font-size:1.15rem;font-weight:600;margin-bottom:4px}
-.unit-card-desc{color:var(--text-muted);font-size:0.8rem}
-.unit-card-lock{position:absolute;top:16px;right:16px;width:28px;height:28px;background:var(--bg-elevated);border-radius:8px;display:grid;place-items:center;color:var(--text-muted)}
-.unit-card-lock svg{width:14px;height:14px}
-.admin-fab{position:fixed;bottom:24px;right:24px;width:56px;height:56px;background:var(--bg-card);border:1px solid var(--border);border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--text-muted);z-index:50}
-.admin-fab svg{width:22px;height:22px}
-.code-inputs{display:flex;gap:12px;justify-content:center;margin-bottom:20px}
-.code-digit{width:52px;height:60px;background:var(--bg-elevated);border:2px solid var(--border);border-radius:var(--radius-md);font-family:'JetBrains Mono',monospace;font-size:1.75rem;font-weight:600;text-align:center;color:var(--text-primary)}
-.code-digit:focus{outline:none;border-color:var(--gold);background:var(--gold-glow)}
-.code-digit.error{border-color:var(--rose);animation:shake 0.4s}
+.landing-logo{width:80px;height:80px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:20px;display:grid;place-items:center;margin-bottom:24px}
+.landing-logo svg{width:44px;height:44px;stroke:var(--bg);stroke-width:2.5;fill:none}
+.landing-title{font-size:1.8rem;font-weight:800;margin-bottom:6px;background:linear-gradient(135deg,var(--gold),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.landing-subtitle{color:var(--text-secondary);margin-bottom:40px}
+.units-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;width:100%;max-width:800px}
+.unit-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden}
+.unit-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--unit-color,var(--gold))}
+.unit-card:hover{border-color:var(--unit-color,var(--gold));transform:translateY(-2px)}
+.unit-card-icon{font-size:2rem;margin-bottom:12px}
+.unit-card-name{font-size:1.05rem;font-weight:600;margin-bottom:2px}
+.unit-card-desc{color:var(--text-muted);font-size:0.75rem}
+.admin-fab{position:fixed;bottom:20px;right:20px;width:50px;height:50px;background:var(--bg-card);border:1px solid var(--border);border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--text-muted);z-index:50}
+.admin-fab svg{width:20px;height:20px}
+.code-inputs{display:flex;gap:10px;justify-content:center;margin-bottom:16px}
+.code-digit{width:48px;height:56px;background:var(--bg-elevated);border:2px solid var(--border);border-radius:var(--radius);font-family:monospace;font-size:1.5rem;font-weight:700;text-align:center;color:var(--text)}
+.code-digit:focus{outline:none;border-color:var(--gold)}
+.code-digit.error{border-color:var(--rose);animation:shake 0.3s}
 .code-digit.success{border-color:var(--emerald)}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-.code-error{color:var(--rose);font-size:0.85rem;text-align:center;margin-top:12px;display:none}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.code-error{color:var(--rose);font-size:0.8rem;text-align:center;display:none}
 .code-error.show{display:block}
-#dashboard{display:none;min-height:100vh;background:var(--bg-primary)}
+#dashboard{display:none;min-height:100vh}
 #dashboard.active{display:block}
-.dash-header{background:var(--bg-card);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.dash-logo{display:flex;align-items:center;gap:12px}
-.dash-logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:10px;display:grid;place-items:center}
-.dash-logo-icon svg{width:22px;height:22px;stroke:var(--bg-deep);fill:none}
-.dash-unit-badge{padding:6px 14px;border-radius:100px;font-size:0.8rem;font-weight:600}
-.dash-user{display:flex;align-items:center;gap:12px}
-.dash-user-info{text-align:right}
-.dash-user-name{font-weight:600;font-size:0.9rem}
-.dash-user-role{font-size:0.7rem;color:var(--text-muted)}
-.dash-avatar{width:40px;height:40px;background:linear-gradient(135deg,var(--teal),var(--emerald));border-radius:10px;display:grid;place-items:center;font-weight:700;font-size:0.85rem}
-.dash-content{max-width:1200px;margin:0 auto;padding:20px}
-.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:24px;overflow-x:auto}
-.tab{padding:14px 20px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text-muted);font-family:inherit;font-size:0.85rem;font-weight:500;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:8px}
-.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
-.tab svg{width:18px;height:18px}
+.dash-header{background:var(--bg-card);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.dash-logo{display:flex;align-items:center;gap:10px}
+.dash-logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:10px;display:grid;place-items:center}
+.dash-logo-icon svg{width:20px;height:20px;stroke:var(--bg);fill:none}
+.dash-badge{padding:5px 12px;border-radius:100px;font-size:0.75rem;font-weight:600}
+.dash-user{display:flex;align-items:center;gap:10px}
+.dash-avatar{width:36px;height:36px;background:linear-gradient(135deg,var(--teal),var(--emerald));border-radius:10px;display:grid;place-items:center;font-weight:700;font-size:0.8rem}
+.dash-content{max-width:1100px;margin:0 auto;padding:16px}
+.tabs{display:flex;gap:4px;background:var(--bg-card);border-radius:var(--radius);padding:4px;margin-bottom:20px;overflow-x:auto}
+.tab{flex:1;padding:10px 16px;background:transparent;border:none;border-radius:8px;color:var(--text-muted);font-family:inherit;font-size:0.8rem;font-weight:500;cursor:pointer;white-space:nowrap;display:flex;align-items:center;justify-content:center;gap:6px;min-width:80px}
+.tab.active{background:var(--bg-elevated);color:var(--gold)}
+.tab svg{width:16px;height:16px}
 .panel{display:none}
 .panel.active{display:block}
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
-.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:18px;text-align:center}
-.stat-value{font-size:1.75rem;font-weight:700;background:linear-gradient(135deg,var(--gold),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.stat-label{font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;margin-top:4px}
-.patients-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
-.patient-card{background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;position:relative;overflow:hidden}
-.patient-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--teal)}
-.patient-card.critical::before{background:var(--rose)}
-.patient-card.chronic::before{background:var(--purple)}
-.patient-header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-.patient-avatar{width:48px;height:48px;background:linear-gradient(135deg,var(--gold),var(--teal));border-radius:12px;display:grid;place-items:center;font-weight:700;color:var(--bg-deep)}
-.patient-name{font-weight:600}
-.patient-meta{font-size:0.75rem;color:var(--text-muted)}
-.patient-status{margin-left:auto;padding:4px 10px;border-radius:100px;font-size:0.65rem;font-weight:600;text-transform:uppercase}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center}
+.stat-value{font-size:1.5rem;font-weight:700;background:linear-gradient(135deg,var(--gold),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-label{font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;margin-top:2px}
+.patients-list{display:grid;gap:12px}
+.patient{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;border-left:3px solid var(--teal)}
+.patient.critical{border-left-color:var(--rose)}
+.patient.chronic{border-left-color:var(--purple)}
+.patient-top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.patient-avatar{width:42px;height:42px;background:linear-gradient(135deg,var(--gold),var(--teal));border-radius:10px;display:grid;place-items:center;font-weight:700;font-size:0.85rem;color:var(--bg);flex-shrink:0}
+.patient-info{flex:1;min-width:0}
+.patient-name{font-weight:600;font-size:0.95rem}
+.patient-meta{font-size:0.7rem;color:var(--text-muted)}
+.patient-status{padding:3px 8px;border-radius:100px;font-size:0.6rem;font-weight:600;text-transform:uppercase}
 .patient-status.active{background:rgba(20,184,166,0.15);color:var(--teal)}
 .patient-status.critical{background:rgba(244,63,94,0.15);color:var(--rose)}
 .patient-status.chronic{background:rgba(139,92,246,0.15);color:var(--purple)}
-.patient-diagnosis{font-size:0.85rem;color:var(--text-secondary);padding:12px;background:var(--bg-card);border-radius:8px;margin-bottom:14px}
-.patient-actions{display:flex;gap:8px}
-.patient-actions .btn{flex:1;padding:10px;font-size:0.8rem}
-.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:20px}
-.card-header{padding:16px 20px;border-bottom:1px solid var(--border)}
-.card-title{font-size:0.95rem;font-weight:600;display:flex;align-items:center;gap:10px}
-.card-body{padding:20px}
-#adminPanel{display:none;min-height:100vh;background:var(--bg-primary)}
+.patient-dx{font-size:0.8rem;color:var(--text-secondary);padding:10px;background:var(--bg-elevated);border-radius:8px}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px}
+.card-header{padding:14px 16px;border-bottom:1px solid var(--border);font-weight:600;font-size:0.9rem}
+.card-body{padding:16px}
+.upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:30px 20px;text-align:center;cursor:pointer;transition:all 0.2s}
+.upload-zone:hover{border-color:var(--gold);background:var(--gold-glow)}
+.upload-zone-icon{font-size:2rem;margin-bottom:10px}
+.analysis-types{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px}
+.analysis-type{background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;padding:12px 8px;text-align:center;cursor:pointer;transition:all 0.2s}
+.analysis-type:hover,.analysis-type.active{border-color:var(--gold);background:var(--gold-glow)}
+.analysis-type-icon{font-size:1.3rem;margin-bottom:4px}
+.analysis-type-name{font-size:0.7rem;font-weight:600}
+.result-card{background:var(--bg-elevated);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+.result-card h4{font-size:0.85rem;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.result-card p,.result-card li{font-size:0.8rem;color:var(--text-secondary);margin:4px 0}
+.result-card ul{padding-left:16px}
+.result-card b{color:var(--gold)}
+.abnormal{color:var(--rose)!important}
+.normal{color:var(--emerald)!important}
+.ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.ref-card{background:var(--bg-elevated);border-radius:8px;padding:14px;border-left:3px solid var(--gold)}
+.ref-card h4{font-size:0.85rem;margin-bottom:8px}
+.ref-card p{font-size:0.75rem;color:var(--text-secondary)}
+.ref-card b{color:var(--gold)}
+#adminPanel{display:none;min-height:100vh}
 #adminPanel.active{display:block}
-.admin-header{background:var(--bg-card);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
-.admin-badge{background:var(--purple);padding:4px 12px;border-radius:100px;font-size:0.7rem;font-weight:600;color:white;margin-left:12px}
-.admin-content{max-width:900px;margin:0 auto;padding:24px}
-.admin-section{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:24px;overflow:hidden}
-.admin-section-header{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.admin-section-title{font-size:1rem;font-weight:600}
-.admin-section-body{padding:20px}
+.admin-header{background:var(--bg-card);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+.admin-content{max-width:800px;margin:0 auto;padding:20px}
+.admin-section{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:20px}
+.admin-section-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.admin-section-title{font-size:0.95rem;font-weight:600}
+.admin-section-body{padding:16px}
 .units-table{width:100%;border-collapse:collapse}
-.units-table th,.units-table td{padding:14px 16px;text-align:left;border-bottom:1px solid var(--border)}
-.units-table th{font-size:0.7rem;font-weight:600;color:var(--text-muted);text-transform:uppercase}
-.color-options{display:flex;gap:8px;flex-wrap:wrap}
-.color-option{width:32px;height:32px;border-radius:8px;cursor:pointer;border:2px solid transparent}
-.color-option.selected{border-color:white;transform:scale(1.15)}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--bg-card);border:1px solid var(--emerald);padding:14px 24px;border-radius:var(--radius-md);font-size:0.9rem;opacity:0;transition:0.3s;z-index:2000}
+.units-table th,.units-table td{padding:12px;text-align:left;border-bottom:1px solid var(--border)}
+.units-table th{font-size:0.65rem;font-weight:600;color:var(--text-muted);text-transform:uppercase}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-card);border:1px solid var(--emerald);padding:12px 20px;border-radius:var(--radius);font-size:0.85rem;opacity:0;transition:0.3s;z-index:2000}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 .toast.error{border-color:var(--rose)}
-/* Import Modal Styles */
-.import-dropzone{border:2px dashed var(--border);border-radius:var(--radius-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:all 0.2s}
-.import-dropzone:hover,.import-dropzone.dragover{border-color:var(--gold);background:var(--gold-glow)}
-.import-dropzone-icon{width:64px;height:64px;background:var(--bg-elevated);border-radius:16px;display:grid;place-items:center;margin:0 auto 16px;font-size:1.75rem}
-.import-preview{margin-top:16px}
-.import-preview img{width:100%;max-height:180px;object-fit:contain;border-radius:var(--radius-md);border:1px solid var(--border)}
-.import-processing{text-align:center;padding:40px 20px}
-.import-spinner{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px}
-@keyframes spin{to{transform:rotate(360deg)}}
-.import-results{margin-top:20px}
-.import-patient{display:flex;align-items:center;gap:12px;padding:14px;background:var(--bg-elevated);border-radius:var(--radius-md);margin-bottom:10px;border-left:3px solid var(--teal)}
+.import-dropzone{border:2px dashed var(--border);border-radius:var(--radius);padding:30px;text-align:center;cursor:pointer}
+.import-dropzone:hover{border-color:var(--gold);background:var(--gold-glow)}
+.import-preview img{width:100%;max-height:160px;object-fit:contain;border-radius:8px;margin-top:12px}
+.import-patient{display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg-elevated);border-radius:8px;margin-bottom:8px;border-left:3px solid var(--teal)}
 .import-patient.critical{border-left-color:var(--rose)}
-.import-patient-avatar{width:40px;height:40px;background:linear-gradient(135deg,var(--gold),var(--teal));border-radius:10px;display:grid;place-items:center;font-weight:600;font-size:0.85rem;color:var(--bg-deep);flex-shrink:0}
-.import-patient-info{flex:1;min-width:0}
-.import-patient-name{font-weight:600;font-size:0.95rem}
-.import-patient-meta{font-size:0.75rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.import-tabs{display:flex;background:var(--bg-elevated);border-radius:var(--radius-md);padding:4px;margin-bottom:20px}
-.import-tab{flex:1;padding:12px;background:none;border:none;border-radius:var(--radius-sm);color:var(--text-muted);font-family:inherit;font-size:0.85rem;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
-.import-tab.active{background:var(--bg-card);color:var(--gold)}
-.import-panel{display:none}
-.import-panel.active{display:block}
-@media(max-width:640px){.landing-title{font-size:1.75rem}.units-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(2,1fr)}.dash-user-info{display:none}.tab span{display:none}.patients-grid{grid-template-columns:1fr}}
+.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.analysis-types{grid-template-columns:repeat(2,1fr)}.tab span{display:none}}
   </style>
 </head>
 <body>
-<div class="ambient"></div>
 
 <!-- LANDING -->
 <div id="landing">
@@ -149,45 +141,45 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:va
   <h1 class="landing-title">MedWard Enterprise</h1>
   <p class="landing-subtitle">Select your unit to continue</p>
   <div class="units-grid" id="unitsGrid"></div>
-  <div class="admin-fab" onclick="App.openAdminLogin()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+  <div class="admin-fab" onclick="App.openAdminLogin()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
 </div>
 
 <!-- ACCESS MODAL -->
 <div class="modal" id="accessModal">
   <div class="modal-box">
     <div class="modal-header" style="text-align:center">
-      <div style="font-size:2.5rem;margin-bottom:12px" id="accessIcon">🏥</div>
-      <h2 class="modal-title" id="accessTitle">Unit</h2>
-      <p style="color:var(--text-muted);font-size:0.85rem;margin-top:4px">Enter 4-digit access code</p>
+      <div id="accessIcon" style="font-size:2.5rem;margin-bottom:8px">🏥</div>
+      <div class="modal-title" id="accessTitle">Unit</div>
+      <div style="color:var(--text-muted);font-size:0.8rem;margin-top:4px">Enter 4-digit code</div>
     </div>
     <div class="modal-body">
       <div class="code-inputs" id="codeInputs"></div>
-      <p class="code-error" id="codeError">Invalid access code</p>
-      <div id="userSection" style="display:none;margin-top:24px;padding-top:24px;border-top:1px solid var(--border)">
+      <p class="code-error" id="codeError">Invalid code</p>
+      <div id="userSection" style="display:none;margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
         <div class="form-group"><label class="form-label">Your Name</label><input type="text" id="userName" class="form-input" placeholder="Dr. Name"></div>
         <div class="form-group"><label class="form-label">Role</label><select id="userRole" class="form-select"><option value="attending">Attending</option><option value="resident">Resident</option><option value="intern">Intern</option><option value="nurse">Nurse</option></select></div>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="App.closeModal('accessModal')">Cancel</button>
-      <button class="btn btn-primary" id="enterUnitBtn" style="display:none" onclick="App.enterUnit()">Enter Unit</button>
+      <button class="btn btn-primary" id="enterBtn" style="display:none" onclick="App.enterUnit()">Enter</button>
     </div>
   </div>
 </div>
 
 <!-- ADMIN LOGIN -->
-<div class="modal" id="adminLoginModal">
+<div class="modal" id="adminModal">
   <div class="modal-box">
     <div class="modal-header" style="text-align:center">
-      <div style="font-size:2.5rem;margin-bottom:12px">⚙️</div>
-      <h2 class="modal-title">Admin Access</h2>
+      <div style="font-size:2.5rem;margin-bottom:8px">⚙️</div>
+      <div class="modal-title">Admin Access</div>
     </div>
     <div class="modal-body">
-      <div class="form-group"><label class="form-label">Password</label><input type="password" id="adminPwd" class="form-input" placeholder="Enter password"></div>
+      <div class="form-group"><label class="form-label">Password</label><input type="password" id="adminPwd" class="form-input" placeholder="Password"></div>
       <p class="code-error" id="adminError">Invalid password</p>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="App.closeModal('adminLoginModal')">Cancel</button>
+      <button class="btn btn-secondary" onclick="App.closeModal('adminModal')">Cancel</button>
       <button class="btn btn-primary" onclick="App.loginAdmin()">Login</button>
     </div>
   </div>
@@ -196,20 +188,20 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:va
 <!-- ADMIN PANEL -->
 <div id="adminPanel">
   <header class="admin-header">
-    <div class="dash-logo"><div class="dash-logo-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke-width="2"/></svg></div><span style="font-weight:600;margin-left:8px">MedWard</span><span class="admin-badge">ADMIN</span></div>
+    <div style="display:flex;align-items:center;gap:8px"><div class="dash-logo-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke-width="2"/></svg></div><span style="font-weight:600">MedWard</span><span style="background:var(--purple);padding:2px 8px;border-radius:100px;font-size:0.65rem;font-weight:600;margin-left:8px">ADMIN</span></div>
     <button class="btn btn-secondary btn-sm" onclick="App.exitAdmin()">Exit</button>
   </header>
   <div class="admin-content">
     <div class="admin-section">
-      <div class="admin-section-header"><h2 class="admin-section-title">🏥 Units</h2><button class="btn btn-primary btn-sm" onclick="App.addUnit()">+ Add</button></div>
-      <div class="admin-section-body" style="padding:0"><table class="units-table"><thead><tr><th>Unit</th><th>Code</th><th>Actions</th></tr></thead><tbody id="unitsTableBody"></tbody></table></div>
+      <div class="admin-section-header"><div class="admin-section-title">🏥 Units</div><button class="btn btn-primary btn-sm" onclick="App.addUnit()">+ Add</button></div>
+      <div class="admin-section-body" style="padding:0"><table class="units-table"><thead><tr><th>Unit</th><th>Code</th><th>Actions</th></tr></thead><tbody id="unitsTable"></tbody></table></div>
     </div>
     <div class="admin-section">
-      <div class="admin-section-header"><h2 class="admin-section-title">⚙️ Settings</h2></div>
+      <div class="admin-section-header"><div class="admin-section-title">⚙️ Settings</div></div>
       <div class="admin-section-body">
-        <div class="form-group"><label class="form-label">Admin Password</label><input type="password" id="newAdminPwd" class="form-input" placeholder="Leave blank to keep current"></div>
-        <div class="form-group"><label class="form-label">Claude API URL (Apps Script)</label><input type="text" id="apiUrl" class="form-input" placeholder="https://script.google.com/macros/s/.../exec"></div>
-        <button class="btn btn-primary" onclick="App.saveSettings()">Save Settings</button>
+        <div class="form-group"><label class="form-label">Admin Password</label><input type="password" id="newAdminPwd" class="form-input" placeholder="Leave blank to keep"></div>
+        <div class="form-group"><label class="form-label">Claude API URL</label><input type="text" id="apiUrl" class="form-input" placeholder="Apps Script URL"></div>
+        <button class="btn btn-primary" onclick="App.saveSettings()">Save</button>
       </div>
     </div>
   </div>
@@ -218,59 +210,67 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:va
 <!-- DASHBOARD -->
 <div id="dashboard">
   <header class="dash-header">
-    <div class="dash-logo">
-      <div class="dash-logo-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke-width="2"/></svg></div>
-      <span class="dash-unit-badge" id="unitBadge">Unit</span>
-    </div>
-    <div class="dash-user">
-      <div class="dash-user-info"><div class="dash-user-name" id="dashUserName">Doctor</div><div class="dash-user-role" id="dashUserRole">Role</div></div>
-      <div class="dash-avatar" id="dashAvatar">DR</div>
-      <button class="btn-icon" onclick="App.logout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
-    </div>
+    <div class="dash-logo"><div class="dash-logo-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke-width="2"/></svg></div><span class="dash-badge" id="unitBadge">Unit</span></div>
+    <div class="dash-user"><div class="dash-avatar" id="dashAvatar">DR</div><button class="btn-icon" onclick="App.logout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button></div>
   </header>
   <div class="dash-content">
     <div class="tabs">
       <button class="tab active" onclick="App.showTab('patients',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Patients</span></button>
-      <button class="tab" onclick="App.showTab('analysis',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><span>AI Analysis</span></button>
+      <button class="tab" onclick="App.showTab('analysis',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/><path d="M14 3v5h5M16 13H8M16 17H8M10 9H8"/></svg><span>AI Analysis</span></button>
       <button class="tab" onclick="App.showTab('reference',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span>Reference</span></button>
     </div>
     
-    <!-- Patients Panel -->
+    <!-- PATIENTS PANEL -->
     <div class="panel active" id="panelPatients">
-      <div class="stats-grid">
-        <div class="stat-card"><div class="stat-value" id="statTotal">0</div><div class="stat-label">Total</div></div>
-        <div class="stat-card"><div class="stat-value" id="statActive">0</div><div class="stat-label">Active</div></div>
-        <div class="stat-card"><div class="stat-value" id="statCritical">0</div><div class="stat-label">Critical</div></div>
-        <div class="stat-card"><div class="stat-value" id="statChronic">0</div><div class="stat-label">Chronic</div></div>
+      <div class="stats">
+        <div class="stat"><div class="stat-value" id="statTotal">0</div><div class="stat-label">Total</div></div>
+        <div class="stat"><div class="stat-value" id="statActive">0</div><div class="stat-label">Active</div></div>
+        <div class="stat"><div class="stat-value" id="statCritical">0</div><div class="stat-label">Critical</div></div>
+        <div class="stat"><div class="stat-value" id="statChronic">0</div><div class="stat-label">Chronic</div></div>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
-        <h2 style="font-size:1.1rem">Unit Patients</h2>
-        <div style="display:flex;gap:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+        <div style="font-weight:600">Patients</div>
+        <div style="display:flex;gap:8px">
           <button class="btn btn-secondary btn-sm" onclick="App.openImport()" style="border-color:var(--gold);color:var(--gold)">📥 Import</button>
-          <button class="btn btn-primary btn-sm" onclick="App.addPatient()">+ Add Patient</button>
+          <button class="btn btn-primary btn-sm" onclick="App.addPatient()">+ Add</button>
         </div>
       </div>
-      <div class="patients-grid" id="patientsGrid"><div style="text-align:center;padding:60px;color:var(--text-muted);grid-column:1/-1">No patients yet</div></div>
+      <div class="patients-list" id="patientsList"></div>
     </div>
     
-    <!-- Analysis Panel -->
+    <!-- ANALYSIS PANEL -->
     <div class="panel" id="panelAnalysis">
       <div class="card">
-        <div class="card-header"><h3 class="card-title">🔬 AI Medical Analysis</h3></div>
-        <div class="card-body" style="text-align:center;padding:40px">
-          <p style="color:var(--text-muted)">Upload medical images for AI analysis</p>
-          <p style="color:var(--text-secondary);font-size:0.85rem;margin-top:8px">Coming soon - use Import feature for patient lists</p>
+        <div class="card-header">🔬 AI Medical Analysis</div>
+        <div class="card-body">
+          <div class="upload-zone" id="analysisZone" onclick="document.getElementById('analysisFile').click()">
+            <div class="upload-zone-icon">📤</div>
+            <div style="font-weight:600">Upload Medical Images</div>
+            <div style="font-size:0.8rem;color:var(--text-muted);margin-top:4px">Labs, X-Rays, CT/MRI, ECG</div>
+          </div>
+          <input type="file" id="analysisFile" accept="image/*" style="display:none">
+          <div class="analysis-types">
+            <div class="analysis-type active" data-type="lab" onclick="App.setAnalysisType('lab',this)"><div class="analysis-type-icon">🧪</div><div class="analysis-type-name">Labs</div></div>
+            <div class="analysis-type" data-type="xray" onclick="App.setAnalysisType('xray',this)"><div class="analysis-type-icon">🩻</div><div class="analysis-type-name">X-Ray</div></div>
+            <div class="analysis-type" data-type="ct" onclick="App.setAnalysisType('ct',this)"><div class="analysis-type-icon">🧠</div><div class="analysis-type-name">CT/MRI</div></div>
+            <div class="analysis-type" data-type="ecg" onclick="App.setAnalysisType('ecg',this)"><div class="analysis-type-icon">💓</div><div class="analysis-type-name">ECG</div></div>
+          </div>
+          <div id="analysisPreview" style="display:none;margin-top:16px">
+            <img id="analysisImg" src="" style="width:100%;max-height:200px;object-fit:contain;border-radius:8px">
+            <button class="btn btn-secondary btn-sm btn-full" onclick="App.clearAnalysis()" style="margin-top:10px">✕ Remove</button>
+          </div>
         </div>
       </div>
+      <button class="btn btn-primary btn-full" id="analyzeBtn" onclick="App.runAnalysis()" disabled>🤖 Analyze with Claude AI</button>
+      <div id="analysisLoading" style="display:none;text-align:center;padding:30px"><div class="spinner"></div><div style="margin-top:12px;font-weight:600">Analyzing...</div></div>
+      <div id="analysisResults" style="margin-top:16px"></div>
     </div>
     
-    <!-- Reference Panel -->
+    <!-- REFERENCE PANEL -->
     <div class="panel" id="panelReference">
       <div class="card">
-        <div class="card-header"><h3 class="card-title">📚 Quick Reference</h3></div>
-        <div class="card-body">
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px" id="refGrid"></div>
-        </div>
+        <div class="card-header">📚 Quick Reference</div>
+        <div class="card-body"><div class="ref-grid" id="refGrid"></div></div>
       </div>
     </div>
   </div>
@@ -279,18 +279,18 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:va
 <!-- PATIENT MODAL -->
 <div class="modal" id="patientModal">
   <div class="modal-box">
-    <div class="modal-header"><h2 class="modal-title">Add Patient</h2></div>
+    <div class="modal-header"><div class="modal-title">Add Patient</div></div>
     <div class="modal-body">
       <div class="form-group"><label class="form-label">Name</label><input type="text" id="ptName" class="form-input" placeholder="Full name"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <div class="form-group"><label class="form-label">Room</label><input type="text" id="ptRoom" class="form-input" placeholder="21-A"></div>
         <div class="form-group"><label class="form-label">Status</label><select id="ptStatus" class="form-select"><option value="active">Active</option><option value="critical">Critical</option><option value="chronic">Chronic</option></select></div>
       </div>
-      <div class="form-group"><label class="form-label">Diagnosis</label><textarea id="ptDiagnosis" class="form-textarea" placeholder="Primary diagnosis"></textarea></div>
+      <div class="form-group"><label class="form-label">Diagnosis</label><textarea id="ptDx" class="form-textarea" placeholder="Diagnosis"></textarea></div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="App.closeModal('patientModal')">Cancel</button>
-      <button class="btn btn-primary" onclick="App.savePatient()">Save Patient</button>
+      <button class="btn btn-primary" onclick="App.savePatient()">Save</button>
     </div>
   </div>
 </div>
@@ -298,24 +298,14 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:va
 <!-- UNIT MODAL -->
 <div class="modal" id="unitModal">
   <div class="modal-box">
-    <div class="modal-header"><h2 class="modal-title" id="unitModalTitle">Add Unit</h2></div>
+    <div class="modal-header"><div class="modal-title" id="unitModalTitle">Add Unit</div></div>
     <div class="modal-body">
-      <div class="form-group"><label class="form-label">Unit Name</label><input type="text" id="unitName" class="form-input" placeholder="Neurology"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-        <div class="form-group"><label class="form-label">Icon</label><input type="text" id="unitIcon" class="form-input" value="🏥" style="font-size:1.5rem;text-align:center"></div>
-        <div class="form-group"><label class="form-label">Code (4 digits)</label><input type="text" id="unitCode" class="form-input" placeholder="1234" maxlength="4"></div>
+      <div class="form-group"><label class="form-label">Name</label><input type="text" id="uName" class="form-input" placeholder="Neurology"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group"><label class="form-label">Icon</label><input type="text" id="uIcon" class="form-input" value="🏥" style="font-size:1.3rem;text-align:center"></div>
+        <div class="form-group"><label class="form-label">Code</label><input type="text" id="uCode" class="form-input" placeholder="1234" maxlength="4"></div>
       </div>
-      <div class="form-group"><label class="form-label">Description</label><input type="text" id="unitDesc" class="form-input" placeholder="Brief description"></div>
-      <div class="form-group"><label class="form-label">Color</label>
-        <div class="color-options">
-          <div class="color-option selected" style="background:#d4a437" data-color="#d4a437" onclick="App.selectColor(this)"></div>
-          <div class="color-option" style="background:#14b8a6" data-color="#14b8a6" onclick="App.selectColor(this)"></div>
-          <div class="color-option" style="background:#3b82f6" data-color="#3b82f6" onclick="App.selectColor(this)"></div>
-          <div class="color-option" style="background:#a855f7" data-color="#a855f7" onclick="App.selectColor(this)"></div>
-          <div class="color-option" style="background:#ef4444" data-color="#ef4444" onclick="App.selectColor(this)"></div>
-          <div class="color-option" style="background:#f97316" data-color="#f97316" onclick="App.selectColor(this)"></div>
-        </div>
-      </div>
+      <div class="form-group"><label class="form-label">Description</label><input type="text" id="uDesc" class="form-input" placeholder="Brief description"></div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="App.closeModal('unitModal')">Cancel</button>
@@ -326,65 +316,41 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:va
 
 <!-- IMPORT MODAL -->
 <div class="modal" id="importModal">
-  <div class="modal-box" style="max-width:540px">
+  <div class="modal-box" style="max-width:500px">
     <div class="modal-header">
-      <h2 class="modal-title" style="display:flex;align-items:center;gap:12px">
-        <span style="font-size:1.5rem">📥</span> Import Patients
-      </h2>
-      <p style="color:var(--text-muted);font-size:0.85rem;margin-top:4px">AI-powered extraction from screenshots</p>
+      <div class="modal-title">📥 Import Patients</div>
+      <div style="font-size:0.8rem;color:var(--text-muted);margin-top:4px">AI extracts patient data from screenshots</div>
     </div>
     <div class="modal-body">
-      <!-- Upload Stage -->
-      <div id="importStageUpload">
-        <div class="import-dropzone" id="importDropzone" onclick="document.getElementById('importFileInput').click()">
-          <div class="import-dropzone-icon">📤</div>
-          <div style="font-weight:600;margin-bottom:4px">Drop image or tap to upload</div>
-          <div style="font-size:0.85rem;color:var(--text-muted)">Screenshot of patient list from Excel, Sheets, or EMR</div>
+      <div id="importUpload">
+        <div class="import-dropzone" onclick="document.getElementById('importFile').click()">
+          <div style="font-size:2rem;margin-bottom:8px">📤</div>
+          <div style="font-weight:600">Upload Screenshot</div>
+          <div style="font-size:0.8rem;color:var(--text-muted);margin-top:4px">Excel, Sheets, EMR screenshot</div>
         </div>
-        <input type="file" id="importFileInput" accept="image/*" style="display:none">
+        <input type="file" id="importFile" accept="image/*" style="display:none">
       </div>
-      
-      <!-- Preview Stage -->
-      <div id="importStagePreview" style="display:none">
-        <div class="import-preview">
-          <img id="importPreviewImg" src="" alt="Preview">
-        </div>
-        <div style="display:flex;gap:10px;margin-top:16px">
-          <button class="btn btn-secondary btn-sm" onclick="App.resetImport()" style="flex:1">✕ Change Image</button>
-          <button class="btn btn-primary btn-sm" onclick="App.analyzeImage()" style="flex:2">🤖 Analyze with AI</button>
+      <div id="importPreview" style="display:none">
+        <img id="importImg" src="" class="import-preview" style="width:100%;max-height:150px;object-fit:contain;border-radius:8px">
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn btn-secondary btn-sm" onclick="App.resetImport()" style="flex:1">Change</button>
+          <button class="btn btn-primary btn-sm" onclick="App.analyzeImport()" style="flex:2">🤖 Extract Patients</button>
         </div>
       </div>
-      
-      <!-- Processing Stage -->
-      <div id="importStageProcessing" style="display:none">
-        <div class="import-processing">
-          <div class="import-spinner"></div>
-          <div style="font-weight:600" id="importStatusText">Analyzing with Claude AI...</div>
-          <div style="font-size:0.85rem;color:var(--text-muted);margin-top:4px">Extracting patient data</div>
-        </div>
+      <div id="importLoading" style="display:none;text-align:center;padding:30px"><div class="spinner"></div><div style="margin-top:12px">Extracting patients...</div></div>
+      <div id="importResults" style="display:none">
+        <div style="display:flex;justify-content:space-between;margin-bottom:12px"><span style="font-weight:600">✓ Found Patients</span><span id="importCount" style="background:var(--emerald);color:white;padding:2px 10px;border-radius:100px;font-size:0.75rem">0</span></div>
+        <div id="importList" style="max-height:250px;overflow-y:auto"></div>
       </div>
-      
-      <!-- Results Stage -->
-      <div id="importStageResults" style="display:none">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-          <div style="font-weight:600;display:flex;align-items:center;gap:8px">
-            <span style="color:var(--emerald)">✓</span> Patients Found
-          </div>
-          <span id="importCount" style="background:var(--emerald);color:white;padding:4px 12px;border-radius:100px;font-size:0.8rem;font-weight:600">0</span>
-        </div>
-        <div id="importPatientsList" style="max-height:300px;overflow-y:auto"></div>
-      </div>
-      
-      <!-- Error Stage -->
-      <div id="importStageError" style="display:none;text-align:center;padding:20px">
-        <div style="font-size:2rem;margin-bottom:12px">⚠️</div>
-        <div style="font-weight:600;color:var(--rose)" id="importErrorText">Analysis failed</div>
-        <button class="btn btn-secondary btn-sm" onclick="App.resetImport()" style="margin-top:16px">Try Again</button>
+      <div id="importError" style="display:none;text-align:center;padding:20px;color:var(--rose)">
+        <div style="font-size:1.5rem;margin-bottom:8px">⚠️</div>
+        <div id="importErrorMsg">Error</div>
+        <button class="btn btn-secondary btn-sm" onclick="App.resetImport()" style="margin-top:12px">Try Again</button>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="App.closeModal('importModal')">Cancel</button>
-      <button class="btn btn-primary" id="importConfirmBtn" onclick="App.confirmImport()" disabled>Import Patients</button>
+      <button class="btn btn-primary" id="importBtn" onclick="App.confirmImport()" disabled>Import</button>
     </div>
   </div>
 </div>
@@ -395,27 +361,21 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-deep);color:va
 var App = (function() {
   'use strict';
   
-  // ═══════════════════════════════════════════════════════════
-  // CONFIGURATION
-  // ═══════════════════════════════════════════════════════════
   var CONFIG = {
-    STORAGE_KEY: 'medward_enterprise_v6',
-    DEFAULT_ADMIN_PWD: 'admin123',
-    DEFAULT_API_URL: 'https://script.google.com/macros/s/AKfycbwnPMayEKM6rHJB2qZ-DDECoVB4Kte1EcoBiea0pmcasfyAeW7RGeADiH5DMXGRJOSJ/exec'
+    STORAGE: 'medward_v7',
+    ADMIN_PWD: 'admin123',
+    API_URL: 'https://script.google.com/macros/s/AKfycbwnPMayEKM6rHJB2qZ-DDECoVB4Kte1EcoBiea0pmcasfyAeW7RGeADiH5DMXGRJOSJ/exec'
   };
   
   var DEFAULT_UNITS = [
-    { id: 'neuro', name: 'Neurology', icon: '🧠', desc: 'Stroke & Neurological Care', code: '1234', color: '#a855f7' },
-    { id: 'cardio', name: 'Cardiology', icon: '❤️', desc: 'Cardiac Care Unit', code: '5678', color: '#ef4444' },
-    { id: 'icu', name: 'ICU', icon: '🏥', desc: 'Intensive Care Unit', code: '9012', color: '#f97316' }
+    {id:'neuro',name:'Neurology',icon:'🧠',desc:'Stroke & Neuro Care',code:'1234',color:'#a855f7'},
+    {id:'cardio',name:'Cardiology',icon:'❤️',desc:'Cardiac Care',code:'5678',color:'#ef4444'},
+    {id:'icu',name:'ICU',icon:'🏥',desc:'Intensive Care',code:'9012',color:'#f97316'}
   ];
   
-  // ═══════════════════════════════════════════════════════════
-  // STATE
-  // ═══════════════════════════════════════════════════════════
   var state = {
     units: [],
-    settings: { adminPassword: CONFIG.DEFAULT_ADMIN_PWD, apiUrl: CONFIG.DEFAULT_API_URL },
+    settings: {adminPassword:CONFIG.ADMIN_PWD, apiUrl:CONFIG.API_URL},
     currentUnit: null,
     currentUser: null,
     patients: [],
@@ -423,752 +383,239 @@ var App = (function() {
     editingUnitId: null
   };
   
-  var importState = {
-    imageBase64: null,
-    patients: [],
-    isProcessing: false
-  };
+  var analysisState = {type:'lab', imageBase64:null};
+  var importState = {imageBase64:null, patients:[], processing:false};
   
-  // ═══════════════════════════════════════════════════════════
-  // UTILITIES
-  // ═══════════════════════════════════════════════════════════
-  function $(id) { return document.getElementById(id); }
-  function $$(sel) { return document.querySelectorAll(sel); }
+  // Helpers
+  function $(id){return document.getElementById(id)}
+  function $$(sel){return document.querySelectorAll(sel)}
+  function toast(msg,err){var t=$('toast');t.textContent=msg;t.className='toast show'+(err?' error':'');setTimeout(function(){t.className='toast'},3000)}
+  function initials(n){if(!n)return'?';var p=n.trim().split(/\s+/);return p.length>=2?(p[0][0]+p[p.length-1][0]).toUpperCase():n.substring(0,2).toUpperCase()}
+  function escHtml(t){var d=document.createElement('div');d.textContent=t||'';return d.innerHTML}
   
-  function toast(msg, isError) {
-    var t = $('toast');
-    t.textContent = msg;
-    t.className = 'toast show' + (isError ? ' error' : '');
-    setTimeout(function() { t.className = 'toast'; }, 3000);
-  }
-  
-  function initials(name) {
-    if (!name) return '?';
-    var parts = name.trim().split(/\s+/);
-    if (parts.length >= 2) return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
-    return name.substring(0, 2).toUpperCase();
-  }
-  
-  // ═══════════════════════════════════════════════════════════
-  // STORAGE
-  // ═══════════════════════════════════════════════════════════
-  function save() {
-    try {
-      localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify({
-        units: state.units,
-        settings: state.settings,
-        patients: state.patients
-      }));
-    } catch(e) { console.warn('Save failed:', e); }
-  }
-  
-  function load() {
-    state.units = DEFAULT_UNITS.slice();
-    state.settings = { adminPassword: CONFIG.DEFAULT_ADMIN_PWD, apiUrl: CONFIG.DEFAULT_API_URL };
-    state.patients = [];
-    
-    try {
-      var saved = localStorage.getItem(CONFIG.STORAGE_KEY);
-      if (saved) {
-        var data = JSON.parse(saved);
-        if (data.units && data.units.length > 0) state.units = data.units;
-        if (data.settings) {
-          state.settings.adminPassword = data.settings.adminPassword || CONFIG.DEFAULT_ADMIN_PWD;
-          state.settings.apiUrl = data.settings.apiUrl || CONFIG.DEFAULT_API_URL;
-        }
-        if (data.patients) state.patients = data.patients;
+  // Storage
+  function save(){try{localStorage.setItem(CONFIG.STORAGE,JSON.stringify({units:state.units,settings:state.settings,patients:state.patients}))}catch(e){}}
+  function load(){
+    state.units=DEFAULT_UNITS.slice();
+    state.settings={adminPassword:CONFIG.ADMIN_PWD,apiUrl:CONFIG.API_URL};
+    try{
+      var d=JSON.parse(localStorage.getItem(CONFIG.STORAGE));
+      if(d){
+        if(d.units&&d.units.length)state.units=d.units;
+        if(d.settings){state.settings.adminPassword=d.settings.adminPassword||CONFIG.ADMIN_PWD;state.settings.apiUrl=d.settings.apiUrl||CONFIG.API_URL}
+        if(d.patients)state.patients=d.patients;
       }
-    } catch(e) { console.warn('Load failed:', e); }
+    }catch(e){}
   }
   
-  // ═══════════════════════════════════════════════════════════
-  // MODALS
-  // ═══════════════════════════════════════════════════════════
-  function openModal(id) { $(id).classList.add('active'); }
-  function closeModal(id) { $(id).classList.remove('active'); }
+  // Modals
+  function openModal(id){$(id).classList.add('active')}
+  function closeModal(id){$(id).classList.remove('active')}
   
-  // ═══════════════════════════════════════════════════════════
-  // LANDING & UNITS
-  // ═══════════════════════════════════════════════════════════
-  function renderUnits() {
-    var grid = $('unitsGrid');
-    var html = '';
-    for (var i = 0; i < state.units.length; i++) {
-      var u = state.units[i];
-      html += '<div class="unit-card" style="--unit-color:' + u.color + '" onclick="App.openUnit(\'' + u.id + '\')">' +
-        '<div class="unit-card-lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>' +
-        '<div class="unit-card-icon">' + u.icon + '</div>' +
-        '<div class="unit-card-name">' + u.name + '</div>' +
-        '<div class="unit-card-desc">' + (u.desc || '') + '</div>' +
-      '</div>';
+  // Units
+  function renderUnits(){
+    var h='';
+    for(var i=0;i<state.units.length;i++){
+      var u=state.units[i];
+      h+='<div class="unit-card" style="--unit-color:'+u.color+'" onclick="App.openUnit(\''+u.id+'\')"><div class="unit-card-icon">'+u.icon+'</div><div class="unit-card-name">'+u.name+'</div><div class="unit-card-desc">'+(u.desc||'')+'</div></div>';
     }
-    grid.innerHTML = html;
+    $('unitsGrid').innerHTML=h;
   }
   
-  function openUnit(unitId) {
-    var unit = null;
-    for (var i = 0; i < state.units.length; i++) {
-      if (state.units[i].id === unitId) { unit = state.units[i]; break; }
-    }
-    if (!unit) return;
-    
-    state.selectedUnitId = unitId;
-    $('accessIcon').textContent = unit.icon;
-    $('accessTitle').textContent = unit.name;
+  function openUnit(id){
+    var unit=null;
+    for(var i=0;i<state.units.length;i++)if(state.units[i].id===id){unit=state.units[i];break}
+    if(!unit)return;
+    state.selectedUnitId=id;
+    $('accessIcon').textContent=unit.icon;
+    $('accessTitle').textContent=unit.name;
     $('codeError').classList.remove('show');
-    $('userSection').style.display = 'none';
-    $('enterUnitBtn').style.display = 'none';
-    
-    var html = '';
-    for (var j = 0; j < 4; j++) {
-      html += '<input type="tel" class="code-digit" maxlength="1" data-idx="' + j + '" inputmode="numeric">';
-    }
-    $('codeInputs').innerHTML = html;
-    
-    var inputs = $$('.code-digit');
-    for (var k = 0; k < inputs.length; k++) {
-      (function(idx, inp) {
-        inp.addEventListener('input', function() {
-          var val = inp.value.replace(/\D/g, '');
-          inp.value = val;
-          if (val && idx < 3) inputs[idx + 1].focus();
-          checkCode(unit, inputs);
-        });
-        inp.addEventListener('keydown', function(e) {
-          if (e.key === 'Backspace' && !inp.value && idx > 0) inputs[idx - 1].focus();
-        });
-      })(k, inputs[k]);
-    }
-    
-    openModal('accessModal');
-    setTimeout(function() { inputs[0].focus(); }, 100);
-  }
-  
-  function checkCode(unit, inputs) {
-    var code = '';
-    for (var i = 0; i < inputs.length; i++) code += inputs[i].value;
-    
-    if (code.length === 4) {
-      if (code === unit.code) {
-        for (var j = 0; j < inputs.length; j++) {
-          inputs[j].classList.add('success');
-          inputs[j].disabled = true;
-        }
-        $('codeError').classList.remove('show');
-        $('userSection').style.display = 'block';
-        $('enterUnitBtn').style.display = 'flex';
-        $('userName').focus();
-      } else {
-        $('codeError').classList.add('show');
-        for (var k = 0; k < inputs.length; k++) inputs[k].classList.add('error');
-        setTimeout(function() {
-          for (var m = 0; m < inputs.length; m++) {
-            inputs[m].classList.remove('error');
-            inputs[m].value = '';
+    $('userSection').style.display='none';
+    $('enterBtn').style.display='none';
+    var h='';for(var j=0;j<4;j++)h+='<input type="tel" class="code-digit" maxlength="1" data-idx="'+j+'" inputmode="numeric">';
+    $('codeInputs').innerHTML=h;
+    var inputs=$$('.code-digit');
+    for(var k=0;k<inputs.length;k++){
+      (function(idx,inp){
+        inp.oninput=function(){
+          inp.value=inp.value.replace(/\D/g,'');
+          if(inp.value&&idx<3)inputs[idx+1].focus();
+          var code='';for(var m=0;m<4;m++)code+=inputs[m].value;
+          if(code.length===4){
+            if(code===unit.code){
+              for(var n=0;n<4;n++){inputs[n].classList.add('success');inputs[n].disabled=true}
+              $('codeError').classList.remove('show');$('userSection').style.display='block';$('enterBtn').style.display='flex';$('userName').focus();
+            }else{
+              $('codeError').classList.add('show');for(var p=0;p<4;p++)inputs[p].classList.add('error');
+              setTimeout(function(){for(var q=0;q<4;q++){inputs[q].classList.remove('error');inputs[q].value=''}inputs[0].focus()},500);
+            }
           }
-          inputs[0].focus();
-        }, 600);
-      }
+        };
+        inp.onkeydown=function(e){if(e.key==='Backspace'&&!inp.value&&idx>0)inputs[idx-1].focus()};
+      })(k,inputs[k]);
     }
+    openModal('accessModal');
+    setTimeout(function(){inputs[0].focus()},100);
   }
   
-  function enterUnit() {
-    var name = $('userName').value.trim();
-    var role = $('userRole').value;
-    if (!name) { toast('Please enter your name', true); return; }
-    
-    for (var i = 0; i < state.units.length; i++) {
-      if (state.units[i].id === state.selectedUnitId) {
-        state.currentUnit = state.units[i];
-        break;
-      }
-    }
-    state.currentUser = { name: name, role: role };
-    
+  function enterUnit(){
+    var name=$('userName').value.trim();
+    if(!name){toast('Enter your name',true);return}
+    for(var i=0;i<state.units.length;i++)if(state.units[i].id===state.selectedUnitId){state.currentUnit=state.units[i];break}
+    state.currentUser={name:name,role:$('userRole').value};
     closeModal('accessModal');
     showDashboard();
   }
   
-  // ═══════════════════════════════════════════════════════════
-  // ADMIN
-  // ═══════════════════════════════════════════════════════════
-  function openAdminLogin() {
-    $('adminPwd').value = '';
-    $('adminError').classList.remove('show');
-    openModal('adminLoginModal');
-    setTimeout(function() { $('adminPwd').focus(); }, 100);
+  // Admin
+  function openAdminLogin(){$('adminPwd').value='';$('adminError').classList.remove('show');openModal('adminModal');setTimeout(function(){$('adminPwd').focus()},100)}
+  function loginAdmin(){if($('adminPwd').value===state.settings.adminPassword){closeModal('adminModal');showAdmin()}else{$('adminError').classList.add('show')}}
+  function showAdmin(){$('landing').classList.add('hidden');$('adminPanel').classList.add('active');$('apiUrl').value=state.settings.apiUrl||'';renderUnitsTable()}
+  function exitAdmin(){$('adminPanel').classList.remove('active');$('landing').classList.remove('hidden')}
+  function renderUnitsTable(){
+    var h='';
+    for(var i=0;i<state.units.length;i++){var u=state.units[i];h+='<tr><td>'+u.icon+' <b>'+u.name+'</b></td><td><code style="background:var(--bg-elevated);padding:3px 8px;border-radius:4px">'+u.code+'</code></td><td><button class="btn-icon" onclick="App.editUnit(\''+u.id+'\')">✏️</button> <button class="btn-icon" onclick="App.deleteUnit(\''+u.id+'\')">🗑️</button></td></tr>'}
+    $('unitsTable').innerHTML=h||'<tr><td colspan="3" style="text-align:center;padding:30px;color:var(--text-muted)">No units</td></tr>';
+  }
+  function addUnit(){state.editingUnitId=null;$('unitModalTitle').textContent='Add Unit';$('uName').value='';$('uIcon').value='🏥';$('uCode').value='';$('uDesc').value='';openModal('unitModal')}
+  function editUnit(id){var u=null;for(var i=0;i<state.units.length;i++)if(state.units[i].id===id){u=state.units[i];break}if(!u)return;state.editingUnitId=id;$('unitModalTitle').textContent='Edit Unit';$('uName').value=u.name;$('uIcon').value=u.icon;$('uCode').value=u.code;$('uDesc').value=u.desc||'';openModal('unitModal')}
+  function saveUnit(){
+    var name=$('uName').value.trim(),icon=$('uIcon').value.trim()||'🏥',code=$('uCode').value.trim(),desc=$('uDesc').value.trim();
+    if(!name){toast('Name required',true);return}
+    if(!/^\d{4}$/.test(code)){toast('Code must be 4 digits',true);return}
+    var colors=['#d4a437','#14b8a6','#3b82f6','#a855f7','#ef4444','#f97316'];
+    if(state.editingUnitId){for(var i=0;i<state.units.length;i++)if(state.units[i].id===state.editingUnitId){state.units[i]={id:state.editingUnitId,name:name,icon:icon,code:code,desc:desc,color:state.units[i].color};break}toast('Updated!')}
+    else{state.units.push({id:'u'+Date.now(),name:name,icon:icon,code:code,desc:desc,color:colors[state.units.length%colors.length]});toast('Created!')}
+    save();renderUnitsTable();renderUnits();closeModal('unitModal');
+  }
+  function deleteUnit(id){if(!confirm('Delete unit?'))return;state.units=state.units.filter(function(u){return u.id!==id});save();renderUnitsTable();renderUnits();toast('Deleted')}
+  function saveSettings(){var pwd=$('newAdminPwd').value.trim(),url=$('apiUrl').value.trim();if(pwd)state.settings.adminPassword=pwd;if(url)state.settings.apiUrl=url;save();toast('Saved!');$('newAdminPwd').value=''}
+  
+  // Dashboard
+  function showDashboard(){
+    $('landing').classList.add('hidden');$('dashboard').classList.add('active');
+    var u=state.currentUnit;
+    $('unitBadge').textContent=u.name;$('unitBadge').style.cssText='border:1px solid '+u.color+';color:'+u.color+';background:'+u.color+'20';
+    $('dashAvatar').textContent=initials(state.currentUser.name);
+    renderPatients();renderReference();
+    toast('Welcome to '+u.name);
+  }
+  function logout(){state.currentUnit=null;state.currentUser=null;$('dashboard').classList.remove('active');$('landing').classList.remove('hidden')}
+  function showTab(name,btn){var tabs=$$('.tab'),panels=$$('.panel');for(var i=0;i<tabs.length;i++)tabs[i].classList.remove('active');for(var j=0;j<panels.length;j++)panels[j].classList.remove('active');btn.classList.add('active');$('panel'+name.charAt(0).toUpperCase()+name.slice(1)).classList.add('active')}
+  
+  // Patients
+  function renderPatients(){
+    var h='';
+    if(!state.patients.length)h='<div style="text-align:center;padding:40px;color:var(--text-muted)">No patients yet</div>';
+    else for(var i=0;i<state.patients.length;i++){var p=state.patients[i];h+='<div class="patient '+p.status+'"><div class="patient-top"><div class="patient-avatar">'+initials(p.name)+'</div><div class="patient-info"><div class="patient-name">'+escHtml(p.name)+'</div><div class="patient-meta">Room '+escHtml(p.room)+' • '+escHtml(p.doctor||'')+'</div></div><span class="patient-status '+p.status+'">'+p.status+'</span></div><div class="patient-dx">'+escHtml(p.diagnosis)+'</div></div>'}
+    $('patientsList').innerHTML=h;
+    $('statTotal').textContent=state.patients.length;
+    $('statActive').textContent=state.patients.filter(function(p){return p.status==='active'}).length;
+    $('statCritical').textContent=state.patients.filter(function(p){return p.status==='critical'}).length;
+    $('statChronic').textContent=state.patients.filter(function(p){return p.status==='chronic'}).length;
+  }
+  function addPatient(){$('ptName').value='';$('ptRoom').value='';$('ptDx').value='';$('ptStatus').value='active';openModal('patientModal')}
+  function savePatient(){
+    var name=$('ptName').value.trim();if(!name){toast('Name required',true);return}
+    state.patients.push({id:Date.now(),name:name,room:$('ptRoom').value.trim()||'—',diagnosis:$('ptDx').value.trim()||'Pending',status:$('ptStatus').value,doctor:state.currentUser?state.currentUser.name:'Unassigned'});
+    save();renderPatients();closeModal('patientModal');toast('Patient added!');
   }
   
-  function loginAdmin() {
-    if ($('adminPwd').value === state.settings.adminPassword) {
-      closeModal('adminLoginModal');
-      showAdminPanel();
-    } else {
-      $('adminError').classList.add('show');
-    }
-  }
-  
-  function showAdminPanel() {
-    $('landing').classList.add('hidden');
-    $('adminPanel').classList.add('active');
-    $('apiUrl').value = state.settings.apiUrl || '';
-    renderUnitsTable();
-  }
-  
-  function exitAdmin() {
-    $('adminPanel').classList.remove('active');
-    $('landing').classList.remove('hidden');
-  }
-  
-  function renderUnitsTable() {
-    var html = '';
-    for (var i = 0; i < state.units.length; i++) {
-      var u = state.units[i];
-      html += '<tr><td>' + u.icon + ' <b>' + u.name + '</b></td><td><code style="background:var(--bg-elevated);padding:4px 10px;border-radius:6px">' + u.code + '</code></td><td><button class="btn-icon" onclick="App.editUnit(\'' + u.id + '\')">✏️</button> <button class="btn-icon" onclick="App.deleteUnit(\'' + u.id + '\')">🗑️</button></td></tr>';
-    }
-    $('unitsTableBody').innerHTML = html || '<tr><td colspan="3" style="text-align:center;padding:40px;color:var(--text-muted)">No units</td></tr>';
-  }
-  
-  function addUnit() {
-    state.editingUnitId = null;
-    $('unitModalTitle').textContent = 'Add Unit';
-    $('unitName').value = '';
-    $('unitIcon').value = '🏥';
-    $('unitCode').value = '';
-    $('unitDesc').value = '';
-    openModal('unitModal');
-  }
-  
-  function editUnit(id) {
-    var unit = null;
-    for (var i = 0; i < state.units.length; i++) {
-      if (state.units[i].id === id) { unit = state.units[i]; break; }
-    }
-    if (!unit) return;
-    
-    state.editingUnitId = id;
-    $('unitModalTitle').textContent = 'Edit Unit';
-    $('unitName').value = unit.name;
-    $('unitIcon').value = unit.icon;
-    $('unitCode').value = unit.code;
-    $('unitDesc').value = unit.desc || '';
-    openModal('unitModal');
-  }
-  
-  function saveUnit() {
-    var name = $('unitName').value.trim();
-    var icon = $('unitIcon').value.trim() || '🏥';
-    var code = $('unitCode').value.trim();
-    var desc = $('unitDesc').value.trim();
-    var colorEl = document.querySelector('.color-option.selected');
-    var color = colorEl ? colorEl.getAttribute('data-color') : '#d4a437';
-    
-    if (!name) { toast('Name required', true); return; }
-    if (!/^\d{4}$/.test(code)) { toast('Code must be 4 digits', true); return; }
-    
-    if (state.editingUnitId) {
-      for (var i = 0; i < state.units.length; i++) {
-        if (state.units[i].id === state.editingUnitId) {
-          state.units[i] = { id: state.editingUnitId, name: name, icon: icon, code: code, desc: desc, color: color };
-          break;
-        }
-      }
-      toast('Unit updated!');
-    } else {
-      state.units.push({ id: 'unit-' + Date.now(), name: name, icon: icon, code: code, desc: desc, color: color });
-      toast('Unit created!');
-    }
-    
-    save();
-    renderUnitsTable();
-    renderUnits();
-    closeModal('unitModal');
-  }
-  
-  function deleteUnit(id) {
-    if (!confirm('Delete this unit?')) return;
-    state.units = state.units.filter(function(u) { return u.id !== id; });
-    save();
-    renderUnitsTable();
-    renderUnits();
-    toast('Unit deleted');
-  }
-  
-  function selectColor(el) {
-    var all = $$('.color-option');
-    for (var i = 0; i < all.length; i++) all[i].classList.remove('selected');
-    el.classList.add('selected');
-  }
-  
-  function saveSettings() {
-    var pwd = $('newAdminPwd').value.trim();
-    var url = $('apiUrl').value.trim();
-    if (pwd) state.settings.adminPassword = pwd;
-    if (url) state.settings.apiUrl = url;
-    save();
-    toast('Settings saved!');
-    $('newAdminPwd').value = '';
-  }
-  
-  // ═══════════════════════════════════════════════════════════
-  // DASHBOARD
-  // ═══════════════════════════════════════════════════════════
-  function showDashboard() {
-    $('landing').classList.add('hidden');
-    $('dashboard').classList.add('active');
-    
-    var u = state.currentUnit;
-    $('unitBadge').textContent = u.name;
-    $('unitBadge').style.cssText = 'border:1px solid ' + u.color + ';color:' + u.color + ';background:' + u.color + '20';
-    $('dashUserName').textContent = state.currentUser.name;
-    $('dashUserRole').textContent = state.currentUser.role;
-    $('dashAvatar').textContent = initials(state.currentUser.name);
-    
-    renderPatients();
-    renderReference();
-    toast('Welcome to ' + u.name);
-  }
-  
-  function logout() {
-    state.currentUnit = null;
-    state.currentUser = null;
-    $('dashboard').classList.remove('active');
-    $('landing').classList.remove('hidden');
-  }
-  
-  function showTab(tabName, btn) {
-    var tabs = $$('.tab');
-    var panels = $$('.panel');
-    for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
-    for (var j = 0; j < panels.length; j++) panels[j].classList.remove('active');
-    btn.classList.add('active');
-    $('panel' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
-  }
-  
-  // ═══════════════════════════════════════════════════════════
-  // PATIENTS
-  // ═══════════════════════════════════════════════════════════
-  function renderPatients() {
-    var grid = $('patientsGrid');
-    if (!state.patients.length) {
-      grid.innerHTML = '<div style="text-align:center;padding:60px;color:var(--text-muted);grid-column:1/-1">No patients yet. Click "+ Add Patient" or "📥 Import" to add patients.</div>';
-    } else {
-      var html = '';
-      for (var i = 0; i < state.patients.length; i++) {
-        var p = state.patients[i];
-        html += '<div class="patient-card ' + p.status + '">' +
-          '<div class="patient-header"><div class="patient-avatar">' + initials(p.name) + '</div><div><div class="patient-name">' + escapeHtml(p.name) + '</div><div class="patient-meta">Room ' + escapeHtml(p.room) + ' • ' + escapeHtml(p.doctor || 'Unassigned') + '</div></div><span class="patient-status ' + p.status + '">' + p.status + '</span></div>' +
-          '<div class="patient-diagnosis">' + escapeHtml(p.diagnosis) + '</div>' +
-          '<div class="patient-actions"><button class="btn btn-secondary" onclick="App.deletePatient(' + i + ')">Remove</button></div></div>';
-      }
-      grid.innerHTML = html;
-    }
-    
-    $('statTotal').textContent = state.patients.length;
-    $('statActive').textContent = state.patients.filter(function(p) { return p.status === 'active'; }).length;
-    $('statCritical').textContent = state.patients.filter(function(p) { return p.status === 'critical'; }).length;
-    $('statChronic').textContent = state.patients.filter(function(p) { return p.status === 'chronic'; }).length;
-  }
-  
-  function escapeHtml(text) {
-    if (!text) return '';
-    var div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
-  
-  function addPatient() {
-    $('ptName').value = '';
-    $('ptRoom').value = '';
-    $('ptDiagnosis').value = '';
-    $('ptStatus').value = 'active';
-    openModal('patientModal');
-  }
-  
-  function savePatient() {
-    var name = $('ptName').value.trim();
-    if (!name) { toast('Name required', true); return; }
-    
-    state.patients.push({
-      id: Date.now(),
-      name: name,
-      room: $('ptRoom').value.trim() || '—',
-      diagnosis: $('ptDiagnosis').value.trim() || 'Pending evaluation',
-      status: $('ptStatus').value,
-      doctor: state.currentUser ? state.currentUser.name : 'Unassigned'
-    });
-    
-    save();
-    renderPatients();
-    closeModal('patientModal');
-    toast('Patient added!');
-  }
-  
-  function deletePatient(idx) {
-    if (!confirm('Remove this patient?')) return;
-    state.patients.splice(idx, 1);
-    save();
-    renderPatients();
-    toast('Patient removed');
-  }
-  
-  // ═══════════════════════════════════════════════════════════
-  // IMPORT SYSTEM - Professional AI-Powered Import
-  // ═══════════════════════════════════════════════════════════
-  function openImport() {
-    // Reset all stages
-    importState.imageBase64 = null;
-    importState.patients = [];
-    importState.isProcessing = false;
-    
-    $('importStageUpload').style.display = 'block';
-    $('importStagePreview').style.display = 'none';
-    $('importStageProcessing').style.display = 'none';
-    $('importStageResults').style.display = 'none';
-    $('importStageError').style.display = 'none';
-    $('importConfirmBtn').disabled = true;
-    $('importFileInput').value = '';
-    
-    openModal('importModal');
-  }
-  
-  function resetImport() {
-    importState.imageBase64 = null;
-    importState.patients = [];
-    $('importStageUpload').style.display = 'block';
-    $('importStagePreview').style.display = 'none';
-    $('importStageProcessing').style.display = 'none';
-    $('importStageResults').style.display = 'none';
-    $('importStageError').style.display = 'none';
-    $('importConfirmBtn').disabled = true;
-    $('importFileInput').value = '';
-  }
-  
-  function setupImportDropzone() {
-    var dropzone = $('importDropzone');
-    var fileInput = $('importFileInput');
-    
-    dropzone.addEventListener('dragover', function(e) {
-      e.preventDefault();
-      dropzone.classList.add('dragover');
-    });
-    
-    dropzone.addEventListener('dragleave', function() {
-      dropzone.classList.remove('dragover');
-    });
-    
-    dropzone.addEventListener('drop', function(e) {
-      e.preventDefault();
-      dropzone.classList.remove('dragover');
-      if (e.dataTransfer.files.length) {
-        handleImportFile(e.dataTransfer.files[0]);
-      }
-    });
-    
-    fileInput.addEventListener('change', function() {
-      if (fileInput.files.length) {
-        handleImportFile(fileInput.files[0]);
-      }
-    });
-  }
-  
-  function handleImportFile(file) {
-    if (!file) return;
-    
-    if (!file.type.startsWith('image/')) {
-      toast('Please upload an image file', true);
-      return;
-    }
-    
-    if (file.size > 10 * 1024 * 1024) {
-      toast('Image too large (max 10MB)', true);
-      return;
-    }
-    
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      importState.imageBase64 = e.target.result;
-      $('importPreviewImg').src = e.target.result;
-      $('importStageUpload').style.display = 'none';
-      $('importStagePreview').style.display = 'block';
-    };
-    reader.onerror = function() {
-      toast('Failed to read image', true);
-    };
-    reader.readAsDataURL(file);
-  }
-  
-  function analyzeImage() {
-    if (!importState.imageBase64 || importState.isProcessing) return;
-    
-    importState.isProcessing = true;
-    $('importStagePreview').style.display = 'none';
-    $('importStageProcessing').style.display = 'block';
-    $('importStatusText').textContent = 'Analyzing with Claude AI...';
-    
-    var apiUrl = state.settings.apiUrl;
-    if (!apiUrl) {
-      showImportError('API URL not configured. Go to Admin → Settings to add your Apps Script URL.');
-      return;
-    }
-    
-    // Send to Apps Script
-    fetch(apiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({
-        action: 'extractPatients',
-        image: importState.imageBase64
-      })
-    })
-    .then(function(response) {
-      if (!response.ok) throw new Error('HTTP ' + response.status);
-      return response.json();
-    })
-    .then(function(data) {
-      importState.isProcessing = false;
-      
-      if (data.error) {
-        showImportError(data.error);
-        return;
-      }
-      
-      var patients = [];
-      
-      // Extract patients from response
-      if (data.patients && Array.isArray(data.patients)) {
-        patients = data.patients;
-      } else if (data.extractedText) {
-        patients = parsePatientText(data.extractedText);
-      }
-      
-      if (patients.length === 0) {
-        showImportError('No patients found in the image. Try a clearer screenshot.');
-        return;
-      }
-      
-      // Process and normalize patients
-      importState.patients = patients.map(function(p, idx) {
-        return {
-          id: Date.now() + idx,
-          name: cleanText(p.name || 'Unknown'),
-          room: cleanText(p.room || p.bed || '—'),
-          diagnosis: cleanText(p.diagnosis || p.condition || 'Pending evaluation'),
-          status: normalizeStatus(p.status),
-          doctor: cleanText(p.doctor || p.physician || (state.currentUser ? state.currentUser.name : 'Unassigned'))
-        };
-      }).filter(function(p) {
-        return p.name && p.name !== 'Unknown' && p.name.length > 1;
-      });
-      
-      if (importState.patients.length === 0) {
-        showImportError('Could not extract valid patient data. Try a different image.');
-        return;
-      }
-      
+  // Import
+  function openImport(){importState={imageBase64:null,patients:[],processing:false};$('importUpload').style.display='block';$('importPreview').style.display='none';$('importLoading').style.display='none';$('importResults').style.display='none';$('importError').style.display='none';$('importBtn').disabled=true;$('importFile').value='';openModal('importModal')}
+  function resetImport(){$('importUpload').style.display='block';$('importPreview').style.display='none';$('importLoading').style.display='none';$('importResults').style.display='none';$('importError').style.display='none';$('importBtn').disabled=true;importState.imageBase64=null;importState.patients=[]}
+  function analyzeImport(){
+    if(!importState.imageBase64||importState.processing)return;
+    importState.processing=true;
+    $('importPreview').style.display='none';$('importLoading').style.display='block';
+    fetch(state.settings.apiUrl,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'extractPatients',image:importState.imageBase64})})
+    .then(function(r){return r.json()})
+    .then(function(d){
+      importState.processing=false;$('importLoading').style.display='none';
+      if(d.error){$('importErrorMsg').textContent=d.error;$('importError').style.display='block';return}
+      var pts=d.patients||[];
+      if(!pts.length&&d.extractedText){try{var m=d.extractedText.match(/\[[\s\S]*\]/);if(m)pts=JSON.parse(m[0])}catch(e){}}
+      if(!pts.length){$('importErrorMsg').textContent='No patients found';$('importError').style.display='block';return}
+      importState.patients=pts.map(function(p,i){return{id:Date.now()+i,name:(p.name||'Unknown').trim(),room:(p.room||p.bed||'—').trim(),diagnosis:(p.diagnosis||p.condition||'Pending').trim(),status:normalizeStatus(p.status),doctor:p.doctor||(state.currentUser?state.currentUser.name:'Unassigned')}}).filter(function(p){return p.name&&p.name!=='Unknown'});
+      if(!importState.patients.length){$('importErrorMsg').textContent='No valid patients';$('importError').style.display='block';return}
       showImportResults();
     })
-    .catch(function(error) {
-      importState.isProcessing = false;
-      console.error('Import error:', error);
-      showImportError('Connection failed: ' + error.message);
-    });
+    .catch(function(e){importState.processing=false;$('importLoading').style.display='none';$('importErrorMsg').textContent='Connection failed';$('importError').style.display='block'});
+  }
+  function normalizeStatus(s){if(!s)return'active';s=String(s).toLowerCase();if(s.match(/critical|icu|urgent|emergency/))return'critical';if(s.match(/chronic|stable|routine/))return'chronic';return'active'}
+  function showImportResults(){
+    $('importResults').style.display='block';$('importCount').textContent=importState.patients.length;
+    var h='';for(var i=0;i<Math.min(importState.patients.length,8);i++){var p=importState.patients[i];h+='<div class="import-patient '+(p.status==='critical'?'critical':'')+'"><div style="width:32px;height:32px;background:linear-gradient(135deg,var(--gold),var(--teal));border-radius:8px;display:grid;place-items:center;font-weight:600;font-size:0.75rem;color:var(--bg)">'+initials(p.name)+'</div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:0.85rem">'+escHtml(p.name)+'</div><div style="font-size:0.7rem;color:var(--text-muted)">Room '+escHtml(p.room)+'</div></div></div>'}
+    if(importState.patients.length>8)h+='<div style="text-align:center;padding:8px;font-size:0.8rem;color:var(--text-muted)">+'+(importState.patients.length-8)+' more</div>';
+    $('importList').innerHTML=h;$('importBtn').disabled=false;toast('Found '+importState.patients.length+' patients!');
+  }
+  function confirmImport(){
+    if(!importState.patients.length)return;
+    var added=0;
+    for(var i=0;i<importState.patients.length;i++){var p=importState.patients[i];var exists=state.patients.some(function(ep){return ep.name.toLowerCase()===p.name.toLowerCase()});if(!exists){state.patients.push(p);added++}}
+    save();renderPatients();closeModal('importModal');toast('Imported '+added+' patients!');
   }
   
-  function parsePatientText(text) {
-    var patients = [];
-    if (!text) return patients;
-    
-    try {
-      // Try to parse as JSON first
-      var jsonMatch = text.match(/\[[\s\S]*\]/);
-      if (jsonMatch) {
-        patients = JSON.parse(jsonMatch[0]);
-        return patients;
+  // Analysis
+  function setAnalysisType(type,el){analysisState.type=type;var all=$$('.analysis-type');for(var i=0;i<all.length;i++)all[i].classList.remove('active');el.classList.add('active')}
+  function clearAnalysis(){analysisState.imageBase64=null;$('analysisPreview').style.display='none';$('analyzeBtn').disabled=true;$('analysisFile').value='';$('analysisResults').innerHTML=''}
+  function runAnalysis(){
+    if(!analysisState.imageBase64)return;
+    $('analyzeBtn').disabled=true;$('analysisLoading').style.display='block';$('analysisResults').innerHTML='';
+    var typeNames={lab:'Laboratory Results',xray:'X-Ray',ct:'CT/MRI Scan',ecg:'ECG'};
+    fetch(state.settings.apiUrl,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'interpret',documentType:analysisState.type,image:analysisState.imageBase64})})
+    .then(function(r){return r.json()})
+    .then(function(d){
+      $('analysisLoading').style.display='none';$('analyzeBtn').disabled=false;
+      if(d.error){$('analysisResults').innerHTML='<div class="result-card"><h4>⚠️ Error</h4><p>'+escHtml(d.error)+'</p></div>';return}
+      var h='<div class="result-card"><h4>📋 '+typeNames[analysisState.type]+' Analysis</h4>';
+      if(d.interpretation){
+        var interp=d.interpretation;
+        if(interp.summary)h+='<p><b>Summary:</b> '+escHtml(interp.summary)+'</p>';
+        if(interp.keyFindings&&interp.keyFindings.length){h+='<p><b>Key Findings:</b></p><ul>';for(var i=0;i<interp.keyFindings.length;i++)h+='<li>'+escHtml(interp.keyFindings[i])+'</li>';h+='</ul>'}
+        if(interp.abnormalities&&interp.abnormalities.length){h+='<p><b class="abnormal">Abnormalities:</b></p><ul>';for(var j=0;j<interp.abnormalities.length;j++)h+='<li class="abnormal">'+escHtml(interp.abnormalities[j])+'</li>';h+='</ul>'}
+        if(interp.normalFindings&&interp.normalFindings.length){h+='<p><b class="normal">Normal:</b></p><ul>';for(var k=0;k<interp.normalFindings.length;k++)h+='<li>'+escHtml(interp.normalFindings[k])+'</li>';h+='</ul>'}
       }
-      
-      var objMatch = text.match(/\{[\s\S]*"patients"[\s\S]*\}/);
-      if (objMatch) {
-        var obj = JSON.parse(objMatch[0]);
-        if (obj.patients) return obj.patients;
-      }
-    } catch(e) {
-      console.warn('JSON parse failed, trying text parse');
-    }
-    
-    // Fall back to line-by-line parsing
-    var lines = text.split('\n').filter(function(l) { return l.trim(); });
-    for (var i = 0; i < lines.length; i++) {
-      var line = lines[i].trim();
-      var parts = line.split(/[|,\t]/).map(function(p) { return p.trim(); });
-      if (parts.length >= 2 && parts[0] && !parts[0].toLowerCase().match(/^(name|patient|#|\d+)$/)) {
-        patients.push({
-          name: parts[0],
-          room: parts[1] || '—',
-          diagnosis: parts[2] || 'Pending',
-          status: parts[3] || 'active',
-          doctor: parts[4] || ''
-        });
-      }
-    }
-    
-    return patients;
+      h+='</div>';
+      if(d.clinicalPearls&&d.clinicalPearls.length){h+='<div class="result-card"><h4>💡 Clinical Pearls</h4><ul>';for(var m=0;m<d.clinicalPearls.length;m++)h+='<li>'+escHtml(d.clinicalPearls[m])+'</li>';h+='</ul></div>'}
+      if(d.presentation){h+='<div class="result-card"><h4>📝 Presentation</h4>';if(d.presentation.patientFriendly)h+='<p><b>Patient-Friendly:</b> '+escHtml(d.presentation.patientFriendly)+'</p>';if(d.presentation.recommendations&&d.presentation.recommendations.length){h+='<p><b>Recommendations:</b></p><ul>';for(var n=0;n<d.presentation.recommendations.length;n++)h+='<li>'+escHtml(d.presentation.recommendations[n])+'</li>';h+='</ul>'}h+='</div>'}
+      if(d.extractedText){h+='<div class="result-card" style="max-height:200px;overflow-y:auto"><h4>📄 Extracted Text</h4><pre style="font-size:0.7rem;white-space:pre-wrap;color:var(--text-secondary)">'+escHtml(d.extractedText)+'</pre></div>'}
+      $('analysisResults').innerHTML=h;
+      toast('Analysis complete!');
+    })
+    .catch(function(e){$('analysisLoading').style.display='none';$('analyzeBtn').disabled=false;$('analysisResults').innerHTML='<div class="result-card"><h4>⚠️ Error</h4><p>Connection failed. Check your API URL in Admin settings.</p></div>'});
   }
   
-  function cleanText(text) {
-    if (!text) return '';
-    return String(text).replace(/\s+/g, ' ').trim();
-  }
-  
-  function normalizeStatus(status) {
-    if (!status) return 'active';
-    var s = String(status).toLowerCase();
-    if (s.match(/critical|icu|urgent|emergency|unstable|severe/)) return 'critical';
-    if (s.match(/chronic|stable|routine|followup|maintenance/)) return 'chronic';
-    return 'active';
-  }
-  
-  function showImportError(message) {
-    $('importStageProcessing').style.display = 'none';
-    $('importStageError').style.display = 'block';
-    $('importErrorText').textContent = message;
-    importState.isProcessing = false;
-  }
-  
-  function showImportResults() {
-    $('importStageProcessing').style.display = 'none';
-    $('importStageResults').style.display = 'block';
-    $('importCount').textContent = importState.patients.length;
-    
-    var html = '';
-    for (var i = 0; i < Math.min(importState.patients.length, 10); i++) {
-      var p = importState.patients[i];
-      html += '<div class="import-patient ' + (p.status === 'critical' ? 'critical' : '') + '">' +
-        '<div class="import-patient-avatar">' + initials(p.name) + '</div>' +
-        '<div class="import-patient-info">' +
-          '<div class="import-patient-name">' + escapeHtml(p.name) + '</div>' +
-          '<div class="import-patient-meta">Room ' + escapeHtml(p.room) + ' • ' + escapeHtml(p.diagnosis.substring(0, 35)) + '</div>' +
-        '</div>' +
-      '</div>';
-    }
-    
-    if (importState.patients.length > 10) {
-      html += '<div style="text-align:center;padding:12px;color:var(--text-muted);font-size:0.85rem">+ ' + (importState.patients.length - 10) + ' more</div>';
-    }
-    
-    $('importPatientsList').innerHTML = html;
-    $('importConfirmBtn').disabled = false;
-    toast('Found ' + importState.patients.length + ' patients!');
-  }
-  
-  function confirmImport() {
-    if (!importState.patients.length) return;
-    
-    var added = 0;
-    var skipped = 0;
-    
-    for (var i = 0; i < importState.patients.length; i++) {
-      var p = importState.patients[i];
-      var exists = state.patients.some(function(ep) {
-        return ep.name.toLowerCase().trim() === p.name.toLowerCase().trim();
-      });
-      
-      if (!exists) {
-        state.patients.push(p);
-        added++;
-      } else {
-        skipped++;
-      }
-    }
-    
-    save();
-    renderPatients();
-    closeModal('importModal');
-    
-    var msg = '✓ Imported ' + added + ' patient' + (added !== 1 ? 's' : '');
-    if (skipped > 0) msg += ' (' + skipped + ' skipped as duplicates)';
-    toast(msg);
-  }
-  
-  // ═══════════════════════════════════════════════════════════
-  // REFERENCE
-  // ═══════════════════════════════════════════════════════════
-  var REFS = [
-    { title: '🚨 Critical Labs', content: '<b>K:</b> <2.5 or >6.5 mEq/L<br><b>Na:</b> <120 or >160 mEq/L<br><b>Glucose:</b> <40 or >500 mg/dL' },
-    { title: '⚡ Hyperkalemia', content: '<b>Stabilize:</b> Ca gluconate 10mL IV<br><b>Shift:</b> Insulin 10U + D50<br><b>Remove:</b> Kayexalate, HD' },
-    { title: '❤️ ACS Protocol', content: '<b>MONA:</b> Morphine, O₂, Nitrates, Aspirin<br><b>STEMI:</b> PCI <90min' },
-    { title: '🧠 Stroke tPA', content: '<b>Window:</b> ≤4.5h from last known well<br><b>Dose:</b> 0.9 mg/kg (max 90mg)<br><b>BP:</b> <185/110 pre-tPA' },
-    { title: '🦠 Sepsis Bundle', content: '<b>Hour-1:</b> Lactate, cultures, antibiotics, 30mL/kg fluids' },
-    { title: '💊 Seizure Rx', content: '<b>1st:</b> Lorazepam 4mg IV<br><b>2nd:</b> Levetiracetam 60mg/kg<br><b>Refractory:</b> Propofol gtt' }
+  // Reference
+  var REFS=[
+    {title:'🚨 Critical Labs',content:'<b>K:</b> <2.5 or >6.5 mEq/L<br><b>Na:</b> <120 or >160 mEq/L<br><b>Glucose:</b> <40 or >500 mg/dL<br><b>pH:</b> <7.2 or >7.6'},
+    {title:'⚡ Hyperkalemia',content:'<b>Stabilize:</b> Ca gluconate 10mL IV<br><b>Shift:</b> Insulin 10U + D50, Albuterol<br><b>Remove:</b> Kayexalate, Lasix, HD'},
+    {title:'❤️ ACS Protocol',content:'<b>MONA:</b> Morphine, O₂, Nitrates, Aspirin 325mg<br><b>STEMI:</b> PCI <90min or lytics<br><b>NSTEMI:</b> Anticoag + cath'},
+    {title:'🧠 Stroke tPA',content:'<b>Window:</b> ≤4.5h from LKW<br><b>Dose:</b> 0.9 mg/kg (max 90mg)<br><b>BP goal:</b> <185/110 pre-tPA<br><b>Exclusions:</b> Recent surgery, bleeding'},
+    {title:'🦠 Sepsis Bundle',content:'<b>Hour-1:</b> Lactate, cultures, antibiotics<br><b>Fluids:</b> 30mL/kg if hypotensive<br><b>Pressors:</b> Norepi first line<br><b>Target:</b> MAP ≥65'},
+    {title:'💊 Seizure Rx',content:'<b>1st:</b> Lorazepam 4mg IV<br><b>2nd:</b> Levetiracetam 60mg/kg or Fosphenytoin 20mg/kg<br><b>Refractory:</b> Propofol or midazolam gtt'},
+    {title:'🫁 PE Treatment',content:'<b>Massive:</b> tPA 100mg over 2h<br><b>Submassive:</b> Anticoag ± lytics<br><b>Low-risk:</b> DOAC outpatient'},
+    {title:'💧 DKA Protocol',content:'<b>Fluids:</b> NS 1-2L/h initially<br><b>Insulin:</b> 0.1 U/kg/h gtt<br><b>K:</b> Replace if <5.3<br><b>Bicarb:</b> Only if pH <6.9'}
   ];
+  function renderReference(){var h='';for(var i=0;i<REFS.length;i++){var r=REFS[i];h+='<div class="ref-card"><h4>'+r.title+'</h4><p>'+r.content+'</p></div>'}$('refGrid').innerHTML=h}
   
-  function renderReference() {
-    var html = '';
-    for (var i = 0; i < REFS.length; i++) {
-      var r = REFS[i];
-      html += '<div style="background:var(--bg-elevated);border-radius:var(--radius-md);padding:16px;border-left:3px solid var(--gold)"><h4 style="margin-bottom:10px;font-size:0.9rem">' + r.title + '</h4><p style="font-size:0.78rem;color:var(--text-secondary)">' + r.content + '</p></div>';
-    }
-    $('refGrid').innerHTML = html;
+  // Init
+  function init(){
+    load();renderUnits();
+    // File handlers
+    $('importFile').onchange=function(){if(this.files[0]){var r=new FileReader();r.onload=function(e){importState.imageBase64=e.target.result;$('importImg').src=e.target.result;$('importUpload').style.display='none';$('importPreview').style.display='block'};r.readAsDataURL(this.files[0])}};
+    $('analysisFile').onchange=function(){if(this.files[0]){var r=new FileReader();r.onload=function(e){analysisState.imageBase64=e.target.result;$('analysisImg').src=e.target.result;$('analysisPreview').style.display='block';$('analyzeBtn').disabled=false};r.readAsDataURL(this.files[0])}};
+    // Modal clicks
+    var modals=$$('.modal');for(var i=0;i<modals.length;i++)(function(m){m.onclick=function(e){if(e.target===m)m.classList.remove('active')}})(modals[i]);
+    // Enter keys
+    $('adminPwd').onkeydown=function(e){if(e.key==='Enter')loginAdmin()};
+    $('userName').onkeydown=function(e){if(e.key==='Enter')enterUnit()};
+    console.log('[MedWard] Ready - API:',state.settings.apiUrl);
   }
   
-  // ═══════════════════════════════════════════════════════════
-  // INITIALIZATION
-  // ═══════════════════════════════════════════════════════════
-  function init() {
-    load();
-    renderUnits();
-    setupImportDropzone();
-    
-    // Modal backdrop close
-    var modals = $$('.modal');
-    for (var i = 0; i < modals.length; i++) {
-      (function(m) {
-        m.addEventListener('click', function(e) {
-          if (e.target === m) m.classList.remove('active');
-        });
-      })(modals[i]);
-    }
-    
-    // Enter key handlers
-    $('adminPwd').addEventListener('keydown', function(e) { if (e.key === 'Enter') loginAdmin(); });
-    $('userName').addEventListener('keydown', function(e) { if (e.key === 'Enter') enterUnit(); });
-    
-    console.log('[MedWard] Initialized - API:', state.settings.apiUrl);
-  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
   
-  // Run on load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-  
-  // ═══════════════════════════════════════════════════════════
-  // PUBLIC API
-  // ═══════════════════════════════════════════════════════════
-  return {
-    openUnit: openUnit,
-    enterUnit: enterUnit,
-    openAdminLogin: openAdminLogin,
-    loginAdmin: loginAdmin,
-    exitAdmin: exitAdmin,
-    addUnit: addUnit,
-    editUnit: editUnit,
-    saveUnit: saveUnit,
-    deleteUnit: deleteUnit,
-    selectColor: selectColor,
-    saveSettings: saveSettings,
-    logout: logout,
-    showTab: showTab,
-    addPatient: addPatient,
-    savePatient: savePatient,
-    deletePatient: deletePatient,
-    openImport: openImport,
-    resetImport: resetImport,
-    analyzeImage: analyzeImage,
-    confirmImport: confirmImport,
-    closeModal: closeModal
-  };
+  return{openUnit:openUnit,enterUnit:enterUnit,openAdminLogin:openAdminLogin,loginAdmin:loginAdmin,exitAdmin:exitAdmin,addUnit:addUnit,editUnit:editUnit,saveUnit:saveUnit,deleteUnit:deleteUnit,saveSettings:saveSettings,logout:logout,showTab:showTab,addPatient:addPatient,savePatient:savePatient,openImport:openImport,resetImport:resetImport,analyzeImport:analyzeImport,confirmImport:confirmImport,setAnalysisType:setAnalysisType,clearAnalysis:clearAnalysis,runAnalysis:runAnalysis,closeModal:closeModal};
 })();
 </script>
 </body>
