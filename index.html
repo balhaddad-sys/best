@@ -136,8 +136,14 @@
     .upload-input{display:none}
 
     /* Preview Area */
-    .preview-area{margin-top:20px;display:none}
+    .preview-area{margin-top:20px;display:none;padding:16px;background:var(--bg-elevated);border-radius:var(--radius-md)}
     .preview-area.show{display:block}
+    .preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:8px;margin-bottom:12px}
+    .preview-thumb{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid var(--border);transition:0.2s}
+    .preview-thumb img{width:100%;height:100%;object-fit:cover}
+    .preview-thumb:hover{border-color:var(--rose)}
+    .preview-thumb::after{content:'✕';position:absolute;top:2px;right:2px;width:18px;height:18px;background:rgba(239,68,68,0.9);border-radius:50%;display:grid;place-items:center;font-size:10px;color:#fff;opacity:0;transition:0.2s}
+    .preview-thumb:hover::after{opacity:1}
     .preview-image{max-width:100%;max-height:300px;border-radius:var(--radius-md);margin-bottom:16px;border:1px solid var(--border)}
     .preview-info{background:var(--bg-elevated);border-radius:var(--radius-md);padding:16px;margin-bottom:16px}
     .preview-filename{font-weight:600;margin-bottom:4px}
@@ -355,27 +361,26 @@
         <!-- Upload Section -->
         <div class="card" id="uploadSection">
           <div class="card-header">
-            <h2 class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload Document</h2>
+            <h2 class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload Documents</h2>
           </div>
           <div class="card-body">
             <div class="upload-zone" id="uploadZone">
               <div class="upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
-              <div class="upload-title">Drop file or tap to upload</div>
-              <div class="upload-sub">Supports images, PDFs, and text files</div>
+              <div class="upload-title">Drop files or tap to upload</div>
+              <div class="upload-sub">Select multiple images at once</div>
               <div class="upload-formats">
                 <span class="upload-format">PNG</span>
                 <span class="upload-format">JPG</span>
-                <span class="upload-format">PDF</span>
-                <span class="upload-format">TXT</span>
+                <span class="upload-format">WEBP</span>
               </div>
-              <input type="file" class="upload-input" id="uploadInput" accept="image/*,.pdf,.txt">
+              <input type="file" class="upload-input" id="uploadInput" accept="image/*" multiple>
             </div>
 
             <div class="preview-area" id="previewArea">
-              <img id="previewImage" class="preview-image" style="display:none">
+              <div class="preview-grid" id="previewGrid"></div>
               <div class="preview-info">
-                <div class="preview-filename" id="previewFilename">filename.jpg</div>
-                <div class="preview-meta" id="previewMeta">2.4 MB • Image</div>
+                <div class="preview-filename" id="previewFilename">0 files selected</div>
+                <div class="preview-meta" id="previewMeta">Tap images to remove</div>
               </div>
             </div>
           </div>
@@ -388,7 +393,12 @@
           </div>
           <div class="card-body">
             <div class="analysis-types">
-              <div class="analysis-type active" data-type="auto">
+              <div class="analysis-type active" data-type="lab">
+                <div class="analysis-type-icon">🧪</div>
+                <div class="analysis-type-name">Lab Results</div>
+                <div class="analysis-type-desc">Blood work, panels</div>
+              </div>
+              <div class="analysis-type" data-type="auto">
                 <div class="analysis-type-icon">🔍</div>
                 <div class="analysis-type-name">Auto-Detect</div>
                 <div class="analysis-type-desc">AI determines type</div>
@@ -408,11 +418,6 @@
                 <div class="analysis-type-name">ECG/EKG</div>
                 <div class="analysis-type-desc">Cardiac rhythm</div>
               </div>
-              <div class="analysis-type" data-type="lab">
-                <div class="analysis-type-icon">🧪</div>
-                <div class="analysis-type-name">Lab Results</div>
-                <div class="analysis-type-desc">Blood work, panels</div>
-              </div>
               <div class="analysis-type" data-type="pathology">
                 <div class="analysis-type-icon">🔬</div>
                 <div class="analysis-type-name">Pathology</div>
@@ -429,16 +434,6 @@
                 <div class="analysis-type-desc">Fundoscopy, OCT</div>
               </div>
             </div>
-          </div>
-        </div>
-
-        <!-- Clinical Context -->
-        <div class="card">
-          <div class="card-header">
-            <h2 class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Clinical Context (Optional)</h2>
-          </div>
-          <div class="card-body">
-            <textarea id="clinicalContext" class="form-textarea" placeholder="Add relevant clinical history, symptoms, or specific questions...&#10;&#10;Example: 65yo male, smoker, presenting with chest pain. Please evaluate for any acute findings."></textarea>
           </div>
         </div>
 
@@ -572,9 +567,9 @@
     user: null,
     patients: [],
     editing: null,
-    analysisType: 'auto',
-    uploadedFile: null,
-    uploadedBase64: null,
+    analysisType: 'lab',
+    uploadedFiles: [],
+    uploadedBase64s: [],
     history: [],
     activeScore: null,
     scores: {}
@@ -766,8 +761,12 @@
     zone.onclick = function() { input.click(); };
     zone.ondragover = function(e) { e.preventDefault(); zone.classList.add('dragover'); };
     zone.ondragleave = function() { zone.classList.remove('dragover'); };
-    zone.ondrop = function(e) { e.preventDefault(); zone.classList.remove('dragover'); if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]); };
-    input.onchange = function() { if (this.files.length) handleFile(this.files[0]); };
+    zone.ondrop = function(e) { 
+      e.preventDefault(); 
+      zone.classList.remove('dragover'); 
+      if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files); 
+    };
+    input.onchange = function() { if (this.files.length) handleFiles(this.files); };
 
     document.querySelectorAll('.analysis-type').forEach(function(t) {
       t.onclick = function() {
@@ -778,155 +777,196 @@
     });
   }
 
-  function handleFile(file) {
-    state.uploadedFile = file;
-    $('previewFilename').textContent = file.name;
-    $('previewMeta').textContent = formatBytes(file.size) + ' • ' + file.type.split('/')[0];
+  // Multi-file handling
+  function handleFiles(files) {
+    state.uploadedFiles = state.uploadedFiles || [];
+    state.uploadedBase64s = state.uploadedBase64s || [];
+    
+    Array.from(files).forEach(function(file) {
+      if (!file.type.startsWith('image/')) return;
+      
+      state.uploadedFiles.push(file);
+      
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        state.uploadedBase64s.push(e.target.result);
+        renderPreviewGrid();
+      };
+      reader.readAsDataURL(file);
+    });
+    
     $('previewArea').classList.add('show');
     $('uploadZone').classList.add('has-file');
     $('analyzeBtn').disabled = false;
+  }
 
-    if (file.type.startsWith('image/')) {
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        state.uploadedBase64 = e.target.result;
-        $('previewImage').src = e.target.result;
-        $('previewImage').style.display = 'block';
-      };
-      reader.readAsDataURL(file);
-    } else if (file.type.startsWith('text/') || file.name.endsWith('.txt')) {
-      var reader = new FileReader();
-      reader.onload = function(e) { state.uploadedBase64 = e.target.result; };
-      reader.readAsText(file);
-      $('previewImage').style.display = 'none';
-    } else {
-      $('previewImage').style.display = 'none';
-      state.uploadedBase64 = null;
+  function renderPreviewGrid() {
+    var grid = $('previewGrid');
+    grid.innerHTML = '';
+    
+    state.uploadedBase64s.forEach(function(base64, idx) {
+      var thumb = document.createElement('div');
+      thumb.className = 'preview-thumb';
+      thumb.innerHTML = '<img src="' + base64 + '">';
+      thumb.onclick = function() { removeFile(idx); };
+      grid.appendChild(thumb);
+    });
+    
+    $('previewFilename').textContent = state.uploadedFiles.length + ' file(s) selected';
+    $('previewMeta').textContent = 'Tap to remove';
+    
+    if (state.uploadedFiles.length === 0) {
+      $('previewArea').classList.remove('show');
+      $('uploadZone').classList.remove('has-file');
+      $('analyzeBtn').disabled = true;
     }
   }
 
+  function removeFile(idx) {
+    state.uploadedFiles.splice(idx, 1);
+    state.uploadedBase64s.splice(idx, 1);
+    renderPreviewGrid();
+  }
+
+  // Analysis with multi-image and Lab Engine
   function runAnalysis() {
-    if (!state.uploadedFile) { toast('Upload a file first', true); return; }
+    if (!state.uploadedBase64s || state.uploadedBase64s.length === 0) { 
+      toast('Upload files first', true); 
+      return; 
+    }
 
     var startTime = performance.now();
+    var totalImages = state.uploadedBase64s.length;
+    var processedImages = 0;
+    var allExtractedText = [];
     
     // Show progress
     $('uploadSection').style.display = 'none';
     $('analysisProgress').classList.add('show');
     $('analysisResults').classList.remove('show');
+    $('progressStatus').textContent = 'Processing ' + totalImages + ' image(s)...';
 
-    var steps = ['Initializing Neural Engine...', 'Processing with Claude Vision AI...', 'Extracting medical data...', 'Generating clinical insights...'];
-    var stepIdx = 0;
-    var stepInterval = setInterval(function() {
-      stepIdx++;
-      if (stepIdx < steps.length) {
-        $('progressStatus').textContent = steps[stepIdx];
-        document.querySelectorAll('.progress-step').forEach(function(s, i) { s.classList.toggle('active', i <= stepIdx); });
-      }
-    }, 1500);
+    // Process all images in parallel
+    var promises = state.uploadedBase64s.map(function(base64, idx) {
+      return new Promise(function(resolve) {
+        var payload = {
+          action: 'interpret',
+          documentType: state.analysisType === 'auto' ? 'lab' : state.analysisType,
+          image: base64,
+          provider: 'claude'
+        };
 
-    // First check Neural Engine cache
-    var cachedResult = null;
-    if (window.NeuralEngine && state.uploadedBase64) {
-      var textContent = state.uploadedBase64.startsWith('data:') ? '' : state.uploadedBase64;
-      if (textContent) {
-        var neuralQuery = window.NeuralEngine.query(textContent, state.analysisType);
-        if (neuralQuery.match && neuralQuery.confidence >= 0.82) {
-          clearInterval(stepInterval);
-          $('analysisProgress').classList.remove('show');
-          showResults(neuralQuery.result, {
-            source: 'neural_cache',
-            confidence: neuralQuery.confidence,
-            queryTime: neuralQuery.queryTime
-          });
-          toast('⚡ Instant result from Neural Engine!');
-          updateNeuralStats();
-          return;
-        }
-      }
-    }
+        fetch(API.CLAUDE, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(payload)
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          processedImages++;
+          $('progressStatus').textContent = 'Processed ' + processedImages + '/' + totalImages + ' images...';
+          
+          if (d.success && d.extractedText) {
+            allExtractedText.push(d.extractedText);
+          }
+          resolve(d);
+        })
+        .catch(function(e) {
+          processedImages++;
+          resolve({ success: false, error: e.message });
+        });
+      });
+    });
 
-    // Build payload for Claude API
-    var payload = {
-      action: 'interpret',
-      documentType: state.analysisType === 'auto' ? 'general' : state.analysisType,
-      username: state.user ? state.user.name : 'Anonymous',
-      provider: 'claude'
-    };
-
-    // Add image or text data
-    if (state.uploadedBase64) {
-      if (state.uploadedBase64.startsWith('data:')) {
-        payload.image = state.uploadedBase64;
-      } else {
-        payload.text = state.uploadedBase64;
-      }
-    }
-
-    // Add clinical context if provided
-    var context = $('clinicalContext').value.trim();
-    if (context) {
-      payload.clinicalContext = context;
-    }
-
-    console.log('Sending to Claude API:', { action: payload.action, type: payload.documentType, hasImage: !!payload.image });
-
-    fetch(API.CLAUDE, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify(payload)
-    })
-    .then(function(r) { 
-      console.log('Response status:', r.status);
-      return r.json(); 
-    })
-    .then(function(d) {
-      clearInterval(stepInterval);
+    Promise.all(promises).then(function(results) {
+      var totalTime = performance.now() - startTime;
       $('analysisProgress').classList.remove('show');
       
-      var totalTime = performance.now() - startTime;
-      console.log('Analysis response:', d);
+      // Combine all extracted text
+      var combinedText = allExtractedText.join('\n\n');
       
-      if (d.success) {
-        // Structure the result
-        var analysis = {
-          summary: d.interpretation ? d.interpretation.summary : (d.extractedText || 'Analysis complete'),
-          findings: d.interpretation ? d.interpretation.keyFindings : [],
-          abnormalities: d.interpretation ? d.interpretation.abnormalities : [],
-          normalFindings: d.interpretation ? d.interpretation.normalFindings : [],
-          interpretation: d.extractedText || '',
-          recommendations: d.presentation ? d.presentation.recommendations : [],
-          clinicalPearls: d.clinicalPearls || [],
-          patientFriendly: d.presentation ? d.presentation.patientFriendly : '',
-          potentialQuestions: d.potentialQuestions || []
-        };
-        
-        // Learn this pattern for future use
-        if (window.NeuralEngine && d.extractedText) {
-          var learned = window.NeuralEngine.learn(d.extractedText, state.analysisType, analysis);
-          if (learned) console.log('[Neural] Learned new pattern');
+      // Use Lab Engine to extract and interpret values
+      var labAnalysis = null;
+      if (window.LabEngine && combinedText) {
+        labAnalysis = window.LabEngine.analyze(combinedText);
+      }
+      
+      // Build final analysis result
+      var analysis = {
+        summary: '',
+        findings: [],
+        abnormalities: [],
+        normalFindings: [],
+        recommendations: [],
+        insights: []
+      };
+      
+      // Merge Claude results
+      results.forEach(function(d) {
+        if (d.success) {
+          if (d.interpretation) {
+            if (d.interpretation.summary) analysis.summary += d.interpretation.summary + ' ';
+            if (d.interpretation.keyFindings) analysis.findings = analysis.findings.concat(d.interpretation.keyFindings);
+            if (d.interpretation.abnormalities) analysis.abnormalities = analysis.abnormalities.concat(d.interpretation.abnormalities);
+            if (d.interpretation.normalFindings) analysis.normalFindings = analysis.normalFindings.concat(d.interpretation.normalFindings);
+          }
+          if (d.clinicalPearls) analysis.insights = analysis.insights.concat(d.clinicalPearls);
+          if (d.presentation && d.presentation.recommendations) {
+            analysis.recommendations = analysis.recommendations.concat(d.presentation.recommendations);
+          }
         }
+      });
+      
+      // Enhance with Lab Engine results
+      if (labAnalysis) {
+        if (labAnalysis.summary) analysis.summary = labAnalysis.summary;
         
-        showResults(analysis, {
-          source: 'claude_api',
-          provider: d.provider || 'claude',
-          totalTime: totalTime
+        // Add lab-specific findings
+        labAnalysis.findings.forEach(function(f) {
+          analysis.abnormalities.push({
+            name: f.name,
+            value: f.value + ' ' + (f.unit || ''),
+            flag: f.flag,
+            severity: f.severity,
+            reference: f.reference,
+            interpretation: f.interpretation
+          });
         });
         
-        saveToHistory(analysis);
-        updateNeuralStats();
-        toast('✓ Analysis complete!');
-      } else {
-        toast('Error: ' + (d.error || 'Analysis failed'), true);
-        $('uploadSection').style.display = 'block';
+        if (labAnalysis.normalFindings) {
+          analysis.normalFindings = labAnalysis.normalFindings;
+        }
+        
+        if (labAnalysis.insights) {
+          analysis.insights = labAnalysis.insights.concat(analysis.insights);
+        }
+        
+        if (labAnalysis.recommendations) {
+          analysis.recommendations = labAnalysis.recommendations.concat(analysis.recommendations);
+        }
       }
-    })
-    .catch(function(e) {
-      clearInterval(stepInterval);
-      $('analysisProgress').classList.remove('show');
-      $('uploadSection').style.display = 'block';
-      console.error('Analysis error:', e);
-      toast('Analysis error: ' + e.message, true);
+      
+      // Remove duplicates
+      analysis.findings = [...new Set(analysis.findings)];
+      analysis.normalFindings = [...new Set(analysis.normalFindings)];
+      analysis.insights = [...new Set(analysis.insights)];
+      analysis.recommendations = [...new Set(analysis.recommendations)];
+      
+      // Learn pattern
+      if (window.NeuralEngine && combinedText) {
+        window.NeuralEngine.learn(combinedText, state.analysisType, analysis);
+      }
+      
+      showResults(analysis, {
+        source: 'claude_api',
+        totalTime: totalTime,
+        imageCount: totalImages,
+        labCount: labAnalysis ? labAnalysis.extractedCount : 0
+      });
+      
+      saveToHistory(analysis);
+      updateNeuralStats();
+      toast('✓ Analysis complete!');
     });
   }
 
@@ -935,7 +975,7 @@
     var stats = window.NeuralEngine.getStats();
     var statsEl = $('neuralStats');
     if (statsEl) {
-      statsEl.innerHTML = '<span>🧠 ' + stats.patterns + ' patterns</span><span>⚡ ' + stats.hitRate + ' cache</span>';
+      statsEl.innerHTML = '<span>🧠 ' + stats.patterns + ' patterns</span><span>⚡ ' + stats.hitRate + ' hit rate</span>';
     }
   }
 
@@ -1041,17 +1081,18 @@
     $('previewArea').classList.remove('show');
     $('uploadZone').classList.remove('has-file');
     $('analyzeBtn').disabled = true;
-    $('clinicalContext').value = '';
-    state.uploadedFile = null;
-    state.uploadedBase64 = null;
+    state.uploadedFiles = [];
+    state.uploadedBase64s = [];
+    var grid = $('previewGrid');
+    if (grid) grid.innerHTML = '';
   }
 
   function saveToHistory(analysis) {
     var item = {
       id: Date.now(),
       type: state.analysisType,
-      filename: state.uploadedFile ? state.uploadedFile.name : 'Unknown',
-      thumb: state.uploadedBase64 && state.uploadedBase64.startsWith('data:image') ? state.uploadedBase64 : null,
+      filename: state.uploadedFiles && state.uploadedFiles.length ? state.uploadedFiles.length + ' file(s)' : 'Unknown',
+      thumb: state.uploadedBase64s && state.uploadedBase64s[0] ? state.uploadedBase64s[0] : null,
       date: new Date().toLocaleString(),
       summary: analysis.summary ? analysis.summary.substring(0, 100) + '...' : 'Analysis complete'
     };
@@ -1549,5 +1590,6 @@ if (typeof window !== 'undefined') {
   window.NeuralEngine = NeuralEngine;
 }
 </script>
+<script src="lab-engine.js"></script>
 </body>
 </html>
