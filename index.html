@@ -1236,6 +1236,68 @@
       100% { background-position: -200% 0; }
     }
     
+    /* ===== STROKE ASSESSMENT ===== */
+    #stroke-screen.active {
+      display: block;
+    }
+    
+    .stroke-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-xl);
+      margin-bottom: var(--space-xl);
+    }
+    
+    @media (max-width: 1024px) {
+      .stroke-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .stroke-section {
+      min-width: 0;
+    }
+    
+    .stroke-reference {
+      margin-top: var(--space-lg);
+    }
+    
+    .reference-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--space-lg);
+    }
+    
+    .reference-item {
+      padding: var(--space-md);
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-md);
+    }
+    
+    .reference-item h4 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--accent-primary);
+      margin-bottom: var(--space-sm);
+    }
+    
+    .reference-item p {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin: var(--space-xs) 0;
+    }
+    
+    .reference-list {
+      margin: 0;
+      padding-left: var(--space-lg);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+    
+    .reference-list li {
+      margin: var(--space-xs) 0;
+    }
+    
     .empty-state {
       text-align: center;
       padding: var(--space-2xl);
@@ -1307,6 +1369,7 @@
       <div class="nav-tabs" id="main-nav">
         <button class="nav-tab active" data-screen="dashboard">Dashboard</button>
         <button class="nav-tab" data-screen="patients" id="patients-tab">Patients</button>
+        <button class="nav-tab" data-screen="stroke" id="stroke-tab">Stroke</button>
       </div>
       
       <div class="nav-user" id="nav-user" hidden>
@@ -1329,11 +1392,79 @@
       <h1 class="login-title">Welcome to MedWard</h1>
       <p class="login-subtitle">Clinical Intelligence Platform</p>
       <div class="form-group">
-        <input type="text" id="username-input" class="form-input" placeholder="Enter your name" autocomplete="name">
+        <input type="text" id="username-input" class="form-input" placeholder="Enter your name" autocomplete="name" onkeypress="if(event.key==='Enter'){document.getElementById('login-btn').click();}">
       </div>
-      <button class="btn btn-primary login-btn" id="login-btn">Continue</button>
+      <button type="button" class="btn btn-primary login-btn" id="login-btn" onclick="handleLogin()">Continue</button>
     </div>
   </main>
+  
+  <!-- Inline Login Function (guaranteed to work) -->
+  <script>
+    function handleLogin() {
+      console.log('handleLogin called');
+      var input = document.getElementById('username-input');
+      var username = input ? input.value.trim() : '';
+      
+      if (!username) {
+        alert('Please enter your name');
+        input && input.focus();
+        return;
+      }
+      
+      console.log('Logging in as:', username);
+      
+      // Save to localStorage
+      var user = { name: username, initial: username[0].toUpperCase() };
+      localStorage.setItem('medward_user', JSON.stringify(user));
+      
+      // Switch screens
+      var loginScreen = document.getElementById('login-screen');
+      var dashboardScreen = document.getElementById('dashboard-screen');
+      
+      if (loginScreen) loginScreen.classList.remove('active');
+      if (dashboardScreen) dashboardScreen.classList.add('active');
+      
+      // Update user display
+      var userInitial = document.getElementById('user-initial');
+      var userName = document.getElementById('user-name');
+      var navUser = document.getElementById('nav-user');
+      
+      if (userInitial) userInitial.textContent = user.initial;
+      if (userName) userName.textContent = user.name;
+      if (navUser) navUser.removeAttribute('hidden');
+      
+      console.log('Login complete, dashboard should be visible');
+    }
+    
+    // Auto-login if user exists
+    document.addEventListener('DOMContentLoaded', function() {
+      var saved = localStorage.getItem('medward_user');
+      if (saved) {
+        try {
+          var user = JSON.parse(saved);
+          if (user && user.name) {
+            console.log('Auto-login for:', user.name);
+            
+            var loginScreen = document.getElementById('login-screen');
+            var dashboardScreen = document.getElementById('dashboard-screen');
+            
+            if (loginScreen) loginScreen.classList.remove('active');
+            if (dashboardScreen) dashboardScreen.classList.add('active');
+            
+            var userInitial = document.getElementById('user-initial');
+            var userName = document.getElementById('user-name');
+            var navUser = document.getElementById('nav-user');
+            
+            if (userInitial) userInitial.textContent = user.initial;
+            if (userName) userName.textContent = user.name;
+            if (navUser) navUser.removeAttribute('hidden');
+          }
+        } catch (e) {
+          console.error('Auto-login failed:', e);
+        }
+      }
+    });
+  </script>
 
   <!-- Dashboard Screen -->
   <main class="screen" id="dashboard-screen">
@@ -1560,6 +1691,73 @@
     </div>
   </main>
 
+  <!-- Stroke Assessment Screen -->
+  <main class="screen" id="stroke-screen">
+    <div class="dashboard-container">
+      <header class="dashboard-header">
+        <h1 class="dashboard-title">Stroke Assessment</h1>
+        <p class="dashboard-subtitle">NIHSS scoring and post-tPA bleeding risk calculators</p>
+      </header>
+      
+      <div class="stroke-grid">
+        <!-- NIHSS Calculator -->
+        <div class="stroke-section">
+          <div id="nihss-calculator-container"></div>
+        </div>
+        
+        <!-- Bleeding Risk Panel -->
+        <div class="stroke-section">
+          <div id="bleeding-risk-container"></div>
+        </div>
+      </div>
+      
+      <!-- Quick Reference -->
+      <div class="stroke-reference card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 16v-4"/>
+              <path d="M12 8h.01"/>
+            </svg>
+            Quick Reference
+          </h2>
+        </div>
+        <div class="card-body">
+          <div class="reference-grid">
+            <div class="reference-item">
+              <h4>tPA Window</h4>
+              <p><strong>IV tPA:</strong> Within 4.5 hours of symptom onset</p>
+              <p><strong>Thrombectomy:</strong> Up to 24 hours in select patients (DAWN/DEFUSE-3 criteria)</p>
+            </div>
+            <div class="reference-item">
+              <h4>tPA Dosing</h4>
+              <p><strong>Dose:</strong> 0.9 mg/kg (max 90 mg)</p>
+              <p><strong>Administration:</strong> 10% bolus over 1 min, 90% infusion over 60 min</p>
+            </div>
+            <div class="reference-item">
+              <h4>BP Targets</h4>
+              <p><strong>Pre-tPA:</strong> &lt; 185/110 mmHg</p>
+              <p><strong>Post-tPA (24h):</strong> &lt; 180/105 mmHg</p>
+              <p><strong>No tPA:</strong> Permissive HTN unless &gt; 220/120</p>
+            </div>
+            <div class="reference-item">
+              <h4>tPA Contraindications</h4>
+              <ul class="reference-list">
+                <li>Recent surgery/trauma (14 days)</li>
+                <li>Active bleeding or bleeding diathesis</li>
+                <li>Platelets &lt; 100,000</li>
+                <li>INR &gt; 1.7 or PT &gt; 15s</li>
+                <li>Recent stroke (3 months)</li>
+                <li>Prior ICH</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
   <!-- Results Modal -->
   <div class="modal-overlay" id="results-modal">
     <div class="modal modal-lg">
@@ -1687,67 +1885,30 @@
   <script src="js/core.js"></script>
   <script src="js/clinical.js"></script>
   <script src="js/patients.js"></script>
+  <script src="js/stroke.js"></script>
   
-  <!-- Fallback login handler (in case modules fail to load) -->
+  <!-- Initialize Stroke Calculators -->
   <script>
-    (function() {
-      document.addEventListener('DOMContentLoaded', function() {
-        var loginBtn = document.getElementById('login-btn');
-        var usernameInput = document.getElementById('username-input');
-        
-        if (!loginBtn) {
-          console.error('CRITICAL: login-btn not found!');
-          return;
-        }
-        
-        function doLogin() {
-          var username = usernameInput ? usernameInput.value.trim() : '';
-          console.log('Fallback login triggered, username:', username);
-          
-          if (!username) {
-            alert('Please enter your name');
-            return;
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize stroke calculators when tab is clicked
+      var strokeTab = document.getElementById('stroke-tab');
+      var strokeInitialized = false;
+      
+      if (strokeTab) {
+        strokeTab.addEventListener('click', function() {
+          if (!strokeInitialized && typeof StrokeAssessment !== 'undefined') {
+            console.log('[Stroke] Initializing calculators...');
+            StrokeAssessment.renderNIHSSCalculator('nihss-calculator-container');
+            StrokeAssessment.renderBleedingRiskPanel('bleeding-risk-container');
+            strokeInitialized = true;
+            console.log('[Stroke] Calculators initialized');
           }
-          
-          // Try MedWard.login first
-          if (window.MedWard && typeof window.MedWard.login === 'function') {
-            console.log('Using MedWard.login');
-            window.MedWard.login(username);
-          } else {
-            // Direct DOM manipulation fallback
-            console.log('Using direct DOM fallback');
-            localStorage.setItem('medward_user', JSON.stringify({ name: username, initial: username[0].toUpperCase() }));
-            
-            document.getElementById('login-screen').classList.remove('active');
-            document.getElementById('dashboard-screen').classList.add('active');
-            
-            var userInitial = document.getElementById('user-initial');
-            var userName = document.getElementById('user-name');
-            var navUser = document.getElementById('nav-user');
-            
-            if (userInitial) userInitial.textContent = username[0].toUpperCase();
-            if (userName) userName.textContent = username;
-            if (navUser) navUser.removeAttribute('hidden');
-          }
-        }
-        
-        loginBtn.onclick = function(e) {
-          e.preventDefault();
-          doLogin();
-        };
-        
-        if (usernameInput) {
-          usernameInput.onkeypress = function(e) {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              doLogin();
-            }
-          };
-        }
-        
-        console.log('Fallback login handler ready');
-      });
-    })();
+        });
+      }
+    });
+  </script>
+</body>
+</html>
   </script>
 </body>
 </html>
