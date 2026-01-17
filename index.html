@@ -661,19 +661,46 @@
     var c = $('patients-container');
     c.innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
     
-    fetch(CONFIG.PATIENT_API + '?action=list')
-      .then(function(r) { return r.json(); })
+    // Try POST first (as per your Google Apps Script PatientManager)
+    fetch(CONFIG.PATIENT_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'getAllData' })
+    })
+      .then(function(r) { 
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json(); 
+      })
       .then(function(d) {
+        console.log('API Response:', d);
         if (d.success && d.patients && d.patients.length) {
           state.patients = d.patients;
+          state.patientsByWard = d.patientsByWard || {};
           renderPatients();
+        } else if (d.success) {
+          c.innerHTML = '<div class="empty">No patients in ward</div>';
         } else {
-          c.innerHTML = '<div class="empty">No patients found</div>';
+          c.innerHTML = '<div class="empty">API Error: ' + (d.error || 'Unknown') + '</div>';
         }
       })
       .catch(function(e) {
-        console.error('Patient load error:', e);
-        c.innerHTML = '<div class="empty">Failed to load patients. Check connection.</div>';
+        console.error('POST failed, trying GET:', e);
+        // Fallback to GET request
+        fetch(CONFIG.PATIENT_API + '?action=getAllData')
+          .then(function(r) { return r.json(); })
+          .then(function(d) {
+            console.log('GET Response:', d);
+            if (d.success && d.patients && d.patients.length) {
+              state.patients = d.patients;
+              renderPatients();
+            } else {
+              c.innerHTML = '<div class="empty">No patients found</div>';
+            }
+          })
+          .catch(function(e2) {
+            console.error('GET also failed:', e2);
+            c.innerHTML = '<div class="empty">Connection failed<br><small style="color:var(--muted)">Check console for details</small></div>';
+          });
       });
   }
 
@@ -685,11 +712,23 @@
     }
     var h = '<table class="patient-table"><thead><tr><th>Patient</th><th>Ward</th><th>Diagnosis</th><th>Status</th></tr></thead><tbody>';
     state.patients.forEach(function(p) {
-      var sc = 'badge-active', st = p.status || 'Active';
-      if (st.toLowerCase() === 'critical') sc = 'badge-critical';
-      else if (st.toLowerCase() === 'stable') sc = 'badge-stable';
-      h += '<tr><td><div class="patient-cell"><div class="patient-avatar">' + getInitials(p.name) + '</div><div><div class="patient-name">' + (p.name||'Unknown') + '</div><div class="patient-mrn">MRN: ' + (p.mrn||p.id||'-') + '</div></div></div></td>';
-      h += '<td>' + (p.ward||'-') + '</td><td>' + (p.diagnosis||'-') + '</td><td><span class="badge ' + sc + '">' + st + '</span></td></tr>';
+      // Handle different possible field names from API
+      var name = p.patientName || p.name || 'Unknown';
+      var ward = p.ward || '-';
+      var room = p.roomBed || p.room || '';
+      var diagnosis = p.diagnosis || '-';
+      var status = p.section || p.status || 'active';
+      var doctor = p.assignedDoctor || p.doctor || '';
+      
+      var sc = 'badge-active', st = status.charAt(0).toUpperCase() + status.slice(1);
+      if (status.toLowerCase() === 'critical') sc = 'badge-critical';
+      else if (status.toLowerCase() === 'stable') sc = 'badge-stable';
+      else if (status.toLowerCase() === 'chronic') { sc = 'badge-stable'; st = 'Chronic'; }
+      
+      var wardDisplay = ward + (room ? ' • ' + room : '');
+      
+      h += '<tr><td><div class="patient-cell"><div class="patient-avatar">' + getInitials(name) + '</div><div><div class="patient-name">' + name + '</div><div class="patient-mrn">' + (doctor ? 'Dr. ' + doctor : 'Unassigned') + '</div></div></div></td>';
+      h += '<td>' + wardDisplay + '</td><td>' + (diagnosis.length > 40 ? diagnosis.substring(0,40) + '...' : diagnosis) + '</td><td><span class="badge ' + sc + '">' + st + '</span></td></tr>';
     });
     h += '</tbody></table>';
     c.innerHTML = h;
