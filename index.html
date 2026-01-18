@@ -47,6 +47,10 @@
     .unit-card-desc{color:var(--text-muted);font-size:0.75rem}
     .admin-fab{position:fixed;bottom:20px;right:20px;width:50px;height:50px;background:var(--bg-card);border:1px solid var(--border);border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--text-muted);z-index:50}
     .admin-fab svg{width:20px;height:20px}
+    .sync-fab{position:fixed;bottom:20px;left:20px;width:50px;height:50px;background:var(--bg-card);border:1px solid var(--border);border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--text-muted);z-index:50;transition:all 0.3s}
+    .sync-fab svg{width:20px;height:20px}
+    .sync-fab.syncing{animation:rotate 1s linear infinite;border-color:var(--gold);color:var(--gold)}
+    @keyframes rotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
     .code-inputs{display:flex;gap:10px;justify-content:center;margin-bottom:16px}
     .code-digit{width:48px;height:56px;background:var(--bg-elevated);border:2px solid var(--border);border-radius:var(--radius);font-family:monospace;font-size:1.5rem;font-weight:700;text-align:center;color:var(--text)}
     .code-digit:focus{outline:none;border-color:var(--gold)}
@@ -151,6 +155,9 @@
   <h1 class="landing-title">MedWard Enterprise</h1>
   <p class="landing-subtitle">Select your unit to continue</p>
   <div class="units-grid" id="unitsGrid"></div>
+  <div class="sync-fab" id="syncFab" title="Sync from cloud">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.66 0 3-4.03 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4.03-3-9s1.34-9 3-9"/></svg>
+  </div>
   <div class="admin-fab" id="adminFab">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
   </div>
@@ -563,8 +570,10 @@
     reader.readAsDataURL(file);
   }
 
-  // ========== STORAGE (Google Drive + localStorage fallback) ==========
+  // ========== STORAGE (Google Drive + localStorage with auto-sync) ==========
   let isSyncing = false;
+  let lastSyncTime = 0;
+  const SYNC_INTERVAL = 30000; // Check for updates every 30 seconds
   
   async function loadStorage() {
     state.units = DEFAULT_UNITS.slice();
@@ -574,8 +583,11 @@
     // First load from localStorage (instant)
     loadFromLocalStorage();
     
-    // Then sync from Google Drive (background)
-    syncFromDrive();
+    // Then sync from Google Drive
+    await syncFromDrive(true);
+    
+    // Start periodic sync
+    setInterval(() => syncFromDrive(false), SYNC_INTERVAL);
   }
   
   function loadFromLocalStorage() {
@@ -592,6 +604,7 @@
           state.settings.apiUrl = data.settings.apiUrl || CONFIG.API_URL;
         }
         if (data.patients && Array.isArray(data.patients)) state.patients = data.patients;
+        lastSyncTime = data.lastUpdated ? new Date(data.lastUpdated).getTime() : 0;
       }
     } catch (e) {
       console.warn('LocalStorage load failed:', e);
@@ -599,7 +612,7 @@
     if (!state.units || state.units.length === 0) state.units = DEFAULT_UNITS.slice();
   }
   
-  async function syncFromDrive() {
+  async function syncFromDrive(isInitial = false) {
     if (isSyncing) return;
     isSyncing = true;
     
@@ -613,33 +626,52 @@
       
       if (result.success && result.data) {
         const driveData = result.data;
+        const driveTime = driveData.lastUpdated ? new Date(driveData.lastUpdated).getTime() : 0;
         
-        // Merge Drive data (Drive takes priority for units/settings, merge patients)
-        if (driveData.units && driveData.units.length > 0) {
-          state.units = driveData.units;
+        // Only update if Drive data is newer
+        if (driveTime > lastSyncTime || isInitial) {
+          let hasChanges = false;
+          
+          // Update units
+          if (driveData.units && driveData.units.length > 0) {
+            const oldUnitsJson = JSON.stringify(state.units);
+            state.units = driveData.units;
+            if (JSON.stringify(state.units) !== oldUnitsJson) hasChanges = true;
+          }
+          
+          // Update settings
+          if (driveData.settings) {
+            state.settings = { ...state.settings, ...driveData.settings };
+          }
+          
+          // Update patients
+          if (driveData.patients) {
+            const oldPatientsJson = JSON.stringify(state.patients);
+            state.patients = driveData.patients;
+            if (JSON.stringify(state.patients) !== oldPatientsJson) hasChanges = true;
+          }
+          
+          lastSyncTime = driveTime || Date.now();
+          
+          // Save to localStorage
+          saveToLocalStorage();
+          
+          // Re-render UI if there were changes
+          if (hasChanges && !isInitial) {
+            console.log('[MedWard] New data from Drive - refreshing UI');
+            if (!state.currentUnit) {
+              renderUnits();
+              toast('Data synced from cloud');
+            } else {
+              renderPatients();
+            }
+          }
+          
+          console.log('[MedWard] Synced from Google Drive');
         }
-        if (driveData.settings) {
-          state.settings = { ...state.settings, ...driveData.settings };
-        }
-        if (driveData.patients && driveData.patients.length > 0) {
-          // Merge patients by ID, Drive takes priority
-          const drivePatientIds = new Set(driveData.patients.map(p => p.id));
-          const localOnly = state.patients.filter(p => !drivePatientIds.has(p.id));
-          state.patients = [...driveData.patients, ...localOnly];
-        }
-        
-        // Update localStorage with merged data
-        saveToLocalStorage();
-        
-        // Re-render if on landing page
-        if (!state.currentUnit) {
-          renderUnits();
-        }
-        
-        console.log('[MedWard] Synced from Google Drive');
       }
     } catch (e) {
-      console.warn('Drive sync failed (using localStorage):', e);
+      console.warn('Drive sync failed:', e);
     }
     
     isSyncing = false;
@@ -648,17 +680,23 @@
   function saveToLocalStorage() {
     try {
       localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify({
-        units: state.units, settings: state.settings, patients: state.patients
+        units: state.units, 
+        settings: state.settings, 
+        patients: state.patients,
+        lastUpdated: new Date().toISOString()
       }));
     } catch (e) { console.warn('LocalStorage save failed:', e); }
   }
   
   async function saveStorage() {
+    // Update timestamp
+    lastSyncTime = Date.now();
+    
     // Save to localStorage immediately
     saveToLocalStorage();
     
-    // Save to Google Drive in background
-    saveToDrive();
+    // Save to Google Drive
+    await saveToDrive();
   }
   
   async function saveToDrive() {
@@ -679,10 +717,21 @@
       const result = await response.json();
       if (result.success) {
         console.log('[MedWard] Saved to Google Drive');
+      } else {
+        console.warn('Drive save failed:', result.error);
+        toast('Cloud sync failed', true);
       }
     } catch (e) {
       console.warn('Drive save failed:', e);
+      toast('Cloud sync failed', true);
     }
+  }
+  
+  // Force sync from Drive (manual refresh)
+  async function forceSync() {
+    lastSyncTime = 0;
+    await syncFromDrive(true);
+    toast('Synced from cloud');
   }
   
   function getUnit(id) { return state.units.find(u => u.id === id); }
@@ -1236,6 +1285,14 @@
     $('unitSaveBtn').addEventListener('click', saveUnit);
     $('unitCancelBtn').addEventListener('click', () => closeModal('unitModal'));
     $('saveSettingsBtn').addEventListener('click', saveSettings);
+    
+    // Sync button
+    $('syncFab').addEventListener('click', async () => {
+      $('syncFab').classList.add('syncing');
+      await forceSync();
+      renderUnits();
+      $('syncFab').classList.remove('syncing');
+    });
     
     // Unit access
     $('accessCancelBtn').addEventListener('click', () => closeModal('accessModal'));
