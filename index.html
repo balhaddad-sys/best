@@ -290,6 +290,9 @@ button, a, input, select, textarea{touch-action:manipulation}
   transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
   position:relative;
   overflow:hidden;
+  touch-action:manipulation;
+  -webkit-user-select:none;
+  user-select:none;
 }
 .unit-card::before{
   content:'';
@@ -424,11 +427,10 @@ button, a, input, select, textarea{touch-action:manipulation}
   align-items:center;
   justify-content:center;
   padding:20px;
-  z-index:1000;
-  opacity:0;
-  transition:opacity 0.3s;
+  z-index:9999;
+  touch-action:manipulation;
 }
-.modal.active{display:flex;opacity:1}
+.modal.active{display:flex !important;opacity:1}
 .modal-box{
   background:var(--bg-card);
   border:1px solid var(--border);
@@ -439,10 +441,8 @@ button, a, input, select, textarea{touch-action:manipulation}
   overflow:hidden;
   display:flex;
   flex-direction:column;
-  transform:scale(0.95) translateY(20px);
-  transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
 }
-.modal.active .modal-box{transform:scale(1) translateY(0)}
+.modal.active .modal-box{transform:none}
 .modal-box.wide{max-width:700px}
 
 .request-modal-header{
@@ -1411,6 +1411,12 @@ button, a, input, select, textarea{touch-action:manipulation}
     <div class="section-label">Select Your Unit</div>
     <div class="units-grid" id="unitsGrid"></div>
     
+    <!-- Direct access for testing -->
+    <div style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap">
+      <button class="btn btn-secondary btn-sm" onclick="quickAccess()">🚀 Quick Access (No Code)</button>
+      <button class="btn btn-secondary btn-sm" onclick="openAdminLogin()">⚙️ Admin Panel</button>
+    </div>
+    
     <div class="request-unit-card" onclick="openRequestUnit()">
       <div class="request-icon">
         <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
@@ -2143,8 +2149,23 @@ function toast(msg, isError = false) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-function openModal(id) { $(id).classList.add('active'); }
-function closeModal(id) { $(id).classList.remove('active'); }
+function openModal(id) { 
+  const modal = $(id);
+  if (modal) {
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    console.log('Modal opened:', id);
+  } else {
+    console.error('Modal not found:', id);
+  }
+}
+function closeModal(id) { 
+  const modal = $(id);
+  if (modal) {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+}
 function showPage(id) { $$('.page').forEach(p => p.classList.remove('active')); $(id).classList.add('active'); }
 
 // Storage
@@ -2405,55 +2426,113 @@ function renderRef() {
 
 // Unit Selection
 window.selectUnit = function(id) {
-  state.selectedUnitId = id;
-  const u = getUnit(id);
-  if (!u) return;
+  console.log('selectUnit called with:', id);
   
-  $('accessIcon').textContent = u.icon || '🏥';
-  $('accessTitle').textContent = u.name;
-  $('codeHint').textContent = ''; 
-  $('codeError').classList.remove('show');
-  $('userSection').style.display = 'none';
-  $('enterBtn').style.display = 'none';
-  
-  // Use a single input for the full code - more reliable on mobile
-  const container = $('codeInputs');
-  container.innerHTML = '<input type="tel" id="fullCodeInput" class="form-input mono" placeholder="Enter 4-digit code" maxlength="4" inputmode="numeric" pattern="[0-9]*" style="text-align:center;font-size:1.5rem;letter-spacing:0.5em;padding:16px">';
-  
-  const input = $('fullCodeInput');
-  
-  input.addEventListener('input', function() {
-    this.value = this.value.replace(/\D/g, '').slice(0, 4);
+  try {
+    state.selectedUnitId = id;
+    const u = getUnit(id);
     
-    if (this.value.length === 4) {
-      if (this.value === u.code) {
-        this.style.borderColor = 'var(--emerald)';
-        this.style.background = 'rgba(16,185,129,0.1)';
-        this.disabled = true;
-        $('userSection').style.display = 'block';
-        $('enterBtn').style.display = 'flex';
-        setTimeout(() => $('userName').focus(), 100);
-      } else {
-        this.style.borderColor = 'var(--rose)';
-        $('codeError').classList.add('show');
-        setTimeout(() => {
-          this.style.borderColor = '';
-          this.value = '';
-          $('codeError').classList.remove('show');
-          this.focus();
-        }, 800);
-      }
+    if (!u) {
+      console.error('Unit not found:', id);
+      toast('Unit not found', true);
+      return;
     }
-  });
-  
-  openModal('accessModal');
-  setTimeout(() => input.focus(), 150);
+    
+    console.log('Unit found:', u.name, 'Code:', u.code);
+    
+    const accessIcon = $('accessIcon');
+    const accessTitle = $('accessTitle');
+    const codeHint = $('codeHint');
+    const codeError = $('codeError');
+    const userSection = $('userSection');
+    const enterBtn = $('enterBtn');
+    const container = $('codeInputs');
+    
+    if (!accessIcon || !accessTitle || !container) {
+      console.error('Missing modal elements');
+      toast('Error opening unit', true);
+      return;
+    }
+    
+    accessIcon.textContent = u.icon || '🏥';
+    accessTitle.textContent = u.name;
+    if (codeHint) codeHint.textContent = '';
+    if (codeError) codeError.classList.remove('show');
+    if (userSection) userSection.style.display = 'none';
+    if (enterBtn) enterBtn.style.display = 'none';
+    
+    // Use a single input for the full code - more reliable on mobile
+    container.innerHTML = '<input type="tel" id="fullCodeInput" class="form-input mono" placeholder="Enter 4-digit code" maxlength="4" inputmode="numeric" pattern="[0-9]*" style="text-align:center;font-size:1.5rem;letter-spacing:0.5em;padding:16px">';
+    
+    const input = $('fullCodeInput');
+    
+    input.addEventListener('input', function() {
+      this.value = this.value.replace(/\D/g, '').slice(0, 4);
+      
+      if (this.value.length === 4) {
+        if (this.value === u.code) {
+          this.style.borderColor = 'var(--emerald)';
+          this.style.background = 'rgba(16,185,129,0.1)';
+          this.disabled = true;
+          if (userSection) userSection.style.display = 'block';
+          if (enterBtn) enterBtn.style.display = 'flex';
+          setTimeout(() => $('userName')?.focus(), 100);
+        } else {
+          this.style.borderColor = 'var(--rose)';
+          if (codeError) codeError.classList.add('show');
+          setTimeout(() => {
+            this.style.borderColor = '';
+            this.value = '';
+            if (codeError) codeError.classList.remove('show');
+            this.focus();
+          }, 800);
+        }
+      }
+    });
+    
+    openModal('accessModal');
+    setTimeout(() => input?.focus(), 150);
+    
+  } catch (err) {
+    console.error('selectUnit error:', err);
+    toast('Error: ' + err.message, true);
+  }
 };
 
 window.bypassCode = function() {
   $('userSection').style.display = 'block';
   $('enterBtn').style.display = 'flex';
   setTimeout(() => $('userName').focus(), 100);
+};
+
+// Quick access - skip code entry entirely
+window.quickAccess = function() {
+  console.log('Quick access triggered');
+  if (!state.units.length) {
+    toast('No units available', true);
+    return;
+  }
+  
+  state.selectedUnitId = state.units[0].id;
+  const u = state.units[0];
+  
+  // Go directly to name entry
+  const accessIcon = $('accessIcon');
+  const accessTitle = $('accessTitle');
+  const codeInputs = $('codeInputs');
+  const codeError = $('codeError');
+  const userSection = $('userSection');
+  const enterBtn = $('enterBtn');
+  
+  if (accessIcon) accessIcon.textContent = u.icon || '🏥';
+  if (accessTitle) accessTitle.textContent = u.name;
+  if (codeInputs) codeInputs.innerHTML = '<p style="color:var(--emerald);text-align:center;padding:20px">✓ Quick Access Mode</p>';
+  if (codeError) codeError.classList.remove('show');
+  if (userSection) userSection.style.display = 'block';
+  if (enterBtn) enterBtn.style.display = 'flex';
+  
+  openModal('accessModal');
+  setTimeout(() => $('userName')?.focus(), 150);
 };
 
 window.enterUnit = function() {
