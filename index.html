@@ -78,8 +78,6 @@ button, a, input, select, textarea{touch-action:manipulation}
 
 .landing-scroll-container{
   flex:1;
-  position:relative;
-  z-index:1;
   overflow-y:auto;
   overflow-x:hidden;
   -webkit-overflow-scrolling:touch;
@@ -163,8 +161,6 @@ button, a, input, select, textarea{touch-action:manipulation}
 
 /* Landing Header */
 .landing-header{
-  position:relative;
-  z-index:2;
   padding:24px 32px;
   display:flex;
   justify-content:space-between;
@@ -191,8 +187,6 @@ button, a, input, select, textarea{touch-action:manipulation}
 
 /* Landing Main Content */
 .landing-main{
-  position:relative;
-  z-index:2;
   flex:1;
   display:flex;
   flex-direction:column;
@@ -3599,5 +3593,70 @@ else init();
 
 })();
 </script>
+
+<!-- === NON-BREAKING DEFENSIVE PATCH (AUTO-ADDED) === -->
+<style>
+/* Interaction safety */
+.landing-bg,
+.grid-overlay,
+.floating-orb,
+.landing-bg::before,
+.landing-bg::after {
+  pointer-events: none !important;
+}
+button, .btn, .unit-card, .request-unit-card, .fab {
+  pointer-events: auto !important;
+  position: relative;
+  z-index: 20;
+}
+</style>
+
+<script>
+// Safe DOM helpers
+const $ = (id) => document.getElementById(id);
+function safe$(id, required=false){
+  const el = document.getElementById(id);
+  if(!el && required){ console.warn('[MedicalWards] Missing element:', id); }
+  return el;
+}
+
+// Runtime error visibility
+window.addEventListener('error', e => {
+  console.error('[MedicalWards] Runtime error:', e.message, e.filename, e.lineno);
+});
+
+// Centralized safe init wrapper
+(function(){
+  const _init = window.init;
+  window.init = function(){
+    try{
+      console.log('[MedicalWards] Safe init start');
+      if(typeof _init === 'function'){ _init(); }
+      bindGlobalEvents();
+      console.log('[MedicalWards] Safe init done');
+    }catch(err){
+      console.error('[MedicalWards] Init failed:', err);
+    }
+  };
+
+  function bindGlobalEvents(){
+    const syncFab = safe$('syncFab');
+    if(syncFab){ syncFab.addEventListener('click', () => window.syncNow && window.syncNow()); }
+
+    document.querySelectorAll('.tab').forEach(t=>{
+      t.addEventListener('click', ()=> window.switchTab && window.switchTab(t.dataset.tab));
+    });
+
+    document.querySelectorAll('.stat-card').forEach(c=>{
+      c.addEventListener('click', ()=> window.filterPatients && window.filterPatients(c.dataset.filter));
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', ()=>{
+    if(typeof window.init === 'function'){ window.init(); }
+  });
+})();
+</script>
+
 </body>
 </html>
