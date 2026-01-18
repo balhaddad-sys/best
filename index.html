@@ -41,6 +41,29 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 ::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:3px}
 .mono{font-family:'JetBrains Mono',monospace}
 
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   UX + PERFORMANCE ENHANCEMENTS (NON-BREAKING)
+   - Better focus visibility for keyboard users
+   - Respect prefers-reduced-motion
+   - Reduce rendering work for long lists (content-visibility)
+   - Improve tap responsiveness on mobile
+   ═══════════════════════════════════════════════════════════════════ */
+
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+button, a, input, select, textarea{touch-action:manipulation}
+
+/* Reduce layout/render cost for long lists (supported browsers only) */
+#patientsList, #unitsGrid{content-visibility:auto;contain-intrinsic-size:800px 600px}
+.patient-card, .unit-card, .ref-card{content-visibility:auto;contain-intrinsic-size:140px 360px}
+
+/* Respect user accessibility preferences */
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{animation-duration:0.001ms !important;animation-iteration-count:1 !important;transition-duration:0.001ms !important;scroll-behavior:auto !important}
+  .landing-bg::before{animation:none !important}
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    SOPHISTICATED LANDING PAGE
    ═══════════════════════════════════════════════════════════════════ */
@@ -1346,21 +1369,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   .units-grid{grid-template-columns:1fr}
   .icon-selector{grid-template-columns:repeat(6,1fr)}
 }
-
-/* === FIX: prevent decorative layers from intercepting touch/click === */
-.grid-overlay,
-.floating-orb {
-  pointer-events: none !important;
-}
-
-/* Safety: ensure main interactive layers are above decorations */
-.landing-main,
-.landing-header,
-.landing-scroll-container {
-  position: relative;
-  z-index: 10;
-}
-
 </style>
 </head>
 <body>
@@ -2072,11 +2080,62 @@ const smartWard = w => { const wl = (w || '').toLowerCase(); for (const vw of CO
 const getUnit = id => state.units.find(u => u.id === id);
 const getPrimaryEndpoint = () => state.settings.apiEndpoints?.find(e => e.isPrimary)?.url || state.settings.apiUrl;
 
+// ═══════════════════════════════════════════════════════════════════
+// UX/PERF UTILITIES (NON-BREAKING)
+// ═══════════════════════════════════════════════════════════════════
+const dom = Object.create(null);
+let toastTimer = null;
+
+function cacheDom() {
+  // Cache hot elements to avoid repeated query overhead
+  dom.toast = dom.toast || $('toast');
+  dom.unitsGrid = dom.unitsGrid || $('unitsGrid');
+  dom.patientsList = dom.patientsList || $('patientsList');
+  dom.syncFab = dom.syncFab || $('syncFab');
+}
+
+const rafThrottle = (fn) => {
+  let locked = false;
+  return (...args) => {
+    if (locked) return;
+    locked = true;
+    requestAnimationFrame(() => {
+      locked = false;
+      fn(...args);
+    });
+  };
+};
+
+const debounce = (fn, wait = 250) => {
+  let t;
+  return (...args) => {
+    clearTimeout(t);
+    t = setTimeout(() => fn(...args), wait);
+  };
+};
+
+async function safeFetch(url, options = {}, timeoutMs = 12000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(id);
+  }
+}
+
+
 function toast(msg, isError = false) {
-  const t = $('toast');
+  const t = dom.toast || $('toast');
+  if (!t) return;
   t.textContent = msg;
-  t.className = 'toast show' + (isError ? ' error' : '');
-  setTimeout(() => t.classList.remove('show'), 3000);
+  // Avoid stacking timeouts when toasts fire rapidly
+  if (toastTimer) clearTimeout(toastTimer);
+  // Use rAF to coalesce style updates
+  requestAnimationFrame(() => {
+    t.className = 'toast show' + (isError ? ' error' : '');
+  });
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
 }
 
 function openModal(id) { $(id).classList.add('active'); }
@@ -2121,7 +2180,7 @@ async function saveCloud() {
   const endpoint = getPrimaryEndpoint();
   if (!endpoint || endpoint === 'YOUR_API_URL_HERE') return;
   try {
-    await fetch(endpoint, {
+    await safeFetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify({
@@ -2138,7 +2197,7 @@ async function syncCloud() {
   const endpoint = getPrimaryEndpoint();
   if (!endpoint || endpoint === 'YOUR_API_URL_HERE') return;
   try {
-    const res = await fetch(endpoint, {
+    const res = await safeFetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify({ action: 'load' })
@@ -2733,7 +2792,7 @@ window.submitUnitRequest = async function() {
   const endpoint = getPrimaryEndpoint();
   if (endpoint && endpoint !== 'YOUR_API_URL_HERE') {
     try {
-      await fetch(endpoint, {
+      await safeFetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({ action: 'submitUnitRequest', request })
@@ -2760,7 +2819,7 @@ async function loadUnitRequests() {
   const endpoint = getPrimaryEndpoint();
   if (endpoint && endpoint !== 'YOUR_API_URL_HERE') {
     try {
-      const res = await fetch(endpoint, {
+      const res = await safeFetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({ action: 'getUnitRequests' })
@@ -2910,7 +2969,7 @@ window.approveRequest = async function() {
   const endpoint = getPrimaryEndpoint();
   if (endpoint && endpoint !== 'YOUR_API_URL_HERE') {
     try {
-      await fetch(endpoint, {
+      await safeFetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({ action: 'updateUnitRequest', request: req })
@@ -2942,7 +3001,7 @@ window.rejectRequest = async function() {
   const endpoint = getPrimaryEndpoint();
   if (endpoint && endpoint !== 'YOUR_API_URL_HERE') {
     try {
-      await fetch(endpoint, {
+      await safeFetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({ action: 'updateUnitRequest', request: req })
@@ -2968,7 +3027,7 @@ window.quickRejectRequest = async function(requestId) {
   const endpoint = getPrimaryEndpoint();
   if (endpoint && endpoint !== 'YOUR_API_URL_HERE') {
     try {
-      await fetch(endpoint, {
+      await safeFetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({ action: 'updateUnitRequest', request: req })
@@ -3206,21 +3265,48 @@ function renderLabResults(p) {
 
 function compress(file, maxSize, callback) {
   const reader = new FileReader();
-  reader.onload = e => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      let w = img.width, h = img.height;
-      if (w > maxSize || h > maxSize) {
-        if (w > h) { h *= maxSize / w; w = maxSize; }
-        else { w *= maxSize / h; h = maxSize; }
+  reader.onload = async e => {
+    try {
+      const dataUrl = e.target.result;
+
+      // Faster decode path when supported
+      if ('createImageBitmap' in window) {
+        const blob = await (await fetch(dataUrl)).blob();
+        const bmp = await createImageBitmap(blob);
+        let w = bmp.width, h = bmp.height;
+        if (w > maxSize || h > maxSize) {
+          if (w > h) { h = Math.round(h * (maxSize / w)); w = maxSize; }
+          else { w = Math.round(w * (maxSize / h)); h = maxSize; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(bmp, 0, 0, w, h);
+        callback(canvas.toDataURL('image/jpeg', 0.8));
+        return;
       }
-      canvas.width = w;
-      canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      callback(canvas.toDataURL('image/jpeg', 0.8));
-    };
-    img.src = e.target.result;
+
+      // Fallback path
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let w = img.width, h = img.height;
+        if (w > maxSize || h > maxSize) {
+          if (w > h) { h *= maxSize / w; w = maxSize; }
+          else { w *= maxSize / h; h = maxSize; }
+        }
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        callback(canvas.toDataURL('image/jpeg', 0.8));
+      };
+      img.src = dataUrl;
+    } catch (err) {
+      console.error('Compress error:', err);
+      // Best-effort fallback: return original
+      callback(String(e.target.result || ''));
+    }
   };
   reader.readAsDataURL(file);
 }
@@ -3388,7 +3474,7 @@ Extract every patient visible. If a field is not visible, omit it or use reasona
 }
 
 async function extractWithGAS(imageBase64, endpoint) {
-  const res = await fetch(endpoint, {
+  const res = await safeFetch(endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain' },
     body: JSON.stringify({ action: 'extractPatients', image: imageBase64 })
@@ -3467,6 +3553,7 @@ window.exportPDF = function() {
 
 async function init() {
   loadLocal();
+  cacheDom();
   renderUnits();
   
   $('syncFab').onclick = async () => { 
