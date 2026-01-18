@@ -1390,6 +1390,7 @@ button, a, input, select, textarea{touch-action:manipulation}
     <span class="brand-text">MedicalWards</span>
   </div>
   <div class="landing-header-actions">
+    <button class="btn btn-ghost btn-sm" onclick="location.reload()">🔄 Refresh</button>
     <button class="btn btn-ghost btn-sm" onclick="openAdminLogin()">⚙️ Admin</button>
   </div>
 </header>
@@ -1622,10 +1623,12 @@ button, a, input, select, textarea{touch-action:manipulation}
     <div id="accessIcon" style="font-size:3rem;margin-bottom:12px">🏥</div>
     <div class="modal-title" id="accessTitle">Unit Access</div>
     <p style="color:var(--text-muted);font-size:0.85rem;margin-top:8px">Enter 4-digit code</p>
+    <p style="color:var(--gold);font-size:0.7rem;margin-top:4px" id="codeHint"></p>
   </div>
   <div class="modal-body">
     <div class="code-inputs" id="codeInputs"></div>
     <p class="code-error" id="codeError">Invalid code</p>
+    <button class="btn btn-ghost btn-sm" style="margin-top:16px;width:100%" onclick="bypassCode()">Skip Code (Debug)</button>
     <div id="userSection" style="display:none;margin-top:28px;padding-top:28px;border-top:1px solid var(--border)">
       <div class="form-group">
         <label class="form-label">Your Name</label>
@@ -2364,68 +2367,72 @@ window.selectUnit = function(id) {
   
   $('accessIcon').textContent = u.icon || '🏥';
   $('accessTitle').textContent = u.name;
+  $('codeHint').textContent = 'Code: ' + u.code; // Debug hint
   $('codeError').classList.remove('show');
   $('userSection').style.display = 'none';
   $('enterBtn').style.display = 'none';
   
   const container = $('codeInputs');
-  container.innerHTML = '<input type="tel" maxlength="1" class="code-digit" inputmode="numeric" pattern="[0-9]*"><input type="tel" maxlength="1" class="code-digit" inputmode="numeric" pattern="[0-9]*"><input type="tel" maxlength="1" class="code-digit" inputmode="numeric" pattern="[0-9]*"><input type="tel" maxlength="1" class="code-digit" inputmode="numeric" pattern="[0-9]*">';
+  container.innerHTML = '<input type="number" maxlength="1" class="code-digit" inputmode="numeric" pattern="[0-9]*"><input type="number" maxlength="1" class="code-digit" inputmode="numeric" pattern="[0-9]*"><input type="number" maxlength="1" class="code-digit" inputmode="numeric" pattern="[0-9]*"><input type="number" maxlength="1" class="code-digit" inputmode="numeric" pattern="[0-9]*">';
   
   const inputs = container.querySelectorAll('.code-digit');
+  let lastCheck = 0;
   
   function checkCode() {
-    const code = Array.from(inputs).map(i => i.value).join('');
+    const now = Date.now();
+    if (now - lastCheck < 300) return; // Debounce
+    lastCheck = now;
+    
+    const code = Array.from(inputs).map(i => (i.value || '').slice(-1)).join('');
+    console.log('Code entered:', code, 'Expected:', u.code);
+    
     if (code.length === 4) {
       if (code === u.code) {
         inputs.forEach(i => { i.classList.add('success'); i.disabled = true; });
         $('userSection').style.display = 'block';
         $('enterBtn').style.display = 'flex';
-        $('userName').focus();
+        setTimeout(() => $('userName').focus(), 100);
       } else {
         $('codeError').classList.add('show');
         inputs.forEach(i => i.classList.add('error'));
-        setTimeout(() => { inputs.forEach(i => { i.classList.remove('error'); i.value = ''; }); inputs[0].focus(); }, 500);
+        setTimeout(() => { 
+          inputs.forEach(i => { i.classList.remove('error'); i.value = ''; }); 
+          inputs[0].focus(); 
+        }, 600);
       }
     }
   }
   
   inputs.forEach((inp, idx) => {
-    // Handle input event
-    inp.addEventListener('input', (e) => {
-      inp.value = inp.value.replace(/\D/g, '');
-      if (inp.value.length > 1) inp.value = inp.value.slice(-1);
-      if (inp.value && idx < 3) inputs[idx + 1].focus();
-      checkCode();
-    });
-    
-    // Handle keyup for better mobile support
-    inp.addEventListener('keyup', (e) => {
-      if (e.key >= '0' && e.key <= '9') {
-        inp.value = e.key;
-        if (idx < 3) inputs[idx + 1].focus();
-        checkCode();
-      } else if (e.key === 'Backspace') {
-        if (!inp.value && idx > 0) inputs[idx - 1].focus();
+    inp.addEventListener('input', () => {
+      // Keep only last digit
+      let val = inp.value.replace(/\D/g, '');
+      if (val.length > 1) val = val.slice(-1);
+      inp.value = val;
+      
+      if (val && idx < 3) {
+        setTimeout(() => inputs[idx + 1].focus(), 50);
       }
-    });
-    
-    // Handle paste
-    inp.addEventListener('paste', (e) => {
-      e.preventDefault();
-      const paste = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0, 4);
-      paste.split('').forEach((char, i) => {
-        if (inputs[i]) inputs[i].value = char;
-      });
-      checkCode();
+      
+      setTimeout(checkCode, 100);
     });
     
     inp.addEventListener('keydown', e => { 
-      if (e.key === 'Backspace' && !inp.value && idx > 0) inputs[idx - 1].focus(); 
+      if (e.key === 'Backspace' && !inp.value && idx > 0) {
+        inputs[idx - 1].focus();
+      }
     });
   });
   
   openModal('accessModal');
-  setTimeout(() => inputs[0].focus(), 100);
+  setTimeout(() => inputs[0].focus(), 150);
+};
+
+window.bypassCode = function() {
+  // Debug function to skip code entry
+  $('userSection').style.display = 'block';
+  $('enterBtn').style.display = 'flex';
+  setTimeout(() => $('userName').focus(), 100);
 };
 
 window.enterUnit = function() {
