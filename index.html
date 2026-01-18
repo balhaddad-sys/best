@@ -449,11 +449,713 @@ MedWard.Utils = {
   }
 };
 </script>
-<script src="js/storage.js"></script>
-<script src="js/patients.js"></script>
-<script src="js/analysis.js"></script>
-<script src="js/import.js"></script>
-<script src="js/app.js"></script>
+<script>
+/**
+ * MedWard Enterprise - Storage Module (Inline)
+ */
+MedWard.Storage = {
+  state: {
+    units: [],
+    settings: {},
+    patients: [],
+    currentUnit: null,
+    currentUser: null,
+    selectedUnitId: null,
+    editingUnitId: null
+  },
+  
+  load() {
+    this.state.units = MedWard.DEFAULT_UNITS.slice();
+    this.state.settings = {
+      adminPassword: MedWard.CONFIG.ADMIN_PASSWORD,
+      apiUrl: MedWard.CONFIG.API_URL
+    };
+    this.state.patients = [];
+    
+    try {
+      const saved = localStorage.getItem(MedWard.CONFIG.STORAGE_KEY);
+      if (saved) {
+        const data = JSON.parse(saved);
+        if (data.units && Array.isArray(data.units) && data.units.length > 0) {
+          const validUnits = data.units.filter(u => u && u.id && u.name && u.code);
+          if (validUnits.length > 0) {
+            this.state.units = validUnits;
+          }
+        }
+        if (data.settings) {
+          this.state.settings.adminPassword = data.settings.adminPassword || MedWard.CONFIG.ADMIN_PASSWORD;
+          this.state.settings.apiUrl = data.settings.apiUrl || MedWard.CONFIG.API_URL;
+        }
+        if (data.patients && Array.isArray(data.patients)) {
+          this.state.patients = data.patients;
+        }
+      }
+    } catch (e) {
+      console.warn('Storage load failed:', e);
+      try { localStorage.removeItem(MedWard.CONFIG.STORAGE_KEY); } catch (ce) {}
+    }
+    
+    if (!this.state.units || this.state.units.length === 0) {
+      this.state.units = MedWard.DEFAULT_UNITS.slice();
+    }
+  },
+  
+  save() {
+    try {
+      localStorage.setItem(MedWard.CONFIG.STORAGE_KEY, JSON.stringify({
+        units: this.state.units,
+        settings: this.state.settings,
+        patients: this.state.patients
+      }));
+    } catch (e) { console.warn('Storage save failed:', e); }
+  },
+  
+  getUnit(id) { return this.state.units.find(u => u.id === id); },
+  
+  addPatient(patient) {
+    patient.id = Date.now();
+    this.state.patients.push(patient);
+    this.save();
+    return patient;
+  },
+  
+  updatePatient(id, updates) {
+    const idx = this.state.patients.findIndex(p => p.id === id);
+    if (idx !== -1) {
+      this.state.patients[idx] = { ...this.state.patients[idx], ...updates };
+      this.save();
+      return this.state.patients[idx];
+    }
+    return null;
+  },
+  
+  deletePatient(id) {
+    const idx = this.state.patients.findIndex(p => p.id === id);
+    if (idx !== -1) {
+      this.state.patients.splice(idx, 1);
+      this.save();
+      return true;
+    }
+    return false;
+  },
+  
+  addUnit(unit) {
+    unit.id = 'u' + Date.now();
+    const colors = ['#d4a437', '#14b8a6', '#3b82f6', '#a855f7', '#ef4444', '#f97316'];
+    unit.color = unit.color || colors[this.state.units.length % colors.length];
+    this.state.units.push(unit);
+    this.save();
+    return unit;
+  },
+  
+  updateUnit(id, updates) {
+    const idx = this.state.units.findIndex(u => u.id === id);
+    if (idx !== -1) {
+      this.state.units[idx] = { ...this.state.units[idx], ...updates };
+      this.save();
+      return this.state.units[idx];
+    }
+    return null;
+  },
+  
+  deleteUnit(id) {
+    this.state.units = this.state.units.filter(u => u.id !== id);
+    this.save();
+  }
+};
+</script>
+<script>
+/**
+ * MedWard Enterprise - Patients Module (Inline)
+ */
+MedWard.Patients = {
+  render() {
+    const { $, escapeHtml, initials } = MedWard.Utils;
+    const patients = MedWard.Storage.state.patients;
+    const container = $('patientsList');
+    
+    if (!patients.length) {
+      container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted)">No patients yet. Click "+ Add" or "📥 Import".</div>';
+    } else {
+      let html = '';
+      patients.forEach((p, idx) => {
+        html += '<div class="patient ' + p.status + '" data-id="' + p.id + '">' +
+          '<div class="patient-top">' +
+          '<div class="patient-avatar">' + initials(p.name) + '</div>' +
+          '<div class="patient-info">' +
+          '<div class="patient-name">' + escapeHtml(p.name) + '</div>' +
+          '<div class="patient-meta">Room ' + escapeHtml(p.room) + ' • ' + escapeHtml(p.doctor || 'Unassigned') + '</div>' +
+          '</div>' +
+          '<span class="patient-status ' + p.status + '">' + p.status + '</span>' +
+          '</div>' +
+          '<div class="patient-dx">' + escapeHtml(p.diagnosis) + '</div>' +
+          '<div class="patient-actions">' +
+          '<button class="btn btn-secondary btn-sm" onclick="MedWard.Patients.edit(' + p.id + ')">✏️ Edit</button>' +
+          '<button class="btn btn-danger btn-sm" onclick="MedWard.Patients.delete(' + p.id + ')">🗑️ Delete</button>' +
+          '</div></div>';
+      });
+      container.innerHTML = html;
+    }
+    this.updateStats();
+  },
+  
+  updateStats() {
+    const { $ } = MedWard.Utils;
+    const patients = MedWard.Storage.state.patients;
+    $('statTotal').textContent = patients.length;
+    $('statActive').textContent = patients.filter(p => p.status === 'active').length;
+    $('statCritical').textContent = patients.filter(p => p.status === 'critical').length;
+    $('statChronic').textContent = patients.filter(p => p.status === 'chronic').length;
+  },
+  
+  openAdd() {
+    const { $, openModal } = MedWard.Utils;
+    $('patientModalTitle').textContent = 'Add Patient';
+    $('ptId').value = '';
+    $('ptName').value = '';
+    $('ptRoom').value = '';
+    $('ptDx').value = '';
+    $('ptStatus').value = 'active';
+    openModal('patientModal');
+  },
+  
+  edit(id) {
+    const { $, openModal } = MedWard.Utils;
+    const patient = MedWard.Storage.state.patients.find(p => p.id === id);
+    if (!patient) return;
+    $('patientModalTitle').textContent = 'Edit Patient';
+    $('ptId').value = patient.id;
+    $('ptName').value = patient.name;
+    $('ptRoom').value = patient.room;
+    $('ptDx').value = patient.diagnosis;
+    $('ptStatus').value = patient.status;
+    openModal('patientModal');
+  },
+  
+  save() {
+    const { $, closeModal, toast } = MedWard.Utils;
+    const id = $('ptId').value;
+    const name = $('ptName').value.trim();
+    const room = $('ptRoom').value.trim() || '—';
+    const diagnosis = $('ptDx').value.trim() || 'Pending evaluation';
+    const status = $('ptStatus').value;
+    
+    if (!name) { toast('Name is required', true); return; }
+    
+    const user = MedWard.Storage.state.currentUser;
+    
+    if (id) {
+      MedWard.Storage.updatePatient(parseInt(id), { name, room, diagnosis, status });
+      toast('Patient updated!');
+    } else {
+      MedWard.Storage.addPatient({ name, room, diagnosis, status, doctor: user ? user.name : 'Unassigned' });
+      toast('Patient added!');
+    }
+    
+    this.render();
+    closeModal('patientModal');
+  },
+  
+  delete(id) {
+    const { toast } = MedWard.Utils;
+    if (!confirm('Delete this patient?')) return;
+    if (MedWard.Storage.deletePatient(id)) {
+      toast('Patient deleted');
+      this.render();
+    }
+  }
+};
+</script>
+<script>
+/**
+ * MedWard Enterprise - Analysis Module (Inline)
+ */
+MedWard.Analysis = {
+  images: [],
+  type: 'lab',
+  
+  setType(type, el) {
+    const { $$ } = MedWard.Utils;
+    this.type = type;
+    $$('.analysis-type').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  },
+  
+  addImage(file) {
+    const { toast } = MedWard.Utils;
+    if (this.images.length >= MedWard.CONFIG.MAX_IMAGES) {
+      toast('Maximum ' + MedWard.CONFIG.MAX_IMAGES + ' images allowed', true);
+      return;
+    }
+    MedWard.Utils.compressImage(file, MedWard.CONFIG.MAX_IMAGE_SIZE, (dataUrl) => {
+      this.images.push({ id: Date.now(), name: file.name, data: dataUrl });
+      this.renderImages();
+      MedWard.Utils.$('analyzeBtn').disabled = false;
+      toast('Image added (' + this.images.length + '/' + MedWard.CONFIG.MAX_IMAGES + ')');
+    });
+  },
+  
+  removeImage(id) {
+    this.images = this.images.filter(img => img.id !== id);
+    this.renderImages();
+    if (this.images.length === 0) MedWard.Utils.$('analyzeBtn').disabled = true;
+  },
+  
+  renderImages() {
+    const { $ } = MedWard.Utils;
+    const preview = $('analysisPreview');
+    if (this.images.length === 0) { preview.style.display = 'none'; return; }
+    let html = '<div class="image-gallery">';
+    this.images.forEach(img => {
+      html += '<div class="image-thumb"><img src="' + img.data + '" alt="Preview">' +
+        '<button class="image-thumb-remove" onclick="MedWard.Analysis.removeImage(' + img.id + ')">✕</button></div>';
+    });
+    html += '</div><div style="font-size:0.75rem;color:var(--text-muted)">' + this.images.length + '/' + MedWard.CONFIG.MAX_IMAGES + ' images</div>';
+    preview.innerHTML = html;
+    preview.style.display = 'block';
+  },
+  
+  clear() {
+    const { $ } = MedWard.Utils;
+    this.images = [];
+    $('analysisPreview').style.display = 'none';
+    $('analyzeBtn').disabled = true;
+    $('analysisFile').value = '';
+    $('analysisResults').innerHTML = '';
+  },
+  
+  async run() {
+    const { $, escapeHtml, toast } = MedWard.Utils;
+    if (this.images.length === 0) return;
+    $('analyzeBtn').disabled = true;
+    $('analysisLoading').style.display = 'block';
+    $('analysisResults').innerHTML = '';
+    const typeNames = { lab: 'Laboratory Results', xray: 'X-Ray', ct: 'CT/MRI Scan', ecg: 'ECG' };
+    try {
+      const response = await fetch(MedWard.Storage.state.settings.apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+          action: 'interpret',
+          documentType: this.type,
+          images: this.images.map(img => ({ data: img.data })),
+          image: this.images[0].data,
+          multiImage: this.images.length > 1
+        })
+      });
+      const data = await response.json();
+      $('analysisLoading').style.display = 'none';
+      $('analyzeBtn').disabled = false;
+      if (data.error) {
+        $('analysisResults').innerHTML = '<div class="result-card"><h4>⚠️ Error</h4><p>' + escapeHtml(data.error) + '</p></div>';
+        return;
+      }
+      let html = '<div class="result-card"><h4>📋 ' + typeNames[this.type] + ' Analysis</h4>';
+      if (data.interpretation) {
+        const interp = data.interpretation;
+        if (interp.summary) html += '<p><b>Summary:</b> ' + escapeHtml(interp.summary) + '</p>';
+        if (interp.keyFindings && interp.keyFindings.length) {
+          html += '<p><b>Key Findings:</b></p><ul>';
+          interp.keyFindings.forEach(f => { html += '<li>' + escapeHtml(f) + '</li>'; });
+          html += '</ul>';
+        }
+        if (interp.abnormalities && interp.abnormalities.length) {
+          html += '<p><b class="abnormal">Abnormalities:</b></p><ul>';
+          interp.abnormalities.forEach(a => { html += '<li class="abnormal">' + escapeHtml(a) + '</li>'; });
+          html += '</ul>';
+        }
+      }
+      html += '</div>';
+      $('analysisResults').innerHTML = html;
+      toast('Analysis complete!');
+    } catch (error) {
+      $('analysisLoading').style.display = 'none';
+      $('analyzeBtn').disabled = false;
+      $('analysisResults').innerHTML = '<div class="result-card"><h4>⚠️ Error</h4><p>Connection failed.</p></div>';
+    }
+  }
+};
+</script>
+<script>
+/**
+ * MedWard Enterprise - Import Module (Inline)
+ */
+MedWard.Import = {
+  imageBase64: null,
+  patients: [],
+  processing: false,
+  
+  open() {
+    const { $, openModal } = MedWard.Utils;
+    this.imageBase64 = null;
+    this.patients = [];
+    this.processing = false;
+    $('importUpload').style.display = 'block';
+    $('importPreview').style.display = 'none';
+    $('importLoading').style.display = 'none';
+    $('importResults').style.display = 'none';
+    $('importError').style.display = 'none';
+    $('importBtn').disabled = true;
+    $('importFile').value = '';
+    openModal('importModal');
+  },
+  
+  reset() {
+    const { $ } = MedWard.Utils;
+    this.imageBase64 = null;
+    this.patients = [];
+    $('importUpload').style.display = 'block';
+    $('importPreview').style.display = 'none';
+    $('importLoading').style.display = 'none';
+    $('importResults').style.display = 'none';
+    $('importError').style.display = 'none';
+    $('importBtn').disabled = true;
+  },
+  
+  handleFile(file) {
+    const { $ } = MedWard.Utils;
+    MedWard.Utils.compressImage(file, MedWard.CONFIG.MAX_IMAGE_SIZE, (dataUrl) => {
+      this.imageBase64 = dataUrl;
+      $('importImg').src = dataUrl;
+      $('importUpload').style.display = 'none';
+      $('importPreview').style.display = 'block';
+    });
+  },
+  
+  async analyze() {
+    const { $, toast } = MedWard.Utils;
+    if (!this.imageBase64 || this.processing) return;
+    this.processing = true;
+    $('importPreview').style.display = 'none';
+    $('importLoading').style.display = 'block';
+    try {
+      const response = await fetch(MedWard.Storage.state.settings.apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'extractPatients', image: this.imageBase64 })
+      });
+      const data = await response.json();
+      this.processing = false;
+      $('importLoading').style.display = 'none';
+      if (data.error) { this.showError(data.error); return; }
+      let pts = data.patients || [];
+      if (!pts.length && data.extractedText) {
+        try { const match = data.extractedText.match(/\[[\s\S]*\]/); if (match) pts = JSON.parse(match[0]); } catch (e) {}
+      }
+      if (!pts.length) { this.showError('No patients found.'); return; }
+      const user = MedWard.Storage.state.currentUser;
+      this.patients = pts.map((p, i) => ({
+        id: Date.now() + i,
+        name: (p.name || 'Unknown').trim(),
+        room: (p.room || p.bed || '—').trim(),
+        diagnosis: (p.diagnosis || p.condition || 'Pending').trim(),
+        status: this.normalizeStatus(p.status),
+        doctor: p.doctor || (user ? user.name : 'Unassigned')
+      })).filter(p => p.name && p.name !== 'Unknown');
+      if (!this.patients.length) { this.showError('No valid patient data.'); return; }
+      this.showResults();
+    } catch (error) {
+      this.processing = false;
+      $('importLoading').style.display = 'none';
+      this.showError('Connection failed.');
+    }
+  },
+  
+  normalizeStatus(status) {
+    if (!status) return 'active';
+    const s = String(status).toLowerCase();
+    if (s.match(/critical|icu|urgent/)) return 'critical';
+    if (s.match(/chronic|stable/)) return 'chronic';
+    return 'active';
+  },
+  
+  showError(message) {
+    const { $ } = MedWard.Utils;
+    $('importError').style.display = 'block';
+    $('importErrorMsg').textContent = message;
+  },
+  
+  showResults() {
+    const { $, initials, escapeHtml, toast } = MedWard.Utils;
+    $('importResults').style.display = 'block';
+    $('importCount').textContent = this.patients.length;
+    let html = '';
+    this.patients.slice(0, 8).forEach(p => {
+      html += '<div class="import-patient ' + (p.status === 'critical' ? 'critical' : '') + '">' +
+        '<div style="width:32px;height:32px;background:linear-gradient(135deg,var(--gold),var(--teal));border-radius:8px;display:grid;place-items:center;font-weight:600;font-size:0.75rem;color:var(--bg)">' + initials(p.name) + '</div>' +
+        '<div style="flex:1"><div style="font-weight:600;font-size:0.85rem">' + escapeHtml(p.name) + '</div>' +
+        '<div style="font-size:0.7rem;color:var(--text-muted)">Room ' + escapeHtml(p.room) + '</div></div></div>';
+    });
+    if (this.patients.length > 8) html += '<div style="text-align:center;padding:8px;font-size:0.8rem;color:var(--text-muted)">+' + (this.patients.length - 8) + ' more</div>';
+    $('importList').innerHTML = html;
+    $('importBtn').disabled = false;
+    toast('Found ' + this.patients.length + ' patients!');
+  },
+  
+  confirm() {
+    const { closeModal, toast } = MedWard.Utils;
+    if (!this.patients.length) return;
+    let added = 0;
+    this.patients.forEach(p => {
+      const exists = MedWard.Storage.state.patients.some(ep => ep.name.toLowerCase() === p.name.toLowerCase());
+      if (!exists) { MedWard.Storage.addPatient(p); added++; }
+    });
+    MedWard.Patients.render();
+    closeModal('importModal');
+    toast('Imported ' + added + ' patients!');
+  }
+};
+</script>
+<script>
+/**
+ * MedWard Enterprise - Main Application (Inline)
+ */
+MedWard.App = {
+  init() {
+    const { $, $$ } = MedWard.Utils;
+    console.log('[MedWard] Initializing...');
+    MedWard.Storage.load();
+    console.log('[MedWard] Units loaded:', MedWard.Storage.state.units.length);
+    this.renderUnits();
+    
+    $('importFile').onchange = function() { if (this.files[0]) MedWard.Import.handleFile(this.files[0]); };
+    $('analysisFile').onchange = function() {
+      const files = this.files;
+      for (let i = 0; i < files.length; i++) {
+        if (files[i].type.startsWith('image/')) MedWard.Analysis.addImage(files[i]);
+      }
+      this.value = '';
+    };
+    
+    $$('.modal').forEach(m => { m.onclick = e => { if (e.target === m) m.classList.remove('active'); }; });
+    $('adminPwd').onkeydown = e => { if (e.key === 'Enter') this.loginAdmin(); };
+    $('userName').onkeydown = e => { if (e.key === 'Enter') this.enterUnit(); };
+    console.log('[MedWard] Initialized');
+  },
+  
+  renderUnits() {
+    const { $ } = MedWard.Utils;
+    const units = MedWard.Storage.state.units;
+    const container = $('unitsGrid');
+    if (!container) return;
+    if (!units || units.length === 0) {
+      container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted)">No units configured.</div>';
+      return;
+    }
+    let html = '';
+    units.forEach(u => {
+      html += '<div class="unit-card" style="--unit-color:' + (u.color || '#d4a437') + '" onclick="MedWard.App.openUnit(\'' + u.id + '\')">' +
+        '<div class="unit-card-icon">' + (u.icon || '🏥') + '</div>' +
+        '<div class="unit-card-name">' + (u.name || 'Unknown') + '</div>' +
+        '<div class="unit-card-desc">' + (u.desc || '') + '</div></div>';
+    });
+    container.innerHTML = html;
+  },
+  
+  openUnit(id) {
+    const { $, $$, openModal } = MedWard.Utils;
+    const unit = MedWard.Storage.getUnit(id);
+    if (!unit) return;
+    MedWard.Storage.state.selectedUnitId = id;
+    $('accessIcon').textContent = unit.icon;
+    $('accessTitle').textContent = unit.name;
+    $('codeError').classList.remove('show');
+    $('userSection').style.display = 'none';
+    $('enterBtn').style.display = 'none';
+    
+    let html = '';
+    for (let i = 0; i < 4; i++) html += '<input type="tel" class="code-digit" maxlength="1" data-idx="' + i + '" inputmode="numeric">';
+    $('codeInputs').innerHTML = html;
+    
+    const inputs = $$('.code-digit');
+    inputs.forEach((inp, idx) => {
+      inp.oninput = () => {
+        inp.value = inp.value.replace(/\D/g, '');
+        if (inp.value && idx < 3) inputs[idx + 1].focus();
+        const code = Array.from(inputs).map(i => i.value).join('');
+        if (code.length === 4) {
+          if (code === unit.code) {
+            inputs.forEach(i => { i.classList.add('success'); i.disabled = true; });
+            $('codeError').classList.remove('show');
+            $('userSection').style.display = 'block';
+            $('enterBtn').style.display = 'flex';
+            $('userName').focus();
+          } else {
+            $('codeError').classList.add('show');
+            inputs.forEach(i => i.classList.add('error'));
+            setTimeout(() => { inputs.forEach(i => { i.classList.remove('error'); i.value = ''; }); inputs[0].focus(); }, 500);
+          }
+        }
+      };
+      inp.onkeydown = e => { if (e.key === 'Backspace' && !inp.value && idx > 0) inputs[idx - 1].focus(); };
+    });
+    openModal('accessModal');
+    setTimeout(() => inputs[0].focus(), 100);
+  },
+  
+  enterUnit() {
+    const { $, closeModal, toast } = MedWard.Utils;
+    const name = $('userName').value.trim();
+    if (!name) { toast('Enter your name', true); return; }
+    const unit = MedWard.Storage.getUnit(MedWard.Storage.state.selectedUnitId);
+    MedWard.Storage.state.currentUnit = unit;
+    MedWard.Storage.state.currentUser = { name, role: $('userRole').value };
+    closeModal('accessModal');
+    this.showDashboard();
+  },
+  
+  showDashboard() {
+    const { $, initials, toast } = MedWard.Utils;
+    const unit = MedWard.Storage.state.currentUnit;
+    const user = MedWard.Storage.state.currentUser;
+    $('landing').classList.add('hidden');
+    $('dashboard').classList.add('active');
+    $('unitBadge').textContent = unit.name;
+    $('unitBadge').style.cssText = 'border:1px solid ' + unit.color + ';color:' + unit.color + ';background:' + unit.color + '20';
+    $('dashAvatar').textContent = initials(user.name);
+    MedWard.Patients.render();
+    this.renderReference();
+    toast('Welcome to ' + unit.name);
+  },
+  
+  logout() {
+    const { $ } = MedWard.Utils;
+    MedWard.Storage.state.currentUnit = null;
+    MedWard.Storage.state.currentUser = null;
+    $('dashboard').classList.remove('active');
+    $('landing').classList.remove('hidden');
+  },
+  
+  showTab(name, btn) {
+    const { $, $$ } = MedWard.Utils;
+    $$('.tab').forEach(t => t.classList.remove('active'));
+    $$('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    $('panel' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('active');
+  },
+  
+  openAdminLogin() {
+    const { $, openModal } = MedWard.Utils;
+    $('adminPwd').value = '';
+    $('adminError').classList.remove('show');
+    openModal('adminModal');
+    setTimeout(() => $('adminPwd').focus(), 100);
+  },
+  
+  loginAdmin() {
+    const { $, closeModal } = MedWard.Utils;
+    if ($('adminPwd').value === MedWard.Storage.state.settings.adminPassword) {
+      closeModal('adminModal');
+      this.showAdmin();
+    } else { $('adminError').classList.add('show'); }
+  },
+  
+  showAdmin() {
+    const { $ } = MedWard.Utils;
+    $('landing').classList.add('hidden');
+    $('adminPanel').classList.add('active');
+    $('apiUrl').value = MedWard.Storage.state.settings.apiUrl || '';
+    this.renderUnitsTable();
+  },
+  
+  exitAdmin() {
+    const { $ } = MedWard.Utils;
+    $('adminPanel').classList.remove('active');
+    $('landing').classList.remove('hidden');
+  },
+  
+  renderUnitsTable() {
+    const { $ } = MedWard.Utils;
+    const units = MedWard.Storage.state.units;
+    let html = '';
+    units.forEach(u => {
+      html += '<tr><td>' + u.icon + ' <b>' + u.name + '</b></td>' +
+        '<td><code style="background:var(--bg-elevated);padding:3px 8px;border-radius:4px">' + u.code + '</code></td>' +
+        '<td><button class="btn-icon" onclick="MedWard.App.editUnit(\'' + u.id + '\')">✏️</button>' +
+        '<button class="btn-icon" onclick="MedWard.App.deleteUnit(\'' + u.id + '\')">🗑️</button></td></tr>';
+    });
+    $('unitsTable').innerHTML = html || '<tr><td colspan="3" style="text-align:center;padding:30px;color:var(--text-muted)">No units</td></tr>';
+  },
+  
+  addUnit() {
+    const { $, openModal } = MedWard.Utils;
+    MedWard.Storage.state.editingUnitId = null;
+    $('unitModalTitle').textContent = 'Add Unit';
+    $('uName').value = '';
+    $('uIcon').value = '🏥';
+    $('uCode').value = '';
+    $('uDesc').value = '';
+    openModal('unitModal');
+  },
+  
+  editUnit(id) {
+    const { $, openModal } = MedWard.Utils;
+    const unit = MedWard.Storage.getUnit(id);
+    if (!unit) return;
+    MedWard.Storage.state.editingUnitId = id;
+    $('unitModalTitle').textContent = 'Edit Unit';
+    $('uName').value = unit.name;
+    $('uIcon').value = unit.icon;
+    $('uCode').value = unit.code;
+    $('uDesc').value = unit.desc || '';
+    openModal('unitModal');
+  },
+  
+  saveUnit() {
+    const { $, closeModal, toast } = MedWard.Utils;
+    const name = $('uName').value.trim();
+    const icon = $('uIcon').value.trim() || '🏥';
+    const code = $('uCode').value.trim();
+    const desc = $('uDesc').value.trim();
+    if (!name) { toast('Name required', true); return; }
+    if (!/^\d{4}$/.test(code)) { toast('Code must be 4 digits', true); return; }
+    const editId = MedWard.Storage.state.editingUnitId;
+    if (editId) {
+      MedWard.Storage.updateUnit(editId, { name, icon, code, desc });
+      toast('Unit updated!');
+    } else {
+      MedWard.Storage.addUnit({ name, icon, code, desc });
+      toast('Unit created!');
+    }
+    this.renderUnitsTable();
+    this.renderUnits();
+    closeModal('unitModal');
+  },
+  
+  deleteUnit(id) {
+    const { toast } = MedWard.Utils;
+    if (!confirm('Delete this unit?')) return;
+    MedWard.Storage.deleteUnit(id);
+    this.renderUnitsTable();
+    this.renderUnits();
+    toast('Unit deleted');
+  },
+  
+  saveSettings() {
+    const { $, toast } = MedWard.Utils;
+    const pwd = $('newAdminPwd').value.trim();
+    const url = $('apiUrl').value.trim();
+    if (pwd) MedWard.Storage.state.settings.adminPassword = pwd;
+    if (url) MedWard.Storage.state.settings.apiUrl = url;
+    MedWard.Storage.save();
+    toast('Settings saved!');
+    $('newAdminPwd').value = '';
+  },
+  
+  renderReference() {
+    const { $ } = MedWard.Utils;
+    let html = '';
+    MedWard.REFERENCES.forEach(r => { html += '<div class="ref-card"><h4>' + r.title + '</h4><p>' + r.content + '</p></div>'; });
+    $('refGrid').innerHTML = html;
+  }
+};
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => MedWard.App.init());
+} else {
+  MedWard.App.init();
+}
+</script>
 
 </body>
 </html>
