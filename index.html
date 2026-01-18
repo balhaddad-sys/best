@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <meta name="theme-color" content="#030712">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>MedWard Pro</title>
+<title>Medical Wards</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -34,11 +34,10 @@
   --font:'Outfit',system-ui,sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%}
+html,body{height:100%;overflow:hidden}
 body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
-::-webkit-scrollbar{width:5px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:3px}
+::-webkit-scrollbar{display:none}
+*{-ms-overflow-style:none;scrollbar-width:none}
 .mono{font-family:'JetBrains Mono',monospace}
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -46,11 +45,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
    ═══════════════════════════════════════════════════════════════════ */
 
 #landing{
-  min-height:100vh;
+  height:100%;
   display:flex;
   flex-direction:column;
   position:relative;
-  overflow:hidden;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
 }
 
 /* Animated Background */
@@ -159,7 +160,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   display:flex;
   flex-direction:column;
   align-items:center;
-  justify-content:center;
   padding:40px 24px 60px;
   position:relative;
   z-index:10;
@@ -168,6 +168,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   text-align:center;
   max-width:600px;
   margin-bottom:48px;
+  flex-shrink:0;
 }
 .hero-badge{
   display:inline-flex;
@@ -452,7 +453,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   font-size:0.9rem;
 }
 
-.modal-body{padding:28px 32px;overflow-y:auto;flex:1}
+.modal-body{padding:28px 32px;overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1}
 .modal-footer{
   padding:20px 32px;
   border-top:1px solid var(--border);
@@ -648,7 +649,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
    ═══════════════════════════════════════════════════════════════════ */
 
 #adminPanel{background:var(--bg);display:none}
-#adminPanel.active{display:flex;flex-direction:column;min-height:100vh}
+#adminPanel.active{display:flex;flex-direction:column;height:100%;overflow:hidden}
 .admin-header{
   background:var(--bg-card);
   border-bottom:1px solid var(--border);
@@ -656,8 +657,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   display:flex;
   justify-content:space-between;
   align-items:center;
+  flex-shrink:0;
 }
-.admin-content{max-width:800px;margin:0 auto;padding:24px;width:100%}
+.admin-content{max-width:800px;margin:0 auto;padding:24px;width:100%;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .admin-tabs{
   display:flex;
   gap:4px;
@@ -665,10 +667,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   background:var(--bg);
   padding:4px;
   border-radius:var(--radius-sm);
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
 }
 .admin-tab{
-  flex:1;
-  padding:12px;
+  flex:0 0 auto;
+  padding:12px 16px;
   background:transparent;
   border:none;
   border-radius:6px;
@@ -678,6 +682,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   font-weight:600;
   cursor:pointer;
   transition:all 0.2s;
+  white-space:nowrap;
 }
 .admin-tab:hover{color:var(--text)}
 .admin-tab.active{background:var(--bg-elevated);color:var(--gold)}
@@ -799,7 +804,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
    DASHBOARD STYLES
    ═══════════════════════════════════════════════════════════════════ */
 
-.page{display:none;min-height:100vh}
+.page{display:none;height:100%;overflow:hidden}
 .page.active{display:flex;flex-direction:column}
 #dashboard{background:var(--bg)}
 .dash-header{
@@ -838,7 +843,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   font-weight:700;
   font-size:0.9rem;
 }
-.dash-content{flex:1;max-width:1000px;margin:0 auto;padding:20px;width:100%}
+.dash-content{flex:1;max-width:1000px;margin:0 auto;padding:20px;width:100%;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .date-banner{
   background:linear-gradient(135deg,var(--gold),var(--orange));
   color:#000;
@@ -857,10 +862,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   margin-bottom:20px;
   display:flex;
   gap:4px;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
 }
 .tab{
-  flex:1;
-  padding:14px;
+  flex:1 0 auto;
+  min-width:fit-content;
+  padding:14px 16px;
   background:transparent;
   border:none;
   border-radius:var(--radius-sm);
@@ -870,13 +878,24 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   font-weight:600;
   cursor:pointer;
   transition:all 0.2s;
+  white-space:nowrap;
 }
 .tab:hover{color:var(--text)}
 .tab.active{background:var(--bg-elevated);color:var(--gold)}
 .panel{display:none}
 .panel.active{display:block}
-.stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px}
+.stats-grid{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  scroll-snap-type:x mandatory;
+  padding-bottom:4px;
+}
 .stat-card{
+  flex:0 0 auto;
+  min-width:80px;
   background:var(--bg-card);
   border:1px solid var(--border);
   border-radius:var(--radius-sm);
@@ -884,6 +903,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   text-align:center;
   cursor:pointer;
   transition:all 0.2s;
+  scroll-snap-align:start;
 }
 .stat-card:hover,.stat-card.active{border-color:var(--gold);background:rgba(245,158,11,0.08)}
 .stat-value{
@@ -968,14 +988,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
    PATIENT PROFILE STYLES
    ═══════════════════════════════════════════════════════════════════ */
 
-#patientProfile{background:var(--bg)}
+#patientProfile{background:var(--bg);overflow:hidden}
 .profile-header{
   background:linear-gradient(180deg,var(--bg-elevated) 0%,var(--bg) 100%);
   padding:20px;
   border-bottom:1px solid var(--border);
-  position:sticky;
-  top:0;
-  z-index:100;
+  flex-shrink:0;
 }
 .profile-nav{display:flex;align-items:center;gap:16px;margin-bottom:20px}
 .back-btn{
@@ -1008,6 +1026,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   padding:0 20px;
   overflow-x:auto;
   -webkit-overflow-scrolling:touch;
+  flex-shrink:0;
+  scroll-snap-type:x mandatory;
 }
 .profile-tabs::-webkit-scrollbar{display:none}
 .profile-tab{
@@ -1022,10 +1042,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   cursor:pointer;
   white-space:nowrap;
   transition:all 0.2s;
+  scroll-snap-align:start;
+  flex-shrink:0;
 }
 .profile-tab:hover{color:var(--text)}
 .profile-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
-.profile-content{flex:1;padding:20px;overflow-y:auto}
+.profile-content{flex:1;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .profile-panel{display:none}
 .profile-panel.active{display:block}
 .section-card{
@@ -1280,7 +1302,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 
 /* Responsive */
 @media(max-width:640px){
-  .stats-grid{grid-template-columns:repeat(3,1fr)}
   .action-buttons{grid-template-columns:1fr}
   .action-buttons .btn-full{grid-column:span 1}
   .profile-patient{flex-direction:column;text-align:center}
@@ -1290,6 +1311,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   .landing-main{padding:20px 16px 40px}
   .units-grid{grid-template-columns:1fr}
   .icon-selector{grid-template-columns:repeat(6,1fr)}
+  .stat-card{min-width:70px;padding:12px 8px}
+  .stat-value{font-size:1.25rem}
+  .modal-body{padding:20px}
+  .form-row{grid-template-columns:1fr}
+  .fluid-summary{grid-template-columns:1fr}
+  .vitals-grid{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
@@ -1308,7 +1335,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 <header class="landing-header">
   <div class="landing-brand">
     <div class="brand-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
-    <span class="brand-text">MedWard Pro</span>
+    <span class="brand-text">Medical Wards</span>
   </div>
   <div class="landing-header-actions">
     <button class="btn btn-ghost btn-sm" onclick="openAdminLogin()">⚙️ Admin</button>
@@ -1319,7 +1346,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   <div class="landing-hero">
     <div class="hero-badge">🧠 AI-Powered Clinical Intelligence</div>
     <h1 class="hero-title">
-      <span class="gradient">Neural</span> Ward<br>Management
+      <span class="gradient">Medical</span> Wards
     </h1>
     <p class="hero-subtitle">Next-generation clinical workflow system with AI-powered patient extraction, intelligent lab analysis, and seamless team collaboration.</p>
   </div>
