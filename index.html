@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <meta name="theme-color" content="#030712">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Medical Wards</title>
+<title>MedicalWards</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -34,10 +34,11 @@
   --font:'Outfit',system-ui,sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden}
-body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
-::-webkit-scrollbar{display:none}
-*{-ms-overflow-style:none;scrollbar-width:none}
+html{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;height:100%;overflow:hidden}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:3px}
 .mono{font-family:'JetBrains Mono',monospace}
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -49,17 +50,24 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   display:flex;
   flex-direction:column;
   position:relative;
+  overflow:hidden;
+}
+
+.landing-scroll-container{
+  flex:1;
   overflow-y:auto;
   overflow-x:hidden;
   -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
 }
 
 /* Animated Background */
 .landing-bg{
-  position:absolute;
+  position:fixed;
   inset:0;
   overflow:hidden;
   z-index:0;
+  pointer-events:none;
 }
 .landing-bg::before{
   content:'';
@@ -160,6 +168,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   display:flex;
   flex-direction:column;
   align-items:center;
+  justify-content:center;
   padding:40px 24px 60px;
   position:relative;
   z-index:10;
@@ -168,7 +177,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   text-align:center;
   max-width:600px;
   margin-bottom:48px;
-  flex-shrink:0;
 }
 .hero-badge{
   display:inline-flex;
@@ -453,7 +461,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   font-size:0.9rem;
 }
 
-.modal-body{padding:28px 32px;overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1}
+.modal-body{padding:28px 32px;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .modal-footer{
   padding:20px 32px;
   border-top:1px solid var(--border);
@@ -649,7 +657,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
    ═══════════════════════════════════════════════════════════════════ */
 
 #adminPanel{background:var(--bg);display:none}
-#adminPanel.active{display:flex;flex-direction:column;height:100%;overflow:hidden}
+#adminPanel.active{display:flex;flex-direction:column;height:100%}
 .admin-header{
   background:var(--bg-card);
   border-bottom:1px solid var(--border);
@@ -659,7 +667,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   align-items:center;
   flex-shrink:0;
 }
-.admin-content{max-width:800px;margin:0 auto;padding:24px;width:100%;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.admin-scroll-container{
+  flex:1;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+}
+.admin-content{max-width:800px;margin:0 auto;padding:24px;width:100%}
 .admin-tabs{
   display:flex;
   gap:4px;
@@ -667,12 +681,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   background:var(--bg);
   padding:4px;
   border-radius:var(--radius-sm);
-  overflow-x:auto;
-  -webkit-overflow-scrolling:touch;
 }
 .admin-tab{
-  flex:0 0 auto;
-  padding:12px 16px;
+  flex:1;
+  padding:12px;
   background:transparent;
   border:none;
   border-radius:6px;
@@ -682,7 +694,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   font-weight:600;
   cursor:pointer;
   transition:all 0.2s;
-  white-space:nowrap;
 }
 .admin-tab:hover{color:var(--text)}
 .admin-tab.active{background:var(--bg-elevated);color:var(--gold)}
@@ -800,6 +811,39 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 }
 .endpoint-actions{display:flex;gap:8px;margin-top:12px}
 
+/* Links Section */
+.link-item{
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:16px;
+  margin-bottom:12px;
+  transition:all 0.2s;
+}
+.link-item:hover{border-color:var(--gold)}
+.link-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:10px;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.link-name{font-weight:600;display:flex;align-items:center;gap:8px;font-size:0.95rem}
+.link-name-icon{font-size:1.2rem}
+.link-url{
+  font-family:'JetBrains Mono',monospace;
+  font-size:0.75rem;
+  color:var(--teal);
+  word-break:break-all;
+  text-decoration:none;
+  display:block;
+  margin-bottom:8px;
+}
+.link-url:hover{text-decoration:underline}
+.link-desc{font-size:0.8rem;color:var(--text-muted);margin-bottom:12px}
+.link-actions{display:flex;gap:8px;flex-wrap:wrap}
+
 /* ═══════════════════════════════════════════════════════════════════
    DASHBOARD STYLES
    ═══════════════════════════════════════════════════════════════════ */
@@ -843,7 +887,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   font-weight:700;
   font-size:0.9rem;
 }
-.dash-content{flex:1;max-width:1000px;margin:0 auto;padding:20px;width:100%;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.dash-content{flex:1;max-width:1000px;margin:0 auto;padding:20px;width:100%}
+.dash-scroll-container{
+  flex:1;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+}
 .date-banner{
   background:linear-gradient(135deg,var(--gold),var(--orange));
   color:#000;
@@ -862,13 +912,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   margin-bottom:20px;
   display:flex;
   gap:4px;
-  overflow-x:auto;
-  -webkit-overflow-scrolling:touch;
 }
 .tab{
-  flex:1 0 auto;
-  min-width:fit-content;
-  padding:14px 16px;
+  flex:1;
+  padding:14px;
   background:transparent;
   border:none;
   border-radius:var(--radius-sm);
@@ -878,24 +925,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   font-weight:600;
   cursor:pointer;
   transition:all 0.2s;
-  white-space:nowrap;
 }
 .tab:hover{color:var(--text)}
 .tab.active{background:var(--bg-elevated);color:var(--gold)}
 .panel{display:none}
 .panel.active{display:block}
-.stats-grid{
-  display:flex;
-  gap:10px;
-  margin-bottom:20px;
-  overflow-x:auto;
-  -webkit-overflow-scrolling:touch;
-  scroll-snap-type:x mandatory;
-  padding-bottom:4px;
-}
+.stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px}
 .stat-card{
-  flex:0 0 auto;
-  min-width:80px;
   background:var(--bg-card);
   border:1px solid var(--border);
   border-radius:var(--radius-sm);
@@ -903,7 +939,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   text-align:center;
   cursor:pointer;
   transition:all 0.2s;
-  scroll-snap-align:start;
 }
 .stat-card:hover,.stat-card.active{border-color:var(--gold);background:rgba(245,158,11,0.08)}
 .stat-value{
@@ -988,12 +1023,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
    PATIENT PROFILE STYLES
    ═══════════════════════════════════════════════════════════════════ */
 
-#patientProfile{background:var(--bg);overflow:hidden}
+#patientProfile{background:var(--bg)}
 .profile-header{
   background:linear-gradient(180deg,var(--bg-elevated) 0%,var(--bg) 100%);
   padding:20px;
   border-bottom:1px solid var(--border);
-  flex-shrink:0;
+  position:sticky;
+  top:0;
+  z-index:100;
 }
 .profile-nav{display:flex;align-items:center;gap:16px;margin-bottom:20px}
 .back-btn{
@@ -1026,8 +1063,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   padding:0 20px;
   overflow-x:auto;
   -webkit-overflow-scrolling:touch;
-  flex-shrink:0;
-  scroll-snap-type:x mandatory;
 }
 .profile-tabs::-webkit-scrollbar{display:none}
 .profile-tab{
@@ -1042,12 +1077,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   cursor:pointer;
   white-space:nowrap;
   transition:all 0.2s;
-  scroll-snap-align:start;
-  flex-shrink:0;
 }
 .profile-tab:hover{color:var(--text)}
 .profile-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
-.profile-content{flex:1;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.profile-content{flex:1;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .profile-panel{display:none}
 .profile-panel.active{display:block}
 .section-card{
@@ -1302,6 +1335,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 
 /* Responsive */
 @media(max-width:640px){
+  .stats-grid{grid-template-columns:repeat(3,1fr)}
   .action-buttons{grid-template-columns:1fr}
   .action-buttons .btn-full{grid-column:span 1}
   .profile-patient{flex-direction:column;text-align:center}
@@ -1311,12 +1345,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   .landing-main{padding:20px 16px 40px}
   .units-grid{grid-template-columns:1fr}
   .icon-selector{grid-template-columns:repeat(6,1fr)}
-  .stat-card{min-width:70px;padding:12px 8px}
-  .stat-value{font-size:1.25rem}
-  .modal-body{padding:20px}
-  .form-row{grid-template-columns:1fr}
-  .fluid-summary{grid-template-columns:1fr}
-  .vitals-grid{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
@@ -1332,10 +1360,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   <div class="grid-overlay"></div>
 </div>
 
+<div class="landing-scroll-container">
 <header class="landing-header">
   <div class="landing-brand">
     <div class="brand-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
-    <span class="brand-text">Medical Wards</span>
+    <span class="brand-text">MedicalWards</span>
   </div>
   <div class="landing-header-actions">
     <button class="btn btn-ghost btn-sm" onclick="openAdminLogin()">⚙️ Admin</button>
@@ -1346,7 +1375,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   <div class="landing-hero">
     <div class="hero-badge">🧠 AI-Powered Clinical Intelligence</div>
     <h1 class="hero-title">
-      <span class="gradient">Medical</span> Wards
+      <span class="gradient">Neural</span> Ward<br>Management
     </h1>
     <p class="hero-subtitle">Next-generation clinical workflow system with AI-powered patient extraction, intelligent lab analysis, and seamless team collaboration.</p>
   </div>
@@ -1364,6 +1393,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
     </div>
   </div>
 </main>
+</div>
 
 <div class="fab sync-fab" id="syncFab">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1390,6 +1420,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
     </button>
   </div>
 </header>
+<div class="dash-scroll-container">
 <div class="dash-content">
   <div class="date-banner">📅 <span id="currentDate"></span></div>
   <div class="tabs-container" id="mainTabs">
@@ -1417,6 +1448,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       <div class="section-body"><div class="ref-grid" id="refGrid"></div></div>
     </div>
   </div>
+</div>
 </div>
 </div>
 
@@ -1460,11 +1492,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   </div>
   <button class="btn btn-secondary btn-sm" onclick="exitAdmin()">← Exit</button>
 </header>
+<div class="admin-scroll-container">
 <div class="admin-content">
   <div class="admin-tabs" id="adminTabs">
     <button class="admin-tab active" data-atab="units">🏥 Units</button>
     <button class="admin-tab" data-atab="requests">📩 Requests <span class="badge-count" id="requestsCount" style="display:none">0</span></button>
-    <button class="admin-tab" data-atab="endpoints">🔗 API Endpoints</button>
+    <button class="admin-tab" data-atab="links">🔗 Links</button>
+    <button class="admin-tab" data-atab="endpoints">⚡ API</button>
     <button class="admin-tab" data-atab="settings">⚙️ Settings</button>
   </div>
   
@@ -1496,6 +1530,22 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
             <div>No pending requests</div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Links Tab -->
+  <div class="admin-tab-panel" id="adminLinks">
+    <div class="admin-section">
+      <div class="section-header">
+        <div class="section-title">🔗 Quick Links</div>
+        <button class="btn btn-primary btn-sm" onclick="openAddLink()">+ Add Link</button>
+      </div>
+      <div class="section-body">
+        <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:20px">
+          Add useful links for your team. These will be accessible from the Reference tab.
+        </p>
+        <div id="linksList"></div>
       </div>
     </div>
   </div>
@@ -1534,6 +1584,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       </div>
     </div>
   </div>
+</div>
 </div>
 </div>
 
@@ -1806,6 +1857,49 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 </div>
 </div>
 
+<!-- Add/Edit Link Modal -->
+<div class="modal" id="linkModal">
+<div class="modal-box">
+  <div class="modal-header">
+    <div class="modal-title" id="linkModalTitle">Add Link</div>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <label class="form-label">Link Name <span class="required">*</span></label>
+      <input type="text" id="linkName" class="form-input" placeholder="e.g., Hospital Guidelines, Lab Reference">
+    </div>
+    <div class="form-group">
+      <label class="form-label">URL <span class="required">*</span></label>
+      <input type="url" id="linkUrl" class="form-input" placeholder="https://...">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Icon</label>
+        <input type="text" id="linkIcon" class="form-input" style="font-size:1.5rem;text-align:center" value="🔗">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <select id="linkCategory" class="form-select">
+          <option value="general">General</option>
+          <option value="guidelines">Guidelines</option>
+          <option value="reference">Reference</option>
+          <option value="tools">Tools</option>
+          <option value="education">Education</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <input type="text" id="linkDesc" class="form-input" placeholder="Brief description of this link">
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-secondary" onclick="closeModal('linkModal')">Cancel</button>
+    <button class="btn btn-primary" onclick="saveLink()">Save Link</button>
+  </div>
+</div>
+</div>
+
 <!-- Patient Modal -->
 <div class="modal" id="patientModal">
 <div class="modal-box" style="max-width:540px">
@@ -1937,7 +2031,7 @@ const REFERENCE = [
 const state = {
   units: [],
   patients: [],
-  settings: { adminPassword: 'admin', apiEndpoints: [], claudeApiKey: '' },
+  settings: { adminPassword: 'admin', apiEndpoints: [], claudeApiKey: '', links: [] },
   unitRequests: [],
   currentUnit: null,
   currentUser: null,
@@ -1949,6 +2043,7 @@ const state = {
   importPatients: [],
   editingUnitId: null,
   editingEndpointId: null,
+  editingLinkId: null,
   selectedRequestId: null
 };
 
@@ -2001,6 +2096,8 @@ function loadLocal() {
         isActive: true
       }];
     }
+    // Initialize links array if not present
+    if (!state.settings.links) state.settings.links = [];
   } catch (e) { console.error('Load error:', e); }
 }
 
@@ -2157,12 +2254,32 @@ function renderPatients() {
 }
 
 function renderRef() {
-  $('refGrid').innerHTML = REFERENCE.map(r => `
+  const links = state.settings.links || [];
+  let html = '';
+  
+  // Render custom links first if any
+  if (links.length > 0) {
+    html += '<div style="margin-bottom:24px"><h4 style="color:var(--gold);font-size:0.8rem;text-transform:uppercase;margin-bottom:14px">📌 Quick Links</h4><div class="ref-grid">';
+    html += links.map(link => `
+      <a href="${esc(link.url)}" target="_blank" rel="noopener" class="ref-card" style="text-decoration:none;cursor:pointer;transition:all 0.2s">
+        <h4>${link.icon || '🔗'} ${esc(link.name)}</h4>
+        <p>${esc(link.desc) || 'Click to open'}</p>
+      </a>
+    `).join('');
+    html += '</div></div>';
+  }
+  
+  // Render built-in reference
+  html += '<div><h4 style="color:var(--text-muted);font-size:0.8rem;text-transform:uppercase;margin-bottom:14px">📚 Clinical Scores</h4><div class="ref-grid">';
+  html += REFERENCE.map(r => `
     <div class="ref-card">
       <h4>${r.title}</h4>
       <p>${r.content}</p>
     </div>
   `).join('');
+  html += '</div></div>';
+  
+  $('refGrid').innerHTML = html;
 }
 
 // Unit Selection
@@ -2256,6 +2373,7 @@ window.loginAdmin = function() {
     $('claudeApiKey').value = state.settings.claudeApiKey || '';
     renderUnitsTable(); 
     renderEndpoints();
+    renderLinks();
     loadUnitRequests(); 
   } else {
     $('adminError').classList.add('show'); 
@@ -2410,6 +2528,115 @@ window.setPrimaryEndpoint = function(id) {
   saveLocal();
   renderEndpoints();
   toast('Primary endpoint updated');
+};
+
+// Link Management
+function getCategoryColor(category) {
+  const colors = { guidelines: 'teal', reference: 'blue', tools: 'purple', education: 'emerald', general: 'gold' };
+  return colors[category] || 'gold';
+}
+
+function renderLinks() {
+  const list = $('linksList');
+  if (!list) return;
+  const links = state.settings.links || [];
+  if (!links.length) {
+    list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted)"><div style="font-size:2rem;margin-bottom:12px">🔗</div><div>No links added yet</div></div>';
+    return;
+  }
+  list.innerHTML = links.map(link => `
+    <div class="link-item">
+      <div class="link-header">
+        <div class="link-name">
+          <span class="link-name-icon">${link.icon || '🔗'}</span>
+          ${esc(link.name)}
+        </div>
+        <span class="badge badge-${getCategoryColor(link.category)}">${link.category || 'general'}</span>
+      </div>
+      <a href="${esc(link.url)}" target="_blank" rel="noopener" class="link-url">${esc(link.url)}</a>
+      ${link.desc ? `<div class="link-desc">${esc(link.desc)}</div>` : ''}
+      <div class="link-actions">
+        <button class="btn btn-secondary btn-xs" onclick="editLink('${link.id}')">Edit</button>
+        <button class="btn btn-danger btn-xs" onclick="deleteLink('${link.id}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+window.openAddLink = function() {
+  state.editingLinkId = null;
+  $('linkModalTitle').textContent = 'Add Link';
+  $('linkName').value = '';
+  $('linkUrl').value = '';
+  $('linkIcon').value = '🔗';
+  $('linkCategory').value = 'general';
+  $('linkDesc').value = '';
+  openModal('linkModal');
+};
+
+window.editLink = function(id) {
+  const link = state.settings.links?.find(l => l.id === id);
+  if (!link) return;
+  state.editingLinkId = id;
+  $('linkModalTitle').textContent = 'Edit Link';
+  $('linkName').value = link.name;
+  $('linkUrl').value = link.url;
+  $('linkIcon').value = link.icon || '🔗';
+  $('linkCategory').value = link.category || 'general';
+  $('linkDesc').value = link.desc || '';
+  openModal('linkModal');
+};
+
+window.saveLink = function() {
+  const name = $('linkName').value.trim();
+  const url = $('linkUrl').value.trim();
+  const icon = $('linkIcon').value.trim() || '🔗';
+  const category = $('linkCategory').value;
+  const desc = $('linkDesc').value.trim();
+  
+  if (!name || !url) {
+    toast('Name and URL are required', true);
+    return;
+  }
+  
+  // Validate URL
+  try {
+    new URL(url);
+  } catch {
+    toast('Please enter a valid URL', true);
+    return;
+  }
+  
+  if (!state.settings.links) state.settings.links = [];
+  
+  if (state.editingLinkId) {
+    const idx = state.settings.links.findIndex(l => l.id === state.editingLinkId);
+    if (idx !== -1) {
+      state.settings.links[idx] = { ...state.settings.links[idx], name, url, icon, category, desc };
+    }
+  } else {
+    state.settings.links.push({
+      id: 'link_' + Date.now(),
+      name,
+      url,
+      icon,
+      category,
+      desc
+    });
+  }
+  
+  saveLocal();
+  renderLinks();
+  closeModal('linkModal');
+  toast('Link saved!');
+};
+
+window.deleteLink = function(id) {
+  if (!confirm('Delete this link?')) return;
+  state.settings.links = state.settings.links.filter(l => l.id !== id);
+  saveLocal();
+  renderLinks();
+  toast('Link deleted');
 };
 
 // Admin Tab Navigation
