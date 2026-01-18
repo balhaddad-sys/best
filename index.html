@@ -6,23 +6,23 @@
 <meta name="theme-color" content="#030712">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>MedWard Pro</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-:root{--bg:#030712;--bg-card:#0a0f1a;--bg-elevated:#111827;--bg-hover:#1f2937;--text:#f9fafb;--text-secondary:#9ca3af;--text-muted:#6b7280;--gold:#f59e0b;--gold-light:#fbbf24;--teal:#14b8a6;--teal-dark:#0d9488;--purple:#8b5cf6;--rose:#f43f5e;--emerald:#10b981;--blue:#3b82f6;--orange:#f97316;--border:rgba(255,255,255,0.08);--border-light:rgba(255,255,255,0.12);--glass:rgba(10,15,26,0.8);--radius:16px;--radius-sm:10px;--shadow:0 25px 50px -12px rgba(0,0,0,0.5)}
+:root{--bg:#030712;--bg-card:#0a0f1a;--bg-elevated:#111827;--bg-hover:#1f2937;--text:#f9fafb;--text-secondary:#9ca3af;--text-muted:#6b7280;--gold:#f59e0b;--gold-light:#fbbf24;--teal:#14b8a6;--teal-dark:#0d9488;--purple:#8b5cf6;--rose:#f43f5e;--emerald:#10b981;--blue:#3b82f6;--orange:#f97316;--border:rgba(255,255,255,0.08);--border-light:rgba(255,255,255,0.12);--glass:rgba(10,15,26,0.9);--radius:16px;--radius-sm:10px;--shadow:0 25px 50px -12px rgba(0,0,0,0.5)}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
 body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:3px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 24px;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:0.875rem;font-weight:600;cursor:pointer;transition:all 0.2s ease;text-decoration:none}
+.mono{font-family:'JetBrains Mono',monospace}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 24px;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:0.875rem;font-weight:600;cursor:pointer;transition:all 0.2s}
 .btn:active{transform:scale(0.97)}
 .btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#000;box-shadow:0 4px 14px rgba(245,158,11,0.4)}
-.btn-primary:hover{box-shadow:0 6px 20px rgba(245,158,11,0.5)}
 .btn-secondary{background:var(--bg-elevated);border:1px solid var(--border-light);color:var(--text)}
-.btn-secondary:hover{background:var(--bg-hover);border-color:var(--gold)}
+.btn-secondary:hover{border-color:var(--gold)}
 .btn-ghost{background:transparent;color:var(--text-secondary);padding:10px}
 .btn-ghost:hover{color:var(--gold)}
 .btn-danger{background:rgba(244,63,94,0.15);border:1px solid rgba(244,63,94,0.3);color:var(--rose)}
@@ -47,6 +47,8 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px;z-index:1000}
 .modal.active{display:flex}
 .modal-box{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);width:100%;max-width:480px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+.modal-box.wide{max-width:800px}
+.modal-box.full{max-width:95vw;max-height:95vh}
 .modal-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .modal-title{font-size:1.1rem;font-weight:700}
 .modal-body{padding:24px;overflow-y:auto;flex:1}
@@ -57,26 +59,26 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 #landing{align-items:center;justify-content:center;padding:24px;background:radial-gradient(ellipse at top,#111827 0%,var(--bg) 50%)}
 .landing-logo{width:88px;height:88px;background:linear-gradient(135deg,var(--gold),var(--orange));border-radius:24px;display:grid;place-items:center;margin-bottom:28px;box-shadow:0 20px 40px rgba(245,158,11,0.3)}
 .landing-logo svg{width:48px;height:48px;stroke:#000;stroke-width:2.5;fill:none}
-.landing-title{font-size:2rem;font-weight:800;margin-bottom:8px;background:linear-gradient(135deg,var(--gold),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.landing-title{font-size:2rem;font-weight:800;margin-bottom:8px;background:linear-gradient(135deg,var(--gold),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .landing-subtitle{color:var(--text-muted);margin-bottom:48px;font-size:0.95rem}
 .units-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;width:100%;max-width:800px}
-.unit-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;cursor:pointer;transition:all 0.3s ease;position:relative;overflow:hidden}
+.unit-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden}
 .unit-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--unit-color,var(--gold));transform:scaleX(0);transition:transform 0.3s}
 .unit-card:hover::before{transform:scaleX(1)}
-.unit-card:hover{border-color:var(--unit-color,var(--gold));transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,0.3)}
+.unit-card:hover{border-color:var(--unit-color,var(--gold));transform:translateY(-4px)}
 .unit-card-icon{font-size:2.5rem;margin-bottom:16px}
 .unit-card-name{font-size:1.1rem;font-weight:700;margin-bottom:4px}
 .unit-card-desc{color:var(--text-muted);font-size:0.85rem}
 .fab{position:fixed;width:56px;height:56px;background:var(--bg-card);border:1px solid var(--border);border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--text-muted);z-index:50;transition:all 0.3s;box-shadow:0 4px 12px rgba(0,0,0,0.3)}
 .fab svg{width:24px;height:24px}
-.fab:hover{border-color:var(--gold);color:var(--gold);transform:scale(1.05)}
+.fab:hover{border-color:var(--gold);color:var(--gold)}
 .admin-fab{bottom:24px;right:24px}
 .sync-fab{bottom:24px;left:24px}
 .sync-fab.syncing{animation:rotate 1s linear infinite;border-color:var(--gold);color:var(--gold)}
 @keyframes rotate{to{transform:rotate(360deg)}}
 .code-inputs{display:flex;gap:14px;justify-content:center;margin-bottom:20px}
-.code-digit{width:56px;height:68px;background:var(--bg);border:2px solid var(--border);border-radius:var(--radius-sm);font-family:'SF Mono',monospace;font-size:1.75rem;font-weight:700;text-align:center;color:var(--text);transition:all 0.2s}
-.code-digit:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(245,158,11,0.2)}
+.code-digit{width:56px;height:68px;background:var(--bg);border:2px solid var(--border);border-radius:var(--radius-sm);font-family:'JetBrains Mono',monospace;font-size:1.75rem;font-weight:700;text-align:center;color:var(--text);transition:all 0.2s}
+.code-digit:focus{outline:none;border-color:var(--gold)}
 .code-digit.success{border-color:var(--emerald);background:rgba(16,185,129,0.1)}
 .code-digit.error{border-color:var(--rose);animation:shake 0.3s}
 @keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
@@ -90,7 +92,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .dash-badge{padding:8px 16px;border-radius:100px;font-size:0.8rem;font-weight:600;border:1px solid var(--border)}
 .dash-user{display:flex;align-items:center;gap:12px}
 .dash-avatar{width:42px;height:42px;background:linear-gradient(135deg,var(--teal),var(--emerald));border-radius:12px;display:grid;place-items:center;font-weight:700;font-size:0.9rem}
-.dash-content{flex:1;max-width:1000px;margin:0 auto;padding:20px;width:100%}
+.dash-content{flex:1;max-width:1200px;margin:0 auto;padding:20px;width:100%}
 .date-banner{background:linear-gradient(135deg,var(--gold),var(--orange));color:#000;padding:16px 20px;border-radius:var(--radius);margin-bottom:20px;font-weight:700;display:flex;align-items:center;gap:12px}
 .tabs-container{background:var(--bg-card);border-radius:var(--radius);padding:6px;margin-bottom:20px;display:flex;gap:4px}
 .tab{flex:1;padding:14px;background:transparent;border:none;border-radius:var(--radius-sm);color:var(--text-muted);font-family:inherit;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px}
@@ -110,13 +112,12 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .ward-title{font-weight:700;font-size:0.95rem;color:var(--gold);display:flex;align-items:center;gap:10px}
 .ward-count{background:var(--gold);color:#000;padding:4px 14px;border-radius:100px;font-size:0.75rem;font-weight:700}
 .patient-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:12px;cursor:pointer;transition:all 0.2s;border-left:4px solid var(--teal)}
-.patient-card:hover{border-color:var(--gold);transform:translateX(4px);box-shadow:0 8px 24px rgba(0,0,0,0.2)}
+.patient-card:hover{border-color:var(--gold);transform:translateX(4px)}
 .patient-card.critical{border-left-color:var(--rose);background:linear-gradient(135deg,rgba(244,63,94,0.05),transparent)}
 .patient-card.chronic{border-left-color:var(--purple)}
 .patient-card.new{border-left-color:var(--emerald);background:linear-gradient(135deg,rgba(16,185,129,0.05),transparent)}
 .patient-header{display:flex;align-items:center;gap:16px}
-.patient-avatar{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;font-weight:700;font-size:0.9rem;color:#000;flex-shrink:0}
-.patient-card:not(.critical):not(.chronic):not(.new) .patient-avatar{background:linear-gradient(135deg,var(--gold),var(--orange))}
+.patient-avatar{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;font-weight:700;font-size:0.9rem;color:#000;flex-shrink:0;background:linear-gradient(135deg,var(--gold),var(--orange))}
 .patient-card.new .patient-avatar{background:linear-gradient(135deg,var(--emerald),var(--teal))}
 .patient-card.chronic .patient-avatar{background:linear-gradient(135deg,var(--purple),#a855f7)}
 .patient-card.critical .patient-avatar{background:linear-gradient(135deg,var(--rose),var(--orange))}
@@ -126,7 +127,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .patient-diagnosis{font-size:0.85rem;color:var(--text-secondary);margin-top:12px;padding:12px 14px;background:var(--bg);border-radius:var(--radius-sm)}
 .patient-quick-stats{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
 .quick-stat{display:flex;align-items:center;gap:6px;padding:6px 12px;background:var(--bg);border-radius:6px;font-size:0.7rem;color:var(--text-secondary)}
-.quick-stat-icon{font-size:0.9rem}
 #patientProfile{background:var(--bg)}
 .profile-header{background:linear-gradient(180deg,var(--bg-elevated) 0%,var(--bg) 100%);padding:20px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
 .profile-nav{display:flex;align-items:center;gap:16px;margin-bottom:20px}
@@ -147,11 +147,51 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .profile-panel{display:none}
 .profile-panel.active{display:block}
 .section-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:20px;overflow:hidden}
-.section-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.section-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
 .section-title{font-weight:700;font-size:0.95rem;display:flex;align-items:center;gap:10px}
 .section-body{padding:20px}
 .section-empty{text-align:center;padding:40px 20px;color:var(--text-muted)}
 .section-empty-icon{font-size:2.5rem;margin-bottom:12px;opacity:0.5}
+/* Lab Trends Table - Professional Medical Style */
+.lab-trends-container{overflow-x:auto;margin:-20px;padding:20px}
+.lab-trends-table{width:100%;border-collapse:separate;border-spacing:0;min-width:600px}
+.lab-trends-table th,.lab-trends-table td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--border);font-size:0.8rem}
+.lab-trends-table thead{position:sticky;top:0;z-index:10}
+.lab-trends-table thead th{background:var(--bg-elevated);font-weight:700;color:var(--gold);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.05em}
+.lab-trends-table thead th:first-child{border-radius:8px 0 0 0}
+.lab-trends-table thead th:last-child{border-radius:0 8px 0 0}
+.lab-trends-table tbody tr{transition:background 0.2s}
+.lab-trends-table tbody tr:hover{background:rgba(245,158,11,0.05)}
+.lab-trends-table .param-cell{display:flex;align-items:center;gap:10px;font-weight:600}
+.lab-trends-table .param-name{white-space:nowrap}
+.lab-trends-table .param-unit{color:var(--text-muted);font-size:0.7rem;font-weight:400}
+.lab-trends-table .param-range{font-size:0.65rem;color:var(--text-muted);display:block;margin-top:2px}
+.lab-trends-table .value-cell{text-align:center;font-family:'JetBrains Mono',monospace;font-weight:600;position:relative}
+.lab-trends-table .value-cell.high{color:var(--rose);background:rgba(244,63,94,0.08)}
+.lab-trends-table .value-cell.low{color:var(--blue);background:rgba(59,130,246,0.08)}
+.lab-trends-table .value-cell.critical{color:var(--rose);background:rgba(244,63,94,0.15);font-weight:800}
+.lab-trends-table .value-cell.normal{color:var(--emerald)}
+.lab-trends-table .value-cell .status-badge{position:absolute;top:4px;right:4px;font-size:0.55rem;font-weight:800;padding:2px 4px;border-radius:3px}
+.lab-trends-table .value-cell.high .status-badge{background:var(--rose);color:#fff}
+.lab-trends-table .value-cell.low .status-badge{background:var(--blue);color:#fff}
+.lab-trends-table .trend-cell{width:80px;padding:8px}
+.sparkline{height:30px;display:flex;align-items:end;gap:2px}
+.sparkline-bar{flex:1;background:var(--teal);border-radius:2px 2px 0 0;min-width:4px;transition:height 0.3s}
+.sparkline-bar.high{background:var(--rose)}
+.sparkline-bar.low{background:var(--blue)}
+.sparkline-bar.normal{background:var(--emerald)}
+.lab-category{background:var(--bg);padding:10px 14px;font-weight:700;font-size:0.75rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.1em;border-left:3px solid var(--gold)}
+.lab-interpretation{background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(20,184,166,0.1));border-radius:var(--radius);padding:20px;margin-top:20px}
+.lab-interpretation h4{color:var(--gold);margin-bottom:12px;font-size:0.9rem}
+.lab-interpretation ul{margin:0;padding-left:18px}
+.lab-interpretation li{margin-bottom:8px;font-size:0.85rem;color:var(--text-secondary)}
+.lab-interpretation .critical-alert{background:rgba(244,63,94,0.15);border:1px solid rgba(244,63,94,0.3);border-radius:8px;padding:12px;margin-bottom:12px;color:var(--rose);font-weight:600}
+.edit-lab-row{display:grid;grid-template-columns:2fr repeat(4,1fr) auto;gap:8px;align-items:center;padding:10px;background:var(--bg);border-radius:8px;margin-bottom:8px}
+.edit-lab-row input{padding:8px 10px;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:0.8rem;text-align:center}
+.edit-lab-row input:focus{border-color:var(--gold);outline:none}
+.edit-lab-row .param-input{text-align:left}
+.add-param-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:transparent;border:2px dashed var(--border);border-radius:8px;color:var(--text-muted);font-size:0.85rem;cursor:pointer;transition:all 0.2s;width:100%;margin-top:12px}
+.add-param-btn:hover{border-color:var(--gold);color:var(--gold)}
 .timeline{position:relative;padding-left:24px}
 .timeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:var(--border)}
 .timeline-item{position:relative;padding-bottom:24px}
@@ -166,16 +206,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .timeline-title{font-weight:600;font-size:0.9rem}
 .timeline-date{font-size:0.7rem;color:var(--text-muted)}
 .timeline-body{font-size:0.85rem;color:var(--text-secondary)}
-.lab-values-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-.lab-item{background:var(--bg);border-radius:var(--radius-sm);padding:14px;border-left:3px solid var(--teal)}
-.lab-item.high{border-left-color:var(--rose)}
-.lab-item.low{border-left-color:var(--blue)}
-.lab-item.critical{border-left-color:var(--rose);background:rgba(244,63,94,0.1)}
-.lab-name{font-size:0.75rem;color:var(--text-muted);margin-bottom:4px}
-.lab-value{font-size:1.1rem;font-weight:700}
-.lab-value.high{color:var(--rose)}
-.lab-value.low{color:var(--blue)}
-.lab-range{font-size:0.7rem;color:var(--text-muted);margin-top:4px}
 .fluid-chart-container{height:250px;margin-bottom:20px}
 .fluid-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .fluid-stat{background:var(--bg);border-radius:var(--radius-sm);padding:16px;text-align:center}
@@ -188,7 +218,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .plan-item-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .plan-item-date{font-size:0.7rem;color:var(--text-muted)}
 .plan-item-content{font-size:0.9rem;white-space:pre-wrap}
-.plan-item-actions{display:flex;gap:8px;margin-top:12px}
 .vitals-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:20px}
 .vital-card{background:var(--bg);border-radius:var(--radius-sm);padding:16px;text-align:center}
 .vital-icon{font-size:1.5rem;margin-bottom:8px}
@@ -202,11 +231,11 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .analysis-patient-select{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-top:20px}
 .analysis-patient-select h4{font-size:0.85rem;margin-bottom:12px;color:var(--gold)}
 .patient-select-list{max-height:200px;overflow-y:auto}
-.patient-select-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg);border-radius:var(--radius-sm);margin-bottom:8px;cursor:pointer;transition:all 0.2s}
+.patient-select-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg);border-radius:var(--radius-sm);margin-bottom:8px;cursor:pointer;transition:all 0.2s;border:1px solid transparent}
 .patient-select-item:hover{background:var(--bg-hover);border-color:var(--gold)}
 .patient-select-item.selected{border:2px solid var(--gold);background:rgba(245,158,11,0.1)}
 .patient-select-avatar{width:36px;height:36px;background:linear-gradient(135deg,var(--gold),var(--teal));border-radius:10px;display:grid;place-items:center;font-weight:700;font-size:0.75rem;color:#000}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--bg-card);border:1px solid var(--emerald);padding:16px 28px;border-radius:var(--radius);font-size:0.9rem;opacity:0;transition:all 0.3s;z-index:2000;box-shadow:var(--shadow)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--bg-card);border:1px solid var(--emerald);padding:16px 28px;border-radius:var(--radius);font-size:0.9rem;opacity:0;transition:all 0.3s;z-index:2000}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 .toast.error{border-color:var(--rose)}
 .spinner{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto}
@@ -216,7 +245,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:48px 24px;text-align:center;cursor:pointer;transition:all 0.2s}
 .upload-zone:hover{border-color:var(--gold);background:rgba(245,158,11,0.05)}
 .upload-zone-icon{font-size:3rem;margin-bottom:16px}
-.analysis-types{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:24px}
+.analysis-types{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:24px}
 .analysis-type{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px 10px;text-align:center;cursor:pointer;transition:all 0.2s}
 .analysis-type:hover{border-color:var(--gold)}
 .analysis-type.active{border-color:var(--gold);background:rgba(245,158,11,0.1)}
@@ -238,13 +267,15 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .units-table{width:100%;border-collapse:collapse}
 .units-table th,.units-table td{padding:16px;text-align:left;border-bottom:1px solid var(--border)}
 .units-table th{font-size:0.7rem;color:var(--text-muted);text-transform:uppercase}
+.trend-chart-container{height:200px;margin:20px 0}
 @media(max-width:640px){
 .stats-grid{grid-template-columns:repeat(3,1fr)}
 .action-buttons{grid-template-columns:1fr}
 .action-buttons .btn-full{grid-column:span 1}
-.analysis-types{grid-template-columns:repeat(3,1fr)}
+.analysis-types{grid-template-columns:repeat(2,1fr)}
 .profile-patient{flex-direction:column;text-align:center}
 .profile-details .meta{justify-content:center}
+.edit-lab-row{grid-template-columns:1fr 1fr}
 }
 </style>
 </head>
@@ -289,7 +320,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 <div class="action-buttons">
 <button class="btn btn-primary btn-sm" onclick="openAddPatient()">➕ Add Patient</button>
 <button class="btn btn-secondary btn-sm" onclick="openImport()">📥 Import</button>
-<button class="btn btn-success btn-sm btn-full" onclick="exportPDF()">📄 Export PDF Report</button>
+<button class="btn btn-success btn-sm btn-full" onclick="exportPDF()">📄 Export PDF</button>
 </div>
 <div id="patientsList"></div>
 </div>
@@ -300,7 +331,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 <div class="upload-zone" onclick="document.getElementById('analysisFile').click()">
 <div class="upload-zone-icon">📤</div>
 <div style="font-weight:600;margin-bottom:8px">Upload Medical Image</div>
-<div style="color:var(--text-muted);font-size:0.85rem">Labs • Echo • ECG • X-Ray • CT/MRI</div>
+<div style="color:var(--text-muted);font-size:0.85rem">Labs • Echo • ECG • X-Ray</div>
 </div>
 <input type="file" id="analysisFile" accept="image/*" style="display:none">
 <div class="analysis-types">
@@ -308,13 +339,12 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 <div class="analysis-type" data-type="echo"><div class="analysis-type-icon">💓</div><div class="analysis-type-name">Echo</div></div>
 <div class="analysis-type" data-type="ecg"><div class="analysis-type-icon">📈</div><div class="analysis-type-name">ECG</div></div>
 <div class="analysis-type" data-type="xray"><div class="analysis-type-icon">🩻</div><div class="analysis-type-name">X-Ray</div></div>
-<div class="analysis-type" data-type="ct"><div class="analysis-type-icon">🧠</div><div class="analysis-type-name">CT/MRI</div></div>
 </div>
 <div id="analysisPreview" style="display:none;margin-top:20px"></div>
 </div>
 </div>
 <button class="btn btn-primary btn-full" id="analyzeBtn" onclick="runAnalysis()" disabled style="margin-top:16px">🤖 Analyze with AI</button>
-<div id="analysisLoading" style="display:none;text-align:center;padding:48px"><div class="spinner"></div><div style="margin-top:20px;color:var(--text-muted)">Analyzing image...</div></div>
+<div id="analysisLoading" style="display:none;text-align:center;padding:48px"><div class="spinner"></div><div style="margin-top:20px;color:var(--text-muted)">AI analyzing...</div></div>
 <div id="analysisResults"></div>
 </div>
 <div class="panel" id="panelReference">
@@ -333,7 +363,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 <div class="back-btn" onclick="closePatientProfile()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></div>
 <div class="profile-title">Patient Profile</div>
 <div class="profile-actions">
-<button class="btn btn-secondary btn-sm" onclick="editCurrentPatient()">✏️ Edit</button>
+<button class="btn btn-secondary btn-sm" onclick="editCurrentPatient()">✏️</button>
 <button class="btn btn-danger btn-sm" onclick="deleteCurrentPatient()">🗑️</button>
 </div>
 </div>
@@ -362,19 +392,19 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 <header class="admin-header">
 <div style="display:flex;align-items:center;gap:12px">
 <div class="dash-logo-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke-width="2"/></svg></div>
-<span style="font-weight:700;font-size:1.1rem">Admin Panel</span>
+<span style="font-weight:700">Admin Panel</span>
 </div>
 <button class="btn btn-secondary btn-sm" onclick="exitAdmin()">← Exit</button>
 </header>
 <div class="admin-content">
 <div class="admin-section">
-<div class="section-header"><div class="section-title">🏥 Units</div><button class="btn btn-primary btn-sm" onclick="addUnit()">+ Add Unit</button></div>
+<div class="section-header"><div class="section-title">🏥 Units</div><button class="btn btn-primary btn-sm" onclick="addUnit()">+ Add</button></div>
 <div style="padding:0"><table class="units-table"><thead><tr><th>Unit</th><th>Code</th><th>Actions</th></tr></thead><tbody id="unitsTable"></tbody></table></div>
 </div>
 <div class="admin-section">
 <div class="section-header"><div class="section-title">⚙️ Settings</div></div>
 <div class="section-body">
-<div class="form-group"><label class="form-label">Admin Password</label><input type="password" id="newAdminPwd" class="form-input" placeholder="Leave blank to keep current"></div>
+<div class="form-group"><label class="form-label">Admin Password</label><input type="password" id="newAdminPwd" class="form-input" placeholder="Leave blank to keep"></div>
 <div class="form-group"><label class="form-label">API Endpoint</label><input type="text" id="apiUrl" class="form-input"></div>
 <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
 </div>
@@ -385,22 +415,22 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 <!-- MODALS -->
 <div class="modal" id="accessModal">
 <div class="modal-box">
-<div class="modal-header" style="text-align:center;display:block;border:none;padding-bottom:0">
+<div class="modal-header" style="text-align:center;display:block;border:none">
 <div id="accessIcon" style="font-size:3rem;margin-bottom:12px">🏥</div>
-<div class="modal-title" id="accessTitle" style="font-size:1.25rem">Unit Access</div>
-<p style="color:var(--text-muted);font-size:0.85rem;margin-top:8px">Enter 4-digit access code</p>
+<div class="modal-title" id="accessTitle">Unit Access</div>
+<p style="color:var(--text-muted);font-size:0.85rem;margin-top:8px">Enter 4-digit code</p>
 </div>
 <div class="modal-body">
 <div class="code-inputs" id="codeInputs"></div>
-<p class="code-error" id="codeError">Invalid code. Please try again.</p>
+<p class="code-error" id="codeError">Invalid code</p>
 <div id="userSection" style="display:none;margin-top:28px;padding-top:28px;border-top:1px solid var(--border)">
 <div class="form-group"><label class="form-label">Your Name</label><input type="text" id="userName" class="form-input" placeholder="Dr. Name"></div>
-<div class="form-group"><label class="form-label">Role</label><select id="userRole" class="form-select"><option value="attending">Attending Physician</option><option value="resident">Resident</option><option value="intern">Intern</option><option value="nurse">Nurse</option></select></div>
+<div class="form-group"><label class="form-label">Role</label><select id="userRole" class="form-select"><option value="attending">Attending</option><option value="resident">Resident</option><option value="intern">Intern</option></select></div>
 </div>
 </div>
 <div class="modal-footer">
 <button class="btn btn-secondary" onclick="closeModal('accessModal')">Cancel</button>
-<button class="btn btn-primary" id="enterBtn" style="display:none" onclick="enterUnit()">Enter Unit</button>
+<button class="btn btn-primary" id="enterBtn" style="display:none" onclick="enterUnit()">Enter</button>
 </div>
 </div>
 </div>
@@ -412,7 +442,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 <div class="modal-title">Admin Access</div>
 </div>
 <div class="modal-body">
-<div class="form-group"><label class="form-label">Password</label><input type="password" id="adminPwd" class="form-input" placeholder="Enter admin password"></div>
+<div class="form-group"><label class="form-label">Password</label><input type="password" id="adminPwd" class="form-input"></div>
 <p class="code-error" id="adminError">Invalid password</p>
 </div>
 <div class="modal-footer">
@@ -427,20 +457,20 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 <div class="modal-header"><div class="modal-title" id="patientModalTitle">Add Patient</div></div>
 <div class="modal-body">
 <input type="hidden" id="ptId">
-<div class="form-group"><label class="form-label">Patient Name</label><input type="text" id="ptName" class="form-input" placeholder="Full name"></div>
+<div class="form-group"><label class="form-label">Patient Name</label><input type="text" id="ptName" class="form-input"></div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 <div class="form-group"><label class="form-label">Ward</label><select id="ptWard" class="form-select"><option value="Ward 14">Ward 14</option><option value="Ward 22">Ward 22</option><option value="Ward 27">Ward 27</option><option value="ICU">ICU</option><option value="ER/Unassigned">ER/Unassigned</option></select></div>
-<div class="form-group"><label class="form-label">Room/Bed</label><input type="text" id="ptRoom" class="form-input" placeholder="e.g. 11-1"></div>
+<div class="form-group"><label class="form-label">Room/Bed</label><input type="text" id="ptRoom" class="form-input"></div>
 </div>
-<div class="form-group"><label class="form-label">Primary Diagnosis</label><textarea id="ptDx" class="form-textarea" placeholder="Enter diagnosis"></textarea></div>
+<div class="form-group"><label class="form-label">Diagnosis</label><textarea id="ptDx" class="form-textarea"></textarea></div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-<div class="form-group"><label class="form-label">Assigned Doctor</label><input type="text" id="ptDoctor" class="form-input" placeholder="Dr. Name"></div>
-<div class="form-group"><label class="form-label">Status</label><select id="ptStatus" class="form-select"><option value="new">🆕 New Admission</option><option value="active">✅ Active</option><option value="critical">🚨 Critical</option><option value="chronic">💜 Chronic</option></select></div>
+<div class="form-group"><label class="form-label">Doctor</label><input type="text" id="ptDoctor" class="form-input"></div>
+<div class="form-group"><label class="form-label">Status</label><select id="ptStatus" class="form-select"><option value="new">🆕 New</option><option value="active">✅ Active</option><option value="critical">🚨 Critical</option><option value="chronic">💜 Chronic</option></select></div>
 </div>
 </div>
 <div class="modal-footer">
 <button class="btn btn-secondary" onclick="closeModal('patientModal')">Cancel</button>
-<button class="btn btn-primary" onclick="savePatient()">Save Patient</button>
+<button class="btn btn-primary" onclick="savePatient()">Save</button>
 </div>
 </div>
 </div>
@@ -449,51 +479,50 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 <div class="modal-box">
 <div class="modal-header"><div class="modal-title" id="unitModalTitle">Add Unit</div></div>
 <div class="modal-body">
-<div class="form-group"><label class="form-label">Unit Name</label><input type="text" id="uName" class="form-input" placeholder="e.g. Cardiology"></div>
+<div class="form-group"><label class="form-label">Unit Name</label><input type="text" id="uName" class="form-input"></div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 <div class="form-group"><label class="form-label">Icon</label><input type="text" id="uIcon" class="form-input" value="🏥" style="font-size:1.75rem;text-align:center"></div>
-<div class="form-group"><label class="form-label">Access Code</label><input type="text" id="uCode" class="form-input" placeholder="4 digits" maxlength="4"></div>
+<div class="form-group"><label class="form-label">Code</label><input type="text" id="uCode" class="form-input" maxlength="4"></div>
 </div>
-<div class="form-group"><label class="form-label">Description</label><input type="text" id="uDesc" class="form-input" placeholder="Brief description"></div>
+<div class="form-group"><label class="form-label">Description</label><input type="text" id="uDesc" class="form-input"></div>
 </div>
 <div class="modal-footer">
 <button class="btn btn-secondary" onclick="closeModal('unitModal')">Cancel</button>
-<button class="btn btn-primary" onclick="saveUnit()">Save Unit</button>
+<button class="btn btn-primary" onclick="saveUnit()">Save</button>
 </div>
 </div>
 </div>
 
 <div class="modal" id="importModal">
 <div class="modal-box" style="max-width:560px">
-<div class="modal-header"><div class="modal-title">📥 Import Patients</div><p style="color:var(--text-muted);font-size:0.8rem;margin-top:4px">AI extracts from screenshot • Tap ward to correct</p></div>
+<div class="modal-header"><div class="modal-title">📥 Import Patients</div></div>
 <div class="modal-body">
 <div id="importUpload">
 <div class="upload-zone" onclick="document.getElementById('importFile').click()">
 <div style="font-size:2.5rem;margin-bottom:12px">📷</div>
 <div style="font-weight:600">Upload Screenshot</div>
-<div style="color:var(--text-muted);font-size:0.85rem;margin-top:8px">Take a screenshot of your patient list</div>
 </div>
 <input type="file" id="importFile" accept="image/*" style="display:none">
 </div>
 <div id="importPreview" style="display:none">
 <img id="importImg" style="width:100%;max-height:160px;object-fit:contain;border-radius:12px;margin-bottom:16px">
 <div style="display:flex;gap:12px">
-<button class="btn btn-secondary btn-sm" style="flex:1" onclick="resetImport()">Change Image</button>
-<button class="btn btn-primary btn-sm" style="flex:2" onclick="extractPatients()">🤖 Extract Patients</button>
+<button class="btn btn-secondary btn-sm" style="flex:1" onclick="resetImport()">Change</button>
+<button class="btn btn-primary btn-sm" style="flex:2" onclick="extractPatients()">🤖 Extract</button>
 </div>
 </div>
-<div id="importLoading" style="display:none;text-align:center;padding:48px"><div class="spinner"></div><div style="margin-top:20px;color:var(--text-muted)">AI is extracting patients...</div></div>
+<div id="importLoading" style="display:none;text-align:center;padding:48px"><div class="spinner"></div><div style="margin-top:20px;color:var(--text-muted)">Extracting...</div></div>
 <div id="importResults" style="display:none">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)">
-<div style="font-weight:600">✓ Found Patients</div>
-<span id="importCount" class="badge badge-emerald" style="font-size:0.8rem;padding:6px 14px">0</span>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+<span style="font-weight:600">Found Patients</span>
+<span id="importCount" class="badge badge-emerald">0</span>
 </div>
 <div id="importList" style="max-height:320px;overflow-y:auto"></div>
 </div>
 <div id="importError" style="display:none;text-align:center;padding:40px">
 <div style="font-size:2.5rem;margin-bottom:16px">⚠️</div>
-<div id="importErrorMsg" style="color:var(--rose);margin-bottom:20px">Error occurred</div>
-<button class="btn btn-secondary btn-sm" onclick="resetImport()">Try Again</button>
+<div id="importErrorMsg" style="color:var(--rose)">Error</div>
+<button class="btn btn-secondary btn-sm" style="margin-top:16px" onclick="resetImport()">Retry</button>
 </div>
 </div>
 <div class="modal-footer">
@@ -518,12 +547,26 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 </div>
 
 <div class="modal" id="addDataModal">
-<div class="modal-box" style="max-width:560px">
+<div class="modal-box" style="max-width:700px">
 <div class="modal-header"><div class="modal-title" id="addDataTitle">Add Data</div></div>
 <div class="modal-body" id="addDataBody"></div>
 <div class="modal-footer">
 <button class="btn btn-secondary" onclick="closeModal('addDataModal')">Cancel</button>
 <button class="btn btn-primary" onclick="saveAddData()">Save</button>
+</div>
+</div>
+</div>
+
+<div class="modal" id="labEditorModal">
+<div class="modal-box full">
+<div class="modal-header">
+<div class="modal-title">🧪 Lab Results Editor</div>
+<button class="btn btn-ghost" onclick="closeModal('labEditorModal')">✕</button>
+</div>
+<div class="modal-body" id="labEditorBody"></div>
+<div class="modal-footer">
+<button class="btn btn-secondary" onclick="closeModal('labEditorModal')">Cancel</button>
+<button class="btn btn-primary" onclick="saveLabEditor()">Save All Changes</button>
 </div>
 </div>
 </div>
@@ -534,45 +577,39 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 'use strict';
 
 const CONFIG = {
-  STORAGE_KEY: 'medward_pro_v8',
+  STORAGE_KEY: 'medward_pro_v9',
   ADMIN_PASSWORD: 'admin123',
   API_URL: 'https://script.google.com/macros/s/AKfycbwnPMayEKM6rHJB2qZ-DDECoVB4Kte1EcoBiea0pmcasfyAeW7RGeADiH5DMXGRJOSJ/exec',
   MAX_IMAGE_SIZE: 1200000,
   IMAGE_QUALITY: 0.75,
   MAX_DIM: 1600,
-  VALID_WARDS: ['Ward 14', 'Ward 22', 'Ward 27', 'ICU', 'ER/Unassigned']
+  VALID_WARDS: ['Ward 14', 'Ward 22', 'Ward 27', 'ICU', 'ER/Unassigned'],
+  LAB_CATEGORIES: {
+    'Renal': ['Urea', 'Creatinine', 'Creat', 'eGFR', 'BUN'],
+    'Electrolytes': ['Na', 'Sodium', 'K', 'Potassium', 'Cl', 'Chloride', 'CO2', 'Bicarbonate', 'Magnesium', 'Mg', 'Calcium', 'Ca', 'Phosphate', 'Phos'],
+    'Glucose': ['Glucose', 'Gluc', 'FBG', 'RBG', 'HbA1c'],
+    'Liver': ['ALT', 'AST', 'ALP', 'GGT', 'Bilirubin', 'Albumin', 'Total Protein'],
+    'CBC': ['Hgb', 'Hemoglobin', 'WBC', 'Platelets', 'RBC', 'MCV', 'MCH', 'MCHC', 'Hct'],
+    'Other': ['Urate', 'Uric Acid', 'Anion Gap', 'Osmolality', 'Lactate', 'CRP', 'ESR', 'Procalcitonin']
+  }
 };
 
 const REFS = [
-  { title: '🚨 Critical Labs', content: '<b>K:</b> &lt;2.5 or &gt;6.5 mEq/L<br><b>Na:</b> &lt;120 or &gt;160 mEq/L<br><b>Glucose:</b> &lt;40 or &gt;500 mg/dL<br><b>Troponin:</b> &gt;0.04 ng/mL' },
-  { title: '⚡ Hyperkalemia Rx', content: '<b>Stabilize:</b> Ca gluconate 1g IV<br><b>Shift:</b> Insulin 10U + D50<br><b>Albuterol:</b> 10-20mg nebulized<br><b>Remove:</b> Kayexalate, dialysis' },
-  { title: '❤️ ACS Protocol', content: '<b>MONA:</b> Morphine, O₂, Nitrates, ASA 325mg<br><b>STEMI:</b> PCI within 90 min<br><b>Anticoag:</b> Heparin/Enoxaparin' },
-  { title: '🧠 Stroke tPA', content: '<b>Window:</b> ≤4.5 hours from onset<br><b>Dose:</b> 0.9 mg/kg (max 90mg)<br><b>10% bolus</b>, 90% over 1 hour<br><b>BP goal:</b> &lt;185/110 before tPA' },
-  { title: '🦠 Sepsis Bundle', content: '<b>Hour-1:</b> Lactate, cultures, broad abx<br><b>Fluids:</b> 30 mL/kg crystalloid<br><b>MAP goal:</b> ≥65 mmHg<br><b>Vasopressors:</b> If fluid-refractory' },
-  { title: '💊 Status Epilepticus', content: '<b>1st line:</b> Lorazepam 4mg IV (may repeat)<br><b>2nd line:</b> Levetiracetam 60mg/kg<br>or Fosphenytoin 20mg PE/kg<br><b>3rd line:</b> Propofol/Midazolam gtt' }
+  { title: '🚨 Critical Labs', content: '<b>K:</b> <2.5 or >6.5<br><b>Na:</b> <120 or >160<br><b>Glucose:</b> <40 or >500<br><b>Troponin:</b> >0.04' },
+  { title: '⚡ Hyperkalemia Rx', content: '<b>Stabilize:</b> Ca gluconate 1g IV<br><b>Shift:</b> Insulin 10U + D50<br><b>Remove:</b> Kayexalate' },
+  { title: '❤️ ACS Protocol', content: '<b>MONA:</b> Morphine, O₂, Nitrates, ASA<br><b>STEMI:</b> PCI within 90 min' },
+  { title: '🧠 Stroke tPA', content: '<b>Window:</b> ≤4.5 hours<br><b>Dose:</b> 0.9 mg/kg (max 90mg)<br><b>BP:</b> <185/110' },
+  { title: '🦠 Sepsis Bundle', content: '<b>Hour-1:</b> Lactate, cultures, abx<br><b>Fluids:</b> 30 mL/kg<br><b>MAP:</b> ≥65' },
+  { title: '💊 Status Epilepticus', content: '<b>1st:</b> Lorazepam 4mg IV<br><b>2nd:</b> Levetiracetam 60mg/kg<br><b>3rd:</b> Propofol gtt' }
 ];
 
-// State
 const state = {
-  units: [],
-  settings: {},
-  patients: [],
-  currentUnit: null,
-  currentUser: null,
-  currentPatient: null,
-  selectedUnitId: null,
-  editingUnitId: null,
-  analysisImages: [],
-  analysisType: 'lab',
-  analysisResult: null,
-  importImage: null,
-  importPatients: [],
-  currentFilter: 'all',
-  fluidChart: null,
-  addDataType: null
+  units: [], settings: {}, patients: [], currentUnit: null, currentUser: null, currentPatient: null,
+  selectedUnitId: null, editingUnitId: null, analysisImages: [], analysisType: 'lab', analysisResult: null,
+  importImage: null, importPatients: [], currentFilter: 'all', fluidChart: null, addDataType: null,
+  labEditorData: null, trendCharts: {}
 };
 
-// Helpers
 const $ = id => document.getElementById(id);
 const $$ = sel => document.querySelectorAll(sel);
 const esc = t => { if (!t) return ''; const d = document.createElement('div'); d.textContent = t; return d.innerHTML; };
@@ -596,16 +633,21 @@ function showPage(pageId) {
 
 function formatDate(d) {
   const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   d = d || new Date();
-  const suf = [1,21,31].includes(d.getDate()) ? 'st' : [2,22].includes(d.getDate()) ? 'nd' : [3,23].includes(d.getDate()) ? 'rd' : 'th';
-  return `${days[d.getDay()]}, ${d.getDate()}${suf} ${months[d.getMonth()]} ${d.getFullYear()}`;
+  return `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
 }
 
 function formatDateTime(iso) {
   if (!iso) return '';
   const d = new Date(iso);
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+function formatShortDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
 function compress(file, max, cb) {
@@ -641,6 +683,14 @@ function smartWard(raw) {
   return 'Ward 14';
 }
 
+function getLabCategory(name) {
+  const n = (name || '').toLowerCase();
+  for (const [cat, terms] of Object.entries(CONFIG.LAB_CATEGORIES)) {
+    if (terms.some(t => n.includes(t.toLowerCase()))) return cat;
+  }
+  return 'Other';
+}
+
 // Storage
 let isSyncing = false;
 
@@ -653,11 +703,8 @@ function loadLocal() {
       if (d.settings) state.settings = { ...state.settings, ...d.settings };
       if (d.patients) state.patients = d.patients;
     }
-  } catch (e) { console.error('Load error:', e); }
-  
-  if (!state.units.length) {
-    state.units = [{ id: 'med-e', name: 'Medicine Unit E', icon: '🏥', desc: 'Internal Medicine', code: '1234', color: '#14b8a6' }];
-  }
+  } catch (e) {}
+  if (!state.units.length) state.units = [{ id: 'med-e', name: 'Medicine Unit E', icon: '🏥', desc: 'Internal Medicine', code: '1234', color: '#14b8a6' }];
   state.settings.adminPassword = state.settings.adminPassword || CONFIG.ADMIN_PASSWORD;
   state.settings.apiUrl = state.settings.apiUrl || CONFIG.API_URL;
 }
@@ -665,12 +712,9 @@ function loadLocal() {
 function saveLocal() {
   try {
     localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify({
-      units: state.units,
-      settings: state.settings,
-      patients: state.patients,
-      lastUpdated: new Date().toISOString()
+      units: state.units, settings: state.settings, patients: state.patients, lastUpdated: new Date().toISOString()
     }));
-  } catch (e) { console.error('Save error:', e); }
+  } catch (e) {}
 }
 
 async function syncCloud() {
@@ -678,8 +722,7 @@ async function syncCloud() {
   isSyncing = true;
   try {
     const res = await fetch(state.settings.apiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
+      method: 'POST', headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify({ action: 'loadData' })
     });
     const data = await res.json();
@@ -691,7 +734,7 @@ async function syncCloud() {
       if (state.currentUnit) renderPatients();
       else renderUnits();
     }
-  } catch (e) { console.error('Sync error:', e); }
+  } catch (e) {}
   isSyncing = false;
 }
 
@@ -699,22 +742,15 @@ async function saveCloud() {
   saveLocal();
   try {
     await fetch(state.settings.apiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
+      method: 'POST', headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify({
         action: 'saveData',
-        payload: {
-          units: state.units,
-          settings: { adminPassword: state.settings.adminPassword },
-          patients: state.patients,
-          lastUpdated: new Date().toISOString()
-        }
+        payload: { units: state.units, settings: { adminPassword: state.settings.adminPassword }, patients: state.patients }
       })
     });
-  } catch (e) { console.error('Cloud save error:', e); }
+  } catch (e) {}
 }
 
-// Rendering
 function getUnit(id) { return state.units.find(u => u.id === id); }
 function getPatient(id) { return state.patients.find(p => p.id === id); }
 
@@ -733,30 +769,26 @@ function renderUnitsTable() {
   $('unitsTable').innerHTML = state.units.map(u => `
     <tr>
       <td><span style="font-size:1.25rem;margin-right:10px">${u.icon}</span><b>${esc(u.name)}</b></td>
-      <td><code style="background:var(--bg);padding:6px 14px;border-radius:8px;font-size:0.9rem">${u.code}</code></td>
+      <td><code style="background:var(--bg);padding:6px 14px;border-radius:8px">${u.code}</code></td>
       <td>
         <button class="btn btn-ghost btn-xs" onclick="editUnit('${u.id}')">✏️</button>
         <button class="btn btn-ghost btn-xs" onclick="deleteUnit('${u.id}')">🗑️</button>
       </td>
     </tr>
-  `).join('') || '<tr><td colspan="3" style="text-align:center;padding:40px;color:var(--text-muted)">No units configured</td></tr>';
+  `).join('');
 }
 
 function renderPatients() {
   const container = $('patientsList');
-  const filter = state.currentFilter;
+  const f = state.currentFilter;
   const pts = [...state.patients];
-  let filtered = filter === 'all' ? pts : pts.filter(p => p.status === filter);
+  let filtered = f === 'all' ? pts : pts.filter(p => p.status === f);
   
   const wards = {};
-  filtered.forEach(p => {
-    const w = p.ward || 'Unassigned';
-    if (!wards[w]) wards[w] = [];
-    wards[w].push(p);
-  });
+  filtered.forEach(p => { const w = p.ward || 'Unassigned'; if (!wards[w]) wards[w] = []; wards[w].push(p); });
   
   if (!filtered.length) {
-    container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">👥</div><div>No patients${filter !== 'all' ? ` with "${filter}" status` : ''}</div><div style="margin-top:8px;font-size:0.85rem;color:var(--text-muted)">Add patients or import from screenshot</div></div>`;
+    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">👥</div><div>No patients</div></div>';
     updateStats();
     return;
   }
@@ -765,46 +797,27 @@ function renderPatients() {
   const sorted = Object.keys(wards).sort((a, b) => {
     const ai = order.indexOf(a), bi = order.indexOf(b);
     if (ai === -1 && bi === -1) return a.localeCompare(b);
-    if (ai === -1) return 1;
-    if (bi === -1) return -1;
+    if (ai === -1) return 1; if (bi === -1) return -1;
     return ai - bi;
   });
   
   let html = '';
   sorted.forEach(ward => {
     const ps = wards[ward];
-    html += `<div class="ward-section">
-      <div class="ward-header">
-        <div class="ward-title">📍 ${esc(ward)}</div>
-        <div class="ward-count">${ps.length}</div>
-      </div>`;
-    
+    html += `<div class="ward-section"><div class="ward-header"><div class="ward-title">📍 ${esc(ward)}</div><div class="ward-count">${ps.length}</div></div>`;
     ps.forEach(p => {
-      const labCount = (p.labs || []).length;
-      const imgCount = (p.imaging || []).length;
-      html += `
-        <div class="patient-card ${p.status}" onclick="openPatientProfile(${p.id})">
-          <div class="patient-header">
-            <div class="patient-avatar">${initials(p.name)}</div>
-            <div class="patient-info">
-              <div class="patient-name">
-                ${esc(p.name)}
-                ${p.status === 'new' ? '<span class="badge badge-emerald">NEW</span>' : ''}
-                ${p.status === 'critical' ? '<span class="badge badge-rose">CRITICAL</span>' : ''}
-              </div>
-              <div class="patient-meta">
-                <span>🛏️ ${esc(p.room || '—')}</span>
-                <span>👨‍⚕️ ${esc(p.doctor || '—')}</span>
-              </div>
-            </div>
+      const labCount = (p.labData?.parameters || []).length || (p.labs || []).length;
+      html += `<div class="patient-card ${p.status}" onclick="openPatientProfile(${p.id})">
+        <div class="patient-header">
+          <div class="patient-avatar">${initials(p.name)}</div>
+          <div class="patient-info">
+            <div class="patient-name">${esc(p.name)} ${p.status === 'new' ? '<span class="badge badge-emerald">NEW</span>' : ''} ${p.status === 'critical' ? '<span class="badge badge-rose">CRITICAL</span>' : ''}</div>
+            <div class="patient-meta"><span>🛏️ ${esc(p.room || '—')}</span><span>👨‍⚕️ ${esc(p.doctor || '—')}</span></div>
           </div>
-          <div class="patient-diagnosis">${esc(p.diagnosis || 'Pending diagnosis')}</div>
-          ${(labCount || imgCount) ? `<div class="patient-quick-stats">
-            ${labCount ? `<div class="quick-stat"><span class="quick-stat-icon">🧪</span>${labCount} labs</div>` : ''}
-            ${imgCount ? `<div class="quick-stat"><span class="quick-stat-icon">📷</span>${imgCount} images</div>` : ''}
-          </div>` : ''}
         </div>
-      `;
+        <div class="patient-diagnosis">${esc(p.diagnosis || 'Pending')}</div>
+        ${labCount ? `<div class="patient-quick-stats"><div class="quick-stat">🧪 ${labCount} params tracked</div></div>` : ''}
+      </div>`;
     });
     html += '</div>';
   });
@@ -832,23 +845,22 @@ window.openPatientProfile = function(id) {
   const p = getPatient(id);
   if (!p) return;
   state.currentPatient = p;
-  
-  // Initialize patient data structures if not exist
   if (!p.history) p.history = '';
   if (!p.examination) p.examination = '';
   if (!p.labs) p.labs = [];
+  if (!p.labData) p.labData = { dates: [], parameters: [], interpretation: null };
   if (!p.imaging) p.imaging = [];
-  if (!p.ecg) p.ecg = [];
   if (!p.fluids) p.fluids = [];
   if (!p.plans) p.plans = [];
   if (!p.vitals) p.vitals = {};
-  
   renderPatientProfile();
   showPage('patientProfile');
 };
 
 window.closePatientProfile = function() {
   state.currentPatient = null;
+  Object.values(state.trendCharts).forEach(c => c.destroy());
+  state.trendCharts = {};
   showPage('dashboard');
   renderPatients();
 };
@@ -857,7 +869,6 @@ function renderPatientProfile() {
   const p = state.currentPatient;
   if (!p) return;
   
-  // Header info
   const avatarBg = p.status === 'critical' ? 'var(--rose),var(--orange)' : 
                    p.status === 'chronic' ? 'var(--purple),#a855f7' :
                    p.status === 'new' ? 'var(--emerald),var(--teal)' : 'var(--gold),var(--orange)';
@@ -886,148 +897,392 @@ function renderProfileOverview() {
   const p = state.currentPatient;
   $('profileOverview').innerHTML = `
     <div class="section-card">
-      <div class="section-header"><div class="section-title">📋 Primary Diagnosis</div></div>
-      <div class="section-body">
-        <div class="editable-section">
-          <div class="editable-content">${esc(p.diagnosis) || '<span style="color:var(--text-muted);font-style:italic">No diagnosis recorded</span>'}</div>
-        </div>
-      </div>
+      <div class="section-header"><div class="section-title">📋 Diagnosis</div></div>
+      <div class="section-body"><div class="editable-content">${esc(p.diagnosis) || '<span style="color:var(--text-muted)">No diagnosis</span>'}</div></div>
     </div>
-    
     <div class="section-card">
-      <div class="section-header">
-        <div class="section-title">🩺 Vitals</div>
-        <button class="btn btn-secondary btn-xs" onclick="openAddVitals()">+ Update</button>
-      </div>
+      <div class="section-header"><div class="section-title">🩺 Vitals</div><button class="btn btn-secondary btn-xs" onclick="openAddVitals()">Update</button></div>
       <div class="section-body">
         <div class="vitals-grid">
-          <div class="vital-card"><div class="vital-icon">❤️</div><div class="vital-value">${p.vitals?.hr || '—'}</div><div class="vital-label">HR (bpm)</div></div>
-          <div class="vital-card"><div class="vital-icon">🩸</div><div class="vital-value">${p.vitals?.bp || '—'}</div><div class="vital-label">BP (mmHg)</div></div>
-          <div class="vital-card"><div class="vital-icon">🌡️</div><div class="vital-value">${p.vitals?.temp || '—'}</div><div class="vital-label">Temp (°C)</div></div>
-          <div class="vital-card"><div class="vital-icon">💨</div><div class="vital-value">${p.vitals?.rr || '—'}</div><div class="vital-label">RR (/min)</div></div>
-          <div class="vital-card"><div class="vital-icon">🫁</div><div class="vital-value">${p.vitals?.spo2 || '—'}</div><div class="vital-label">SpO₂ (%)</div></div>
+          <div class="vital-card"><div class="vital-icon">❤️</div><div class="vital-value">${p.vitals?.hr || '—'}</div><div class="vital-label">HR</div></div>
+          <div class="vital-card"><div class="vital-icon">🩸</div><div class="vital-value">${p.vitals?.bp || '—'}</div><div class="vital-label">BP</div></div>
+          <div class="vital-card"><div class="vital-icon">🌡️</div><div class="vital-value">${p.vitals?.temp || '—'}</div><div class="vital-label">Temp</div></div>
+          <div class="vital-card"><div class="vital-icon">💨</div><div class="vital-value">${p.vitals?.rr || '—'}</div><div class="vital-label">RR</div></div>
+          <div class="vital-card"><div class="vital-icon">🫁</div><div class="vital-value">${p.vitals?.spo2 || '—'}</div><div class="vital-label">SpO₂</div></div>
         </div>
-      </div>
-    </div>
-    
-    <div class="section-card">
-      <div class="section-header"><div class="section-title">📊 Recent Activity</div></div>
-      <div class="section-body">
-        ${renderRecentTimeline(p)}
       </div>
     </div>
   `;
-}
-
-function renderRecentTimeline(p) {
-  const items = [];
-  (p.labs || []).slice(-3).forEach(l => items.push({ type: 'lab', date: l.date, title: 'Lab Results', data: l }));
-  (p.imaging || []).slice(-3).forEach(i => items.push({ type: 'imaging', date: i.date, title: i.type || 'Imaging', data: i }));
-  (p.plans || []).slice(-3).forEach(pl => items.push({ type: 'note', date: pl.date, title: 'Plan Update', data: pl }));
-  
-  items.sort((a, b) => new Date(b.date) - new Date(a.date));
-  
-  if (!items.length) {
-    return '<div class="section-empty"><div class="section-empty-icon">📭</div><div>No recent activity</div></div>';
-  }
-  
-  return `<div class="timeline">${items.slice(0, 5).map(item => `
-    <div class="timeline-item">
-      <div class="timeline-dot ${item.type}"></div>
-      <div class="timeline-content">
-        <div class="timeline-header">
-          <div class="timeline-title">${esc(item.title)}</div>
-          <div class="timeline-date">${formatDateTime(item.date)}</div>
-        </div>
-        <div class="timeline-body">${esc(item.data.summary || item.data.content || '').substring(0, 150)}${(item.data.summary || item.data.content || '').length > 150 ? '...' : ''}</div>
-      </div>
-    </div>
-  `).join('')}</div>`;
 }
 
 function renderProfileHistory() {
   const p = state.currentPatient;
   $('profileHistory').innerHTML = `
     <div class="section-card">
-      <div class="section-header">
-        <div class="section-title">📝 History of Present Illness</div>
-        <button class="btn btn-secondary btn-xs" onclick="openEditText('history', 'History of Present Illness')">✏️ Edit</button>
-      </div>
-      <div class="section-body">
-        <div class="editable-content">${esc(p.history) || ''}</div>
-      </div>
+      <div class="section-header"><div class="section-title">📝 History</div><button class="btn btn-secondary btn-xs" onclick="openEditText('history', 'History')">✏️ Edit</button></div>
+      <div class="section-body"><div class="editable-content">${esc(p.history) || ''}</div></div>
     </div>
-    
     <div class="section-card">
-      <div class="section-header">
-        <div class="section-title">🔍 Physical Examination</div>
-        <button class="btn btn-secondary btn-xs" onclick="openEditText('examination', 'Physical Examination')">✏️ Edit</button>
-      </div>
-      <div class="section-body">
-        <div class="editable-content">${esc(p.examination) || ''}</div>
-      </div>
+      <div class="section-header"><div class="section-title">🔍 Examination</div><button class="btn btn-secondary btn-xs" onclick="openEditText('examination', 'Examination')">✏️ Edit</button></div>
+      <div class="section-body"><div class="editable-content">${esc(p.examination) || ''}</div></div>
     </div>
   `;
 }
 
 function renderProfileLabs() {
   const p = state.currentPatient;
-  const labs = p.labs || [];
+  const labData = p.labData || { dates: [], parameters: [] };
   
-  $('profileLabs').innerHTML = `
+  let html = `
     <div class="section-card">
       <div class="section-header">
         <div class="section-title">🧪 Laboratory Results</div>
-        <button class="btn btn-primary btn-xs" onclick="openAddLab()">+ Add Labs</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-secondary btn-xs" onclick="openLabEditor()">✏️ Manual Edit</button>
+          <button class="btn btn-primary btn-xs" onclick="openLabUpload()">📤 AI Import</button>
+        </div>
       </div>
       <div class="section-body">
-        ${labs.length ? labs.slice().reverse().map((lab, idx) => `
-          <div style="margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border)">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-              <div style="font-weight:600">${formatDateTime(lab.date)}</div>
-              <button class="btn btn-ghost btn-xs" onclick="deleteLab(${labs.length - 1 - idx})">🗑️</button>
-            </div>
-            ${lab.values?.length ? `<div class="lab-values-grid">${lab.values.map(v => `
-              <div class="lab-item ${v.status === 'high' || v.status === 'critical' ? 'high' : v.status === 'low' ? 'low' : ''}">
-                <div class="lab-name">${esc(v.name)}</div>
-                <div class="lab-value ${v.status === 'high' || v.status === 'critical' ? 'high' : v.status === 'low' ? 'low' : ''}">${esc(v.value)} ${esc(v.unit || '')}</div>
-                ${v.range ? `<div class="lab-range">Ref: ${esc(v.range)}</div>` : ''}
-              </div>
-            `).join('')}</div>` : ''}
-            ${lab.summary ? `<div style="margin-top:12px;padding:12px;background:var(--bg);border-radius:8px;font-size:0.85rem">${esc(lab.summary)}</div>` : ''}
+  `;
+  
+  if (!labData.parameters?.length) {
+    html += '<div class="section-empty"><div class="section-empty-icon">🧪</div><div>No lab results</div><div style="margin-top:12px;font-size:0.85rem;color:var(--text-muted)">Upload a lab report image or add manually</div></div>';
+  } else {
+    // Sort dates newest first
+    const sortedDates = [...(labData.dates || [])].sort((a, b) => new Date(b) - new Date(a)).slice(0, 5);
+    
+    // Group parameters by category
+    const categories = {};
+    labData.parameters.forEach(param => {
+      const cat = getLabCategory(param.name);
+      if (!categories[cat]) categories[cat] = [];
+      categories[cat].push(param);
+    });
+    
+    html += '<div class="lab-trends-container"><table class="lab-trends-table"><thead><tr>';
+    html += '<th style="min-width:180px">Parameter</th>';
+    sortedDates.forEach(d => html += `<th style="min-width:90px">${formatShortDate(d)}</th>`);
+    html += '<th>Trend</th></tr></thead><tbody>';
+    
+    const catOrder = ['Renal', 'Electrolytes', 'Glucose', 'Liver', 'CBC', 'Other'];
+    catOrder.forEach(cat => {
+      if (!categories[cat]?.length) return;
+      
+      html += `<tr><td colspan="${sortedDates.length + 2}" class="lab-category">${cat}</td></tr>`;
+      
+      categories[cat].forEach(param => {
+        html += '<tr>';
+        html += `<td><div class="param-cell"><span class="param-name">${esc(param.name)}</span></div>
+                 <span class="param-unit">${esc(param.unit || '')}</span>
+                 ${param.refMin !== undefined && param.refMax !== undefined ? `<span class="param-range">${param.refMin}-${param.refMax}</span>` : ''}</td>`;
+        
+        const valuesMap = {};
+        (param.values || []).forEach(v => valuesMap[v.date] = v);
+        
+        sortedDates.forEach(d => {
+          const v = valuesMap[d];
+          if (v) {
+            const status = v.status || 'normal';
+            html += `<td class="value-cell ${status}"><span class="mono">${v.value}</span>${status !== 'normal' ? `<span class="status-badge">${status === 'high' ? 'H' : status === 'low' ? 'L' : '!'}</span>` : ''}</td>`;
+          } else {
+            html += '<td class="value-cell" style="color:var(--text-muted)">—</td>';
+          }
+        });
+        
+        // Sparkline
+        const vals = (param.values || []).slice(-6).map(v => ({ val: parseFloat(v.value) || 0, status: v.status }));
+        if (vals.length > 1) {
+          const max = Math.max(...vals.map(v => v.val));
+          html += '<td class="trend-cell"><div class="sparkline">';
+          vals.forEach(v => {
+            const h = max > 0 ? Math.max(4, (v.val / max) * 28) : 4;
+            html += `<div class="sparkline-bar ${v.status || 'normal'}" style="height:${h}px"></div>`;
+          });
+          html += '</div></td>';
+        } else {
+          html += '<td class="trend-cell">—</td>';
+        }
+        html += '</tr>';
+      });
+    });
+    
+    html += '</tbody></table></div>';
+    
+    // Interpretation
+    if (labData.interpretation) {
+      const interp = labData.interpretation;
+      html += '<div class="lab-interpretation">';
+      if (interp.criticalValues?.length) {
+        html += `<div class="critical-alert">⚠️ Critical: ${interp.criticalValues.join(', ')}</div>`;
+      }
+      html += `<h4>🔬 AI Interpretation</h4>`;
+      if (interp.summary) html += `<p style="margin-bottom:12px">${esc(interp.summary)}</p>`;
+      if (interp.trends?.length) {
+        html += '<p style="font-weight:600;margin-top:12px">Trends:</p><ul>';
+        interp.trends.forEach(t => html += `<li>${esc(t)}</li>`);
+        html += '</ul>';
+      }
+      if (interp.recommendations?.length) {
+        html += '<p style="font-weight:600;margin-top:12px;color:var(--gold)">Recommendations:</p><ul>';
+        interp.recommendations.forEach(r => html += `<li>${esc(r)}</li>`);
+        html += '</ul>';
+      }
+      html += '</div>';
+    }
+  }
+  
+  html += '</div></div>';
+  
+  // Add trend chart for key parameters
+  if (labData.parameters?.length > 0) {
+    html += `<div class="section-card">
+      <div class="section-header"><div class="section-title">📈 Trend Charts</div></div>
+      <div class="section-body">
+        <select id="trendParamSelect" class="form-select" style="max-width:300px;margin-bottom:16px" onchange="renderTrendChart()">
+          ${labData.parameters.map((p, i) => `<option value="${i}">${esc(p.name)}</option>`).join('')}
+        </select>
+        <div class="trend-chart-container"><canvas id="labTrendChart"></canvas></div>
+      </div>
+    </div>`;
+  }
+  
+  $('profileLabs').innerHTML = html;
+  
+  if (labData.parameters?.length > 0) {
+    setTimeout(() => renderTrendChart(), 100);
+  }
+}
+
+window.renderTrendChart = function() {
+  const p = state.currentPatient;
+  const labData = p.labData || { parameters: [] };
+  const idx = parseInt($('trendParamSelect')?.value) || 0;
+  const param = labData.parameters[idx];
+  if (!param) return;
+  
+  const ctx = $('labTrendChart');
+  if (!ctx) return;
+  
+  if (state.trendCharts.lab) state.trendCharts.lab.destroy();
+  
+  const values = (param.values || []).slice(-10);
+  const labels = values.map(v => formatShortDate(v.date));
+  const data = values.map(v => parseFloat(v.value) || 0);
+  const colors = values.map(v => v.status === 'high' || v.status === 'critical' ? '#f43f5e' : v.status === 'low' ? '#3b82f6' : '#10b981');
+  
+  state.trendCharts.lab = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: param.name,
+        data,
+        borderColor: '#f59e0b',
+        backgroundColor: 'rgba(245,158,11,0.1)',
+        fill: true,
+        tension: 0.3,
+        pointBackgroundColor: colors,
+        pointBorderColor: colors,
+        pointRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        annotation: param.refMin !== undefined && param.refMax !== undefined ? {
+          annotations: {
+            refMax: { type: 'line', yMin: param.refMax, yMax: param.refMax, borderColor: 'rgba(244,63,94,0.5)', borderDash: [5, 5] },
+            refMin: { type: 'line', yMin: param.refMin, yMax: param.refMin, borderColor: 'rgba(59,130,246,0.5)', borderDash: [5, 5] }
+          }
+        } : {}
+      },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#6b7280' } },
+        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#6b7280' } }
+      }
+    }
+  });
+};
+
+// Lab Editor
+window.openLabEditor = function() {
+  const p = state.currentPatient;
+  state.labEditorData = JSON.parse(JSON.stringify(p.labData || { dates: [], parameters: [] }));
+  renderLabEditor();
+  openModal('labEditorModal');
+};
+
+function renderLabEditor() {
+  const data = state.labEditorData;
+  const dates = data.dates || [];
+  
+  let html = `
+    <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:20px">Add or edit lab parameters and values. Changes save when you click "Save All Changes".</p>
+    
+    <div style="margin-bottom:20px">
+      <label class="form-label">Dates (columns)</label>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+        ${dates.map((d, i) => `
+          <div style="display:flex;align-items:center;gap:4px;background:var(--bg);padding:8px 12px;border-radius:8px">
+            <input type="date" class="form-input form-input-sm" style="width:140px" value="${d.split('T')[0]}" onchange="updateLabDate(${i}, this.value)">
+            <button class="btn btn-ghost btn-xs" onclick="removeLabDate(${i})">✕</button>
           </div>
-        `).join('') : '<div class="section-empty"><div class="section-empty-icon">🧪</div><div>No lab results</div></div>'}
+        `).join('')}
+        <button class="btn btn-secondary btn-xs" onclick="addLabDate()">+ Add Date</button>
       </div>
     </div>
+    
+    <div style="margin-bottom:20px">
+      <label class="form-label">Parameters</label>
   `;
+  
+  (data.parameters || []).forEach((param, pi) => {
+    html += `
+      <div style="background:var(--bg);border-radius:12px;padding:16px;margin-bottom:12px;border-left:3px solid var(--teal)">
+        <div style="display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+          <input type="text" class="form-input form-input-sm" style="width:150px" placeholder="Name" value="${esc(param.name)}" onchange="updateLabParam(${pi}, 'name', this.value)">
+          <input type="text" class="form-input form-input-sm" style="width:80px" placeholder="Unit" value="${esc(param.unit || '')}" onchange="updateLabParam(${pi}, 'unit', this.value)">
+          <input type="number" class="form-input form-input-sm" style="width:70px" placeholder="Min" value="${param.refMin ?? ''}" onchange="updateLabParam(${pi}, 'refMin', this.value)">
+          <span style="color:var(--text-muted)">-</span>
+          <input type="number" class="form-input form-input-sm" style="width:70px" placeholder="Max" value="${param.refMax ?? ''}" onchange="updateLabParam(${pi}, 'refMax', this.value)">
+          <button class="btn btn-danger btn-xs" onclick="removeLabParam(${pi})">🗑️</button>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          ${dates.map((d, di) => {
+            const v = (param.values || []).find(x => x.date === d);
+            return `
+              <div style="text-align:center">
+                <div style="font-size:0.65rem;color:var(--text-muted);margin-bottom:4px">${formatShortDate(d)}</div>
+                <input type="text" class="form-input form-input-sm mono" style="width:70px;text-align:center" 
+                       placeholder="—" value="${v?.value ?? ''}" 
+                       onchange="updateLabValue(${pi}, '${d}', this.value)">
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  });
+  
+  html += `
+      <button class="add-param-btn" onclick="addLabParam()">+ Add Parameter</button>
+    </div>
+  `;
+  
+  $('labEditorBody').innerHTML = html;
 }
+
+window.addLabDate = function() {
+  const today = new Date().toISOString().split('T')[0];
+  state.labEditorData.dates.push(today);
+  renderLabEditor();
+};
+
+window.removeLabDate = function(idx) {
+  const d = state.labEditorData.dates[idx];
+  state.labEditorData.dates.splice(idx, 1);
+  state.labEditorData.parameters.forEach(p => {
+    p.values = (p.values || []).filter(v => v.date !== d);
+  });
+  renderLabEditor();
+};
+
+window.updateLabDate = function(idx, val) {
+  const oldDate = state.labEditorData.dates[idx];
+  const newDate = val;
+  state.labEditorData.dates[idx] = newDate;
+  state.labEditorData.parameters.forEach(p => {
+    const v = (p.values || []).find(x => x.date === oldDate);
+    if (v) v.date = newDate;
+  });
+};
+
+window.addLabParam = function() {
+  state.labEditorData.parameters.push({ name: '', unit: '', values: [] });
+  renderLabEditor();
+};
+
+window.removeLabParam = function(idx) {
+  state.labEditorData.parameters.splice(idx, 1);
+  renderLabEditor();
+};
+
+window.updateLabParam = function(idx, field, val) {
+  if (field === 'refMin' || field === 'refMax') {
+    state.labEditorData.parameters[idx][field] = val ? parseFloat(val) : undefined;
+  } else {
+    state.labEditorData.parameters[idx][field] = val;
+  }
+};
+
+window.updateLabValue = function(paramIdx, date, val) {
+  const param = state.labEditorData.parameters[paramIdx];
+  if (!param.values) param.values = [];
+  
+  let v = param.values.find(x => x.date === date);
+  if (!v) {
+    v = { date, value: '', status: 'normal' };
+    param.values.push(v);
+  }
+  
+  v.value = val;
+  
+  // Auto-determine status
+  const numVal = parseFloat(val);
+  if (!isNaN(numVal) && param.refMin !== undefined && param.refMax !== undefined) {
+    if (numVal > param.refMax) v.status = 'high';
+    else if (numVal < param.refMin) v.status = 'low';
+    else v.status = 'normal';
+  }
+};
+
+window.saveLabEditor = function() {
+  // Clean up empty values
+  state.labEditorData.parameters = state.labEditorData.parameters.filter(p => p.name);
+  state.labEditorData.parameters.forEach(p => {
+    p.values = (p.values || []).filter(v => v.value !== '' && v.value !== null);
+  });
+  
+  state.currentPatient.labData = state.labEditorData;
+  saveCloud();
+  closeModal('labEditorModal');
+  renderProfileLabs();
+  toast('Lab data saved!');
+};
+
+// Lab Upload & AI Analysis
+window.openLabUpload = function() {
+  state.analysisType = 'lab';
+  state.analysisImages = [];
+  $('analyzeBtn').disabled = true;
+  $('analysisPreview').style.display = 'none';
+  $('analysisResults').innerHTML = '';
+  showTab('analysis');
+  toast('Upload lab image in Analysis tab');
+};
 
 function renderProfileImaging() {
   const p = state.currentPatient;
-  const imaging = [...(p.imaging || []), ...(p.ecg || [])].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const imaging = p.imaging || [];
   
   $('profileImaging').innerHTML = `
     <div class="section-card">
-      <div class="section-header">
-        <div class="section-title">📷 Imaging & ECG</div>
-        <button class="btn btn-primary btn-xs" onclick="openAddImaging()">+ Add</button>
-      </div>
+      <div class="section-header"><div class="section-title">📷 Imaging & ECG</div><button class="btn btn-primary btn-xs" onclick="openAddImaging()">+ Add</button></div>
       <div class="section-body">
-        ${imaging.length ? imaging.map((img, idx) => `
-          <div style="margin-bottom:20px;padding:16px;background:var(--bg);border-radius:12px;border-left:3px solid ${img.type === 'ecg' ? 'var(--rose)' : 'var(--blue)'}">
+        ${imaging.length ? imaging.slice().reverse().map((img, idx) => `
+          <div style="padding:16px;background:var(--bg);border-radius:12px;margin-bottom:12px;border-left:3px solid ${img.type === 'ecg' ? 'var(--rose)' : 'var(--blue)'}">
             <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:10px">
               <div>
-                <div style="font-weight:600;display:flex;align-items:center;gap:8px">
-                  ${img.type === 'ecg' ? '📈 ECG' : img.type === 'echo' ? '💓 Echo' : img.type === 'xray' ? '🩻 X-Ray' : img.type === 'ct' ? '🧠 CT/MRI' : '📷 ' + (img.type || 'Imaging')}
-                </div>
-                <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px">${formatDateTime(img.date)}</div>
+                <div style="font-weight:600">${img.type === 'ecg' ? '📈 ECG' : img.type === 'echo' ? '💓 Echo' : img.type === 'xray' ? '🩻 X-Ray' : '📷 ' + (img.type || 'Imaging')}</div>
+                <div style="font-size:0.75rem;color:var(--text-muted)">${formatDateTime(img.date)}</div>
               </div>
-              <button class="btn btn-ghost btn-xs" onclick="deleteImaging(${idx}, '${img.type}')">🗑️</button>
+              <button class="btn btn-ghost btn-xs" onclick="deleteImaging(${imaging.length - 1 - idx})">🗑️</button>
             </div>
-            ${img.summary ? `<div style="font-size:0.9rem;margin-bottom:8px">${esc(img.summary)}</div>` : ''}
-            ${img.findings?.length ? `<ul style="margin:0;padding-left:18px;font-size:0.85rem;color:var(--text-secondary)">${img.findings.map(f => `<li>${esc(typeof f === 'string' ? f : f.description || '')}</li>`).join('')}</ul>` : ''}
+            ${img.summary ? `<div style="font-size:0.9rem">${esc(img.summary)}</div>` : ''}
           </div>
-        `).join('') : '<div class="section-empty"><div class="section-empty-icon">📷</div><div>No imaging studies</div></div>'}
+        `).join('') : '<div class="section-empty"><div class="section-empty-icon">📷</div><div>No imaging</div></div>'}
       </div>
     </div>
   `;
@@ -1036,63 +1291,40 @@ function renderProfileImaging() {
 function renderProfileFluids() {
   const p = state.currentPatient;
   const fluids = p.fluids || [];
-  
   const totalIntake = fluids.reduce((s, f) => s + (f.intake || 0), 0);
   const totalOutput = fluids.reduce((s, f) => s + (f.output || 0), 0);
   const balance = totalIntake - totalOutput;
   
   $('profileFluids').innerHTML = `
     <div class="section-card">
-      <div class="section-header">
-        <div class="section-title">💧 Fluid Balance</div>
-        <button class="btn btn-primary btn-xs" onclick="openAddFluid()">+ Add Entry</button>
-      </div>
+      <div class="section-header"><div class="section-title">💧 Fluid Balance</div><button class="btn btn-primary btn-xs" onclick="openAddFluid()">+ Add</button></div>
       <div class="section-body">
         <div class="fluid-summary">
-          <div class="fluid-stat"><div class="fluid-stat-value intake">${totalIntake}</div><div class="fluid-stat-label">Total Intake (mL)</div></div>
-          <div class="fluid-stat"><div class="fluid-stat-value output">${totalOutput}</div><div class="fluid-stat-label">Total Output (mL)</div></div>
-          <div class="fluid-stat"><div class="fluid-stat-value balance" style="color:${balance >= 0 ? 'var(--emerald)' : 'var(--rose)'}">${balance >= 0 ? '+' : ''}${balance}</div><div class="fluid-stat-label">Net Balance (mL)</div></div>
+          <div class="fluid-stat"><div class="fluid-stat-value intake">${totalIntake}</div><div class="fluid-stat-label">Intake (mL)</div></div>
+          <div class="fluid-stat"><div class="fluid-stat-value output">${totalOutput}</div><div class="fluid-stat-label">Output (mL)</div></div>
+          <div class="fluid-stat"><div class="fluid-stat-value balance" style="color:${balance >= 0 ? 'var(--emerald)' : 'var(--rose)'}">${balance >= 0 ? '+' : ''}${balance}</div><div class="fluid-stat-label">Balance</div></div>
         </div>
-        
-        ${fluids.length ? `
-          <div class="fluid-chart-container" style="margin-top:20px"><canvas id="fluidChart"></canvas></div>
-          <div style="margin-top:16px">
-            ${fluids.slice().reverse().map((f, idx) => `
-              <div style="display:flex;justify-content:space-between;padding:12px;background:var(--bg);border-radius:8px;margin-bottom:8px;font-size:0.85rem">
-                <span>${formatDateTime(f.date)}</span>
-                <span style="color:var(--blue)">+${f.intake || 0}mL</span>
-                <span style="color:var(--orange)">-${f.output || 0}mL</span>
-                <button class="btn btn-ghost btn-xs" onclick="deleteFluid(${fluids.length - 1 - idx})">🗑️</button>
-              </div>
-            `).join('')}
-          </div>
-        ` : '<div class="section-empty" style="margin-top:20px"><div class="section-empty-icon">💧</div><div>No fluid entries</div></div>'}
+        ${fluids.length ? `<div class="fluid-chart-container" style="margin-top:20px"><canvas id="fluidChart"></canvas></div>` : ''}
       </div>
     </div>
   `;
   
-  if (fluids.length) {
-    setTimeout(() => renderFluidChart(fluids), 100);
-  }
+  if (fluids.length) setTimeout(() => renderFluidChart(fluids), 100);
 }
 
 function renderFluidChart(fluids) {
   const ctx = $('fluidChart');
   if (!ctx) return;
-  
   if (state.fluidChart) state.fluidChart.destroy();
   
   const labels = fluids.map(f => formatDateTime(f.date).split(',')[0]);
-  const intakeData = fluids.map(f => f.intake || 0);
-  const outputData = fluids.map(f => f.output || 0);
-  
   state.fluidChart = new Chart(ctx, {
     type: 'bar',
     data: {
       labels,
       datasets: [
-        { label: 'Intake', data: intakeData, backgroundColor: 'rgba(59,130,246,0.7)', borderRadius: 6 },
-        { label: 'Output', data: outputData, backgroundColor: 'rgba(249,115,22,0.7)', borderRadius: 6 }
+        { label: 'Intake', data: fluids.map(f => f.intake || 0), backgroundColor: 'rgba(59,130,246,0.7)', borderRadius: 6 },
+        { label: 'Output', data: fluids.map(f => f.output || 0), backgroundColor: 'rgba(249,115,22,0.7)', borderRadius: 6 }
       ]
     },
     options: {
@@ -1113,41 +1345,32 @@ function renderProfilePlans() {
   
   $('profilePlans').innerHTML = `
     <div class="section-card">
-      <div class="section-header">
-        <div class="section-title">📝 Management Plans</div>
-        <button class="btn btn-primary btn-xs" onclick="openAddPlan()">+ Add Plan</button>
-      </div>
+      <div class="section-header"><div class="section-title">📝 Plans</div><button class="btn btn-primary btn-xs" onclick="openAddPlan()">+ Add</button></div>
       <div class="section-body">
         ${plans.length ? plans.slice().reverse().map((plan, idx) => `
           <div class="plan-item">
             <div class="plan-item-header">
               <div class="plan-item-date">${formatDateTime(plan.date)}</div>
-              <div>
-                <button class="btn btn-ghost btn-xs" onclick="editPlan(${plans.length - 1 - idx})">✏️</button>
-                <button class="btn btn-ghost btn-xs" onclick="deletePlan(${plans.length - 1 - idx})">🗑️</button>
-              </div>
+              <div><button class="btn btn-ghost btn-xs" onclick="deletePlan(${plans.length - 1 - idx})">🗑️</button></div>
             </div>
             <div class="plan-item-content">${esc(plan.content)}</div>
           </div>
-        `).join('') : '<div class="section-empty"><div class="section-empty-icon">📝</div><div>No plans recorded</div></div>'}
+        `).join('') : '<div class="section-empty"><div class="section-empty-icon">📝</div><div>No plans</div></div>'}
       </div>
     </div>
   `;
 }
 
-// Edit/Add Data Functions
+// Add Data Modals
 window.openEditText = function(type, title) {
-  const p = state.currentPatient;
   $('editTextTitle').textContent = 'Edit ' + title;
   $('editTextType').value = type;
-  $('editTextArea').value = p[type] || '';
+  $('editTextArea').value = state.currentPatient[type] || '';
   openModal('editTextModal');
 };
 
 window.saveEditText = function() {
-  const type = $('editTextType').value;
-  const content = $('editTextArea').value;
-  state.currentPatient[type] = content;
+  state.currentPatient[$('editTextType').value] = $('editTextArea').value;
   saveCloud();
   renderPatientProfile();
   closeModal('editTextModal');
@@ -1160,66 +1383,22 @@ window.openAddVitals = function() {
   const v = state.currentPatient.vitals || {};
   $('addDataBody').innerHTML = `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-      <div class="form-group"><label class="form-label">Heart Rate (bpm)</label><input type="text" id="addHR" class="form-input form-input-sm" value="${v.hr || ''}"></div>
-      <div class="form-group"><label class="form-label">Blood Pressure</label><input type="text" id="addBP" class="form-input form-input-sm" value="${v.bp || ''}" placeholder="120/80"></div>
-      <div class="form-group"><label class="form-label">Temperature (°C)</label><input type="text" id="addTemp" class="form-input form-input-sm" value="${v.temp || ''}"></div>
-      <div class="form-group"><label class="form-label">Respiratory Rate</label><input type="text" id="addRR" class="form-input form-input-sm" value="${v.rr || ''}"></div>
-      <div class="form-group"><label class="form-label">SpO₂ (%)</label><input type="text" id="addSpO2" class="form-input form-input-sm" value="${v.spo2 || ''}"></div>
+      <div class="form-group"><label class="form-label">Heart Rate</label><input type="text" id="addHR" class="form-input" value="${v.hr || ''}"></div>
+      <div class="form-group"><label class="form-label">Blood Pressure</label><input type="text" id="addBP" class="form-input" value="${v.bp || ''}" placeholder="120/80"></div>
+      <div class="form-group"><label class="form-label">Temperature</label><input type="text" id="addTemp" class="form-input" value="${v.temp || ''}"></div>
+      <div class="form-group"><label class="form-label">Respiratory Rate</label><input type="text" id="addRR" class="form-input" value="${v.rr || ''}"></div>
+      <div class="form-group"><label class="form-label">SpO₂</label><input type="text" id="addSpO2" class="form-input" value="${v.spo2 || ''}"></div>
     </div>
   `;
   openModal('addDataModal');
-};
-
-window.openAddLab = function() {
-  state.addDataType = 'lab';
-  $('addDataTitle').textContent = 'Add Lab Results';
-  $('addDataBody').innerHTML = `
-    <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:16px">💡 Tip: Use Analysis tab to auto-extract from lab images</p>
-    <div class="form-group"><label class="form-label">Summary/Notes</label><textarea id="addLabSummary" class="form-textarea" placeholder="Enter lab summary or notes..."></textarea></div>
-    <div id="labValuesContainer">
-      <div class="form-label">Lab Values</div>
-      <div class="lab-value-row" style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;margin-bottom:8px">
-        <input type="text" class="form-input form-input-sm" placeholder="Test name" id="labName0">
-        <input type="text" class="form-input form-input-sm" placeholder="Value" id="labVal0">
-        <select class="form-select" style="padding:8px" id="labStatus0"><option value="normal">Normal</option><option value="high">High</option><option value="low">Low</option><option value="critical">Critical</option></select>
-      </div>
-    </div>
-    <button class="btn btn-secondary btn-xs" onclick="addLabValueRow()">+ Add Value</button>
-  `;
-  openModal('addDataModal');
-};
-
-let labRowCount = 1;
-window.addLabValueRow = function() {
-  const container = $('labValuesContainer');
-  const row = document.createElement('div');
-  row.className = 'lab-value-row';
-  row.style.cssText = 'display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;margin-bottom:8px';
-  row.innerHTML = `
-    <input type="text" class="form-input form-input-sm" placeholder="Test name" id="labName${labRowCount}">
-    <input type="text" class="form-input form-input-sm" placeholder="Value" id="labVal${labRowCount}">
-    <select class="form-select" style="padding:8px" id="labStatus${labRowCount}"><option value="normal">Normal</option><option value="high">High</option><option value="low">Low</option><option value="critical">Critical</option></select>
-  `;
-  container.appendChild(row);
-  labRowCount++;
 };
 
 window.openAddImaging = function() {
   state.addDataType = 'imaging';
-  $('addDataTitle').textContent = 'Add Imaging/ECG';
+  $('addDataTitle').textContent = 'Add Imaging';
   $('addDataBody').innerHTML = `
-    <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:16px">💡 Tip: Use Analysis tab to auto-interpret images</p>
-    <div class="form-group">
-      <label class="form-label">Type</label>
-      <select id="addImgType" class="form-select">
-        <option value="xray">🩻 X-Ray</option>
-        <option value="ct">🧠 CT/MRI</option>
-        <option value="echo">💓 Echo</option>
-        <option value="ecg">📈 ECG</option>
-        <option value="other">📷 Other</option>
-      </select>
-    </div>
-    <div class="form-group"><label class="form-label">Summary/Findings</label><textarea id="addImgSummary" class="form-textarea" placeholder="Enter findings..."></textarea></div>
+    <div class="form-group"><label class="form-label">Type</label><select id="addImgType" class="form-select"><option value="xray">🩻 X-Ray</option><option value="ct">🧠 CT/MRI</option><option value="echo">💓 Echo</option><option value="ecg">📈 ECG</option></select></div>
+    <div class="form-group"><label class="form-label">Findings</label><textarea id="addImgSummary" class="form-textarea"></textarea></div>
   `;
   openModal('addDataModal');
 };
@@ -1229,20 +1408,17 @@ window.openAddFluid = function() {
   $('addDataTitle').textContent = 'Add Fluid Entry';
   $('addDataBody').innerHTML = `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-      <div class="form-group"><label class="form-label">Intake (mL)</label><input type="number" id="addIntake" class="form-input" placeholder="0"></div>
-      <div class="form-group"><label class="form-label">Output (mL)</label><input type="number" id="addOutput" class="form-input" placeholder="0"></div>
+      <div class="form-group"><label class="form-label">Intake (mL)</label><input type="number" id="addIntake" class="form-input" value="0"></div>
+      <div class="form-group"><label class="form-label">Output (mL)</label><input type="number" id="addOutput" class="form-input" value="0"></div>
     </div>
-    <div class="form-group"><label class="form-label">Notes (optional)</label><input type="text" id="addFluidNotes" class="form-input form-input-sm" placeholder="e.g., IV NS, Urine output"></div>
   `;
   openModal('addDataModal');
 };
 
 window.openAddPlan = function() {
   state.addDataType = 'plan';
-  $('addDataTitle').textContent = 'Add Management Plan';
-  $('addDataBody').innerHTML = `
-    <div class="form-group"><label class="form-label">Plan</label><textarea id="addPlanContent" class="form-textarea" style="min-height:150px" placeholder="Enter management plan..."></textarea></div>
-  `;
+  $('addDataTitle').textContent = 'Add Plan';
+  $('addDataBody').innerHTML = '<div class="form-group"><label class="form-label">Plan</label><textarea id="addPlanContent" class="form-textarea" style="min-height:150px"></textarea></div>';
   openModal('addDataModal');
 };
 
@@ -1252,44 +1428,13 @@ window.saveAddData = function() {
   const now = new Date().toISOString();
   
   if (type === 'vitals') {
-    p.vitals = {
-      hr: $('addHR').value || '',
-      bp: $('addBP').value || '',
-      temp: $('addTemp').value || '',
-      rr: $('addRR').value || '',
-      spo2: $('addSpO2').value || '',
-      updated: now
-    };
-  } else if (type === 'lab') {
-    const values = [];
-    for (let i = 0; i < labRowCount; i++) {
-      const name = $('labName' + i)?.value;
-      const val = $('labVal' + i)?.value;
-      if (name && val) {
-        values.push({ name, value: val, status: $('labStatus' + i)?.value || 'normal' });
-      }
-    }
-    if (!p.labs) p.labs = [];
-    p.labs.push({ date: now, summary: $('addLabSummary').value, values });
-    labRowCount = 1;
+    p.vitals = { hr: $('addHR').value, bp: $('addBP').value, temp: $('addTemp').value, rr: $('addRR').value, spo2: $('addSpO2').value };
   } else if (type === 'imaging') {
-    const imgType = $('addImgType').value;
-    const entry = { date: now, type: imgType, summary: $('addImgSummary').value };
-    if (imgType === 'ecg') {
-      if (!p.ecg) p.ecg = [];
-      p.ecg.push(entry);
-    } else {
-      if (!p.imaging) p.imaging = [];
-      p.imaging.push(entry);
-    }
+    if (!p.imaging) p.imaging = [];
+    p.imaging.push({ date: now, type: $('addImgType').value, summary: $('addImgSummary').value });
   } else if (type === 'fluid') {
     if (!p.fluids) p.fluids = [];
-    p.fluids.push({
-      date: now,
-      intake: parseInt($('addIntake').value) || 0,
-      output: parseInt($('addOutput').value) || 0,
-      notes: $('addFluidNotes').value
-    });
+    p.fluids.push({ date: now, intake: parseInt($('addIntake').value) || 0, output: parseInt($('addOutput').value) || 0 });
   } else if (type === 'plan') {
     if (!p.plans) p.plans = [];
     p.plans.push({ date: now, content: $('addPlanContent').value });
@@ -1301,61 +1446,18 @@ window.saveAddData = function() {
   toast('Added!');
 };
 
-window.deleteLab = function(idx) {
-  if (!confirm('Delete this lab entry?')) return;
-  state.currentPatient.labs.splice(idx, 1);
-  saveCloud();
-  renderProfileLabs();
-  toast('Deleted');
-};
-
-window.deleteImaging = function(idx, type) {
-  if (!confirm('Delete this entry?')) return;
-  if (type === 'ecg') state.currentPatient.ecg.splice(idx, 1);
-  else state.currentPatient.imaging.splice(idx, 1);
+window.deleteImaging = function(idx) {
+  if (!confirm('Delete?')) return;
+  state.currentPatient.imaging.splice(idx, 1);
   saveCloud();
   renderProfileImaging();
-  toast('Deleted');
-};
-
-window.deleteFluid = function(idx) {
-  if (!confirm('Delete this entry?')) return;
-  state.currentPatient.fluids.splice(idx, 1);
-  saveCloud();
-  renderProfileFluids();
-  toast('Deleted');
 };
 
 window.deletePlan = function(idx) {
-  if (!confirm('Delete this plan?')) return;
+  if (!confirm('Delete?')) return;
   state.currentPatient.plans.splice(idx, 1);
   saveCloud();
   renderProfilePlans();
-  toast('Deleted');
-};
-
-window.editPlan = function(idx) {
-  state.addDataType = 'editPlan';
-  state.editingPlanIdx = idx;
-  const plan = state.currentPatient.plans[idx];
-  $('addDataTitle').textContent = 'Edit Plan';
-  $('addDataBody').innerHTML = `<div class="form-group"><label class="form-label">Plan</label><textarea id="editPlanContent" class="form-textarea" style="min-height:150px">${esc(plan.content)}</textarea></div>`;
-  openModal('addDataModal');
-};
-
-// Override saveAddData to handle editPlan
-const originalSaveAddData = window.saveAddData;
-window.saveAddData = function() {
-  if (state.addDataType === 'editPlan') {
-    state.currentPatient.plans[state.editingPlanIdx].content = $('editPlanContent').value;
-    state.currentPatient.plans[state.editingPlanIdx].edited = new Date().toISOString();
-    saveCloud();
-    renderProfilePlans();
-    closeModal('addDataModal');
-    toast('Updated!');
-  } else {
-    originalSaveAddData();
-  }
 };
 
 window.editCurrentPatient = function() {
@@ -1372,14 +1474,161 @@ window.editCurrentPatient = function() {
 };
 
 window.deleteCurrentPatient = function() {
-  if (!confirm('Delete this patient and all their data?')) return;
+  if (!confirm('Delete patient?')) return;
   state.patients = state.patients.filter(p => p.id !== state.currentPatient.id);
   saveCloud();
   closePatientProfile();
-  toast('Patient deleted');
+  toast('Deleted');
 };
 
-// Continue with remaining functions...
+// Analysis
+function renderAnalysisImages() {
+  const p = $('analysisPreview');
+  if (!state.analysisImages.length) { p.style.display = 'none'; return; }
+  p.innerHTML = `<div style="display:flex;gap:10px"><img src="${state.analysisImages[0].data}" style="max-height:120px;border-radius:12px;border:1px solid var(--border)"></div>`;
+  p.style.display = 'block';
+}
+
+window.runAnalysis = async function() {
+  if (!state.analysisImages.length) return;
+  $('analyzeBtn').disabled = true;
+  $('analysisLoading').style.display = 'block';
+  $('analysisResults').innerHTML = '';
+  
+  const action = state.analysisType === 'lab' ? 'analyzeLabs' : 'interpret';
+  
+  try {
+    const res = await fetch(state.settings.apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action, documentType: state.analysisType, image: state.analysisImages[0].data })
+    });
+    const data = await res.json();
+    $('analysisLoading').style.display = 'none';
+    $('analyzeBtn').disabled = false;
+    
+    if (data.error) {
+      $('analysisResults').innerHTML = `<div class="result-card"><h4>⚠️ Error</h4><p>${esc(data.error)}</p></div>`;
+      return;
+    }
+    
+    state.analysisResult = data;
+    
+    let html = '<div class="result-card">';
+    
+    if (state.analysisType === 'lab' && data.labData) {
+      const ld = data.labData;
+      html += '<h4>🧪 Lab Results Extracted</h4>';
+      
+      if (ld.interpretation?.summary) {
+        html += `<p style="margin-bottom:16px">${esc(ld.interpretation.summary)}</p>`;
+      }
+      
+      if (ld.parameters?.length) {
+        html += '<div style="max-height:300px;overflow-y:auto;margin-bottom:16px"><table class="lab-trends-table"><thead><tr><th>Parameter</th><th>Latest</th><th>Range</th><th>Status</th></tr></thead><tbody>';
+        ld.parameters.forEach(p => {
+          const latest = p.values?.[0];
+          if (latest) {
+            html += `<tr>
+              <td><b>${esc(p.name)}</b> <span style="color:var(--text-muted);font-size:0.75rem">${esc(p.unit || '')}</span></td>
+              <td class="mono">${esc(latest.value)}</td>
+              <td style="color:var(--text-muted)">${p.refMin !== undefined ? `${p.refMin}-${p.refMax}` : '—'}</td>
+              <td><span class="badge badge-${latest.status === 'high' || latest.status === 'critical' ? 'rose' : latest.status === 'low' ? 'blue' : 'emerald'}">${latest.status || 'normal'}</span></td>
+            </tr>`;
+          }
+        });
+        html += '</tbody></table></div>';
+      }
+      
+      if (ld.interpretation?.criticalValues?.length) {
+        html += `<div style="background:rgba(244,63,94,0.15);border:1px solid rgba(244,63,94,0.3);border-radius:8px;padding:12px;margin-bottom:12px"><b style="color:var(--rose)">⚠️ Critical:</b> ${ld.interpretation.criticalValues.join(', ')}</div>`;
+      }
+    } else if (data.interpretation) {
+      html += `<h4>📋 Analysis Results</h4>`;
+      if (data.interpretation.summary) html += `<p>${esc(data.interpretation.summary)}</p>`;
+    }
+    
+    html += '</div>';
+    
+    // Patient attachment
+    html += `<div class="analysis-patient-select"><h4>📎 Attach to Patient</h4><div class="patient-select-list">
+      ${state.patients.length ? state.patients.map(p => `
+        <div class="patient-select-item" onclick="attachAnalysisToPatient(${p.id})">
+          <div class="patient-select-avatar">${initials(p.name)}</div>
+          <div><div style="font-weight:600;font-size:0.85rem">${esc(p.name)}</div><div style="font-size:0.75rem;color:var(--text-muted)">${esc(p.ward)}</div></div>
+        </div>
+      `).join('') : '<div style="text-align:center;padding:20px;color:var(--text-muted)">No patients</div>'}
+    </div></div>`;
+    
+    $('analysisResults').innerHTML = html;
+    toast('Analysis complete!');
+  } catch (e) {
+    $('analysisLoading').style.display = 'none';
+    $('analyzeBtn').disabled = false;
+    $('analysisResults').innerHTML = '<div class="result-card"><h4>⚠️</h4><p>Analysis failed</p></div>';
+  }
+};
+
+window.attachAnalysisToPatient = function(patientId) {
+  const p = getPatient(patientId);
+  if (!p || !state.analysisResult) return;
+  
+  if (state.analysisType === 'lab' && state.analysisResult.labData) {
+    const ld = state.analysisResult.labData;
+    if (!p.labData) p.labData = { dates: [], parameters: [], interpretation: null };
+    
+    // Merge dates
+    (ld.dates || []).forEach(d => {
+      if (!p.labData.dates.includes(d)) p.labData.dates.push(d);
+    });
+    p.labData.dates.sort((a, b) => new Date(b) - new Date(a));
+    
+    // Merge parameters
+    (ld.parameters || []).forEach(newParam => {
+      let existing = p.labData.parameters.find(ep => 
+        ep.name.toLowerCase() === newParam.name.toLowerCase() ||
+        (ep.abbrev && newParam.abbrev && ep.abbrev.toLowerCase() === newParam.abbrev.toLowerCase())
+      );
+      
+      if (existing) {
+        // Merge values
+        (newParam.values || []).forEach(nv => {
+          const existingVal = existing.values.find(ev => ev.date === nv.date);
+          if (existingVal) {
+            existingVal.value = nv.value;
+            existingVal.status = nv.status;
+          } else {
+            existing.values.push(nv);
+          }
+        });
+        // Update ref ranges if not set
+        if (newParam.refMin !== undefined && existing.refMin === undefined) existing.refMin = newParam.refMin;
+        if (newParam.refMax !== undefined && existing.refMax === undefined) existing.refMax = newParam.refMax;
+        if (newParam.unit && !existing.unit) existing.unit = newParam.unit;
+      } else {
+        p.labData.parameters.push(newParam);
+      }
+    });
+    
+    // Update interpretation
+    if (ld.interpretation) p.labData.interpretation = ld.interpretation;
+  } else {
+    if (!p.imaging) p.imaging = [];
+    p.imaging.push({
+      date: new Date().toISOString(),
+      type: state.analysisType,
+      summary: state.analysisResult.interpretation?.summary || ''
+    });
+  }
+  
+  saveCloud();
+  state.analysisImages = [];
+  state.analysisResult = null;
+  renderAnalysisImages();
+  $('analysisResults').innerHTML = '';
+  $('analyzeBtn').disabled = true;
+  toast(`Attached to ${p.name}!`);
+};
 
 // Unit Access
 function openUnitAccess(id) {
@@ -1421,24 +1670,18 @@ function openUnitAccess(id) {
 
 window.enterUnit = function() {
   const n = $('userName').value.trim();
-  if (!n) { toast('Enter your name', true); return; }
+  if (!n) { toast('Enter name', true); return; }
   state.currentUnit = getUnit(state.selectedUnitId);
   state.currentUser = { name: n, role: $('userRole').value };
   closeModal('accessModal');
-  showDashboard();
-};
-
-function showDashboard() {
-  const u = state.currentUnit;
   showPage('dashboard');
-  $('unitBadge').textContent = u.name;
-  $('unitBadge').style.cssText = `border-color:${u.color};color:${u.color}`;
+  $('unitBadge').textContent = state.currentUnit.name;
   $('dashAvatar').textContent = initials(state.currentUser.name);
   $('currentDate').textContent = formatDate();
   renderPatients();
   renderRef();
   toast(`Welcome, ${state.currentUser.name}!`);
-}
+};
 
 window.logout = function() {
   state.currentUnit = null;
@@ -1447,19 +1690,18 @@ window.logout = function() {
   showPage('landing');
 };
 
-// Tabs
 function showTab(tabName) {
   $$('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelector(`.tab[data-tab="${tabName}"]`).classList.add('active');
+  document.querySelector(`.tab[data-tab="${tabName}"]`)?.classList.add('active');
   $$('.panel').forEach(p => p.classList.remove('active'));
-  $('panel' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
+  $('panel' + tabName.charAt(0).toUpperCase() + tabName.slice(1))?.classList.add('active');
 }
 
 function showProfileTab(tabName) {
   $$('.profile-tab').forEach(t => t.classList.remove('active'));
-  document.querySelector(`.profile-tab[data-ptab="${tabName}"]`).classList.add('active');
+  document.querySelector(`.profile-tab[data-ptab="${tabName}"]`)?.classList.add('active');
   $$('.profile-panel').forEach(p => p.classList.remove('active'));
-  $('profile' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
+  $('profile' + tabName.charAt(0).toUpperCase() + tabName.slice(1))?.classList.add('active');
 }
 
 // Admin
@@ -1467,31 +1709,23 @@ window.openAdminLogin = function() {
   $('adminPwd').value = '';
   $('adminError').classList.remove('show');
   openModal('adminModal');
-  setTimeout(() => $('adminPwd').focus(), 100);
 };
 
 window.loginAdmin = function() {
   if ($('adminPwd').value === state.settings.adminPassword) {
     closeModal('adminModal');
-    showAdmin();
+    showPage('adminPanel');
+    $('apiUrl').value = state.settings.apiUrl || '';
+    renderUnitsTable();
   } else $('adminError').classList.add('show');
 };
-
-function showAdmin() {
-  showPage('adminPanel');
-  $('apiUrl').value = state.settings.apiUrl || '';
-  renderUnitsTable();
-}
 
 window.exitAdmin = function() { showPage('landing'); };
 
 window.addUnit = function() {
   state.editingUnitId = null;
   $('unitModalTitle').textContent = 'Add Unit';
-  $('uName').value = '';
-  $('uIcon').value = '🏥';
-  $('uCode').value = '';
-  $('uDesc').value = '';
+  $('uName').value = ''; $('uIcon').value = '🏥'; $('uCode').value = ''; $('uDesc').value = '';
   openModal('unitModal');
 };
 
@@ -1500,57 +1734,40 @@ window.editUnit = function(id) {
   if (!u) return;
   state.editingUnitId = id;
   $('unitModalTitle').textContent = 'Edit Unit';
-  $('uName').value = u.name;
-  $('uIcon').value = u.icon;
-  $('uCode').value = u.code;
-  $('uDesc').value = u.desc || '';
+  $('uName').value = u.name; $('uIcon').value = u.icon; $('uCode').value = u.code; $('uDesc').value = u.desc || '';
   openModal('unitModal');
 };
 
 window.saveUnit = function() {
   const name = $('uName').value.trim(), icon = $('uIcon').value.trim() || '🏥', code = $('uCode').value.trim(), desc = $('uDesc').value.trim();
-  if (!name || !/^\d{4}$/.test(code)) { toast('Invalid input', true); return; }
+  if (!name || !/^\d{4}$/.test(code)) { toast('Invalid', true); return; }
   if (state.editingUnitId) {
     const i = state.units.findIndex(u => u.id === state.editingUnitId);
     if (i !== -1) state.units[i] = { ...state.units[i], name, icon, code, desc };
   } else {
-    state.units.push({ id: 'u' + Date.now(), name, icon, code, desc, color: ['#f59e0b', '#14b8a6', '#3b82f6', '#8b5cf6', '#f43f5e'][state.units.length % 5] });
+    state.units.push({ id: 'u' + Date.now(), name, icon, code, desc, color: ['#f59e0b', '#14b8a6', '#3b82f6', '#8b5cf6'][state.units.length % 4] });
   }
-  saveCloud();
-  renderUnitsTable();
-  renderUnits();
-  closeModal('unitModal');
-  toast('Saved!');
+  saveCloud(); renderUnitsTable(); renderUnits(); closeModal('unitModal'); toast('Saved!');
 };
 
 window.deleteUnit = function(id) {
-  if (!confirm('Delete unit?')) return;
+  if (!confirm('Delete?')) return;
   state.units = state.units.filter(u => u.id !== id);
-  saveCloud();
-  renderUnitsTable();
-  renderUnits();
-  toast('Deleted');
+  saveCloud(); renderUnitsTable(); renderUnits();
 };
 
 window.saveSettings = function() {
   const p = $('newAdminPwd').value.trim(), u = $('apiUrl').value.trim();
   if (p) state.settings.adminPassword = p;
   if (u) state.settings.apiUrl = u;
-  saveCloud();
-  toast('Saved!');
-  $('newAdminPwd').value = '';
+  saveCloud(); toast('Saved!'); $('newAdminPwd').value = '';
 };
 
 // Patient CRUD
 window.openAddPatient = function() {
   $('patientModalTitle').textContent = 'Add Patient';
-  $('ptId').value = '';
-  $('ptName').value = '';
-  $('ptWard').value = 'Ward 14';
-  $('ptRoom').value = '';
-  $('ptDx').value = '';
-  $('ptDoctor').value = state.currentUser?.name || '';
-  $('ptStatus').value = 'new';
+  $('ptId').value = ''; $('ptName').value = ''; $('ptWard').value = 'Ward 14';
+  $('ptRoom').value = ''; $('ptDx').value = ''; $('ptDoctor').value = state.currentUser?.name || ''; $('ptStatus').value = 'new';
   openModal('patientModal');
 };
 
@@ -1558,14 +1775,7 @@ window.savePatient = function() {
   const id = $('ptId').value, name = $('ptName').value.trim();
   if (!name) { toast('Name required', true); return; }
   
-  const data = {
-    name,
-    ward: $('ptWard').value,
-    room: $('ptRoom').value.trim() || '—',
-    diagnosis: $('ptDx').value.trim() || 'Pending',
-    doctor: $('ptDoctor').value.trim() || 'Unassigned',
-    status: $('ptStatus').value
-  };
+  const data = { name, ward: $('ptWard').value, room: $('ptRoom').value.trim() || '—', diagnosis: $('ptDx').value.trim() || 'Pending', doctor: $('ptDoctor').value.trim() || 'Unassigned', status: $('ptStatus').value };
   
   if (id) {
     const i = state.patients.findIndex(p => p.id === parseInt(id));
@@ -1577,166 +1787,26 @@ window.savePatient = function() {
       }
     }
   } else {
-    state.patients.push({ id: Date.now(), ...data, labs: [], imaging: [], ecg: [], fluids: [], plans: [], history: '', examination: '', vitals: {} });
+    state.patients.push({ id: Date.now(), ...data, labs: [], labData: { dates: [], parameters: [] }, imaging: [], fluids: [], plans: [], history: '', examination: '', vitals: {} });
   }
   
-  saveCloud();
-  renderPatients();
-  closeModal('patientModal');
-  toast('Saved!');
-};
-
-// Analysis with patient attachment
-function renderAnalysisImages() {
-  const p = $('analysisPreview');
-  if (!state.analysisImages.length) { p.style.display = 'none'; return; }
-  p.innerHTML = `<div style="display:flex;gap:10px;flex-wrap:wrap">${state.analysisImages.map(i => `
-    <div style="position:relative;width:80px;height:80px;border-radius:12px;overflow:hidden;border:1px solid var(--border)">
-      <img src="${i.data}" style="width:100%;height:100%;object-fit:cover">
-      <button onclick="removeAnalysisImage(${i.id})" style="position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,0.8);border:none;color:white;font-size:12px;cursor:pointer">✕</button>
-    </div>
-  `).join('')}</div>`;
-  p.style.display = 'block';
-}
-
-window.removeAnalysisImage = function(id) {
-  state.analysisImages = state.analysisImages.filter(i => i.id !== id);
-  renderAnalysisImages();
-  if (!state.analysisImages.length) $('analyzeBtn').disabled = true;
-};
-
-window.runAnalysis = async function() {
-  if (!state.analysisImages.length) return;
-  $('analyzeBtn').disabled = true;
-  $('analysisLoading').style.display = 'block';
-  $('analysisResults').innerHTML = '';
-  
-  try {
-    const res = await fetch(state.settings.apiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action: 'interpret', documentType: state.analysisType, image: state.analysisImages[0].data })
-    });
-    const data = await res.json();
-    $('analysisLoading').style.display = 'none';
-    $('analyzeBtn').disabled = false;
-    
-    if (data.error) {
-      $('analysisResults').innerHTML = `<div class="result-card"><h4>⚠️ Error</h4><p>${esc(data.error)}</p></div>`;
-      return;
-    }
-    
-    state.analysisResult = data;
-    let html = '<div class="result-card"><h4>📋 Analysis Results</h4>';
-    
-    if (data.interpretation) {
-      const i = data.interpretation;
-      if (i.summary) html += `<p style="margin-bottom:16px"><b>Summary:</b> ${esc(i.summary)}</p>`;
-      
-      if (i.values?.length) {
-        html += '<div class="lab-values-grid" style="margin-bottom:16px">' + i.values.map(v => `
-          <div class="lab-item ${v.status === 'high' || v.status === 'critical' ? 'high' : v.status === 'low' ? 'low' : ''}">
-            <div class="lab-name">${esc(v.name)}</div>
-            <div class="lab-value ${v.status}">${esc(v.value)} ${esc(v.unit || '')}</div>
-            ${v.range ? `<div class="lab-range">Ref: ${esc(v.range)}</div>` : ''}
-          </div>
-        `).join('') + '</div>';
-      }
-      
-      if (i.keyFindings?.length) html += '<p><b>Key Findings:</b></p><ul style="margin:8px 0 16px 18px">' + i.keyFindings.map(f => `<li>${esc(f)}</li>`).join('') + '</ul>';
-      if (i.abnormalities?.length) html += '<p style="color:var(--rose)"><b>Abnormalities:</b></p><ul style="margin:8px 0 16px 18px;color:var(--rose)">' + i.abnormalities.map(a => `<li>${esc(a)}</li>`).join('') + '</ul>';
-    }
-    
-    if (data.recommendations?.length) {
-      html += '<p><b>Recommendations:</b></p><ul style="margin:8px 0 0 18px">' + data.recommendations.map(r => `<li>${esc(r)}</li>`).join('') + '</ul>';
-    }
-    
-    html += '</div>';
-    
-    // Patient attachment
-    html += `<div class="analysis-patient-select">
-      <h4>📎 Attach to Patient (Optional)</h4>
-      <div class="patient-select-list">
-        ${state.patients.length ? state.patients.map(p => `
-          <div class="patient-select-item" onclick="attachAnalysisToPatient(${p.id})">
-            <div class="patient-select-avatar">${initials(p.name)}</div>
-            <div><div style="font-weight:600;font-size:0.85rem">${esc(p.name)}</div><div style="font-size:0.75rem;color:var(--text-muted)">${esc(p.ward)} • ${esc(p.room)}</div></div>
-          </div>
-        `).join('') : '<div style="text-align:center;padding:20px;color:var(--text-muted)">No patients to attach to</div>'}
-      </div>
-    </div>`;
-    
-    $('analysisResults').innerHTML = html;
-    toast('Analysis complete!');
-  } catch (e) {
-    $('analysisLoading').style.display = 'none';
-    $('analyzeBtn').disabled = false;
-    $('analysisResults').innerHTML = '<div class="result-card"><h4>⚠️</h4><p>Analysis failed</p></div>';
-  }
-};
-
-window.attachAnalysisToPatient = function(patientId) {
-  const p = getPatient(patientId);
-  if (!p || !state.analysisResult) return;
-  
-  const type = state.analysisType;
-  const data = state.analysisResult;
-  const now = new Date().toISOString();
-  
-  if (type === 'lab') {
-    if (!p.labs) p.labs = [];
-    p.labs.push({
-      date: now,
-      summary: data.interpretation?.summary || '',
-      values: data.interpretation?.values || []
-    });
-  } else if (type === 'ecg') {
-    if (!p.ecg) p.ecg = [];
-    p.ecg.push({
-      date: now,
-      type: 'ecg',
-      summary: data.interpretation?.summary || '',
-      findings: data.interpretation?.keyFindings || []
-    });
-  } else {
-    if (!p.imaging) p.imaging = [];
-    p.imaging.push({
-      date: now,
-      type: type,
-      summary: data.interpretation?.summary || data.interpretation?.impression || '',
-      findings: data.interpretation?.keyFindings || data.interpretation?.findings || []
-    });
-  }
-  
-  saveCloud();
-  
-  // Clear analysis
-  state.analysisImages = [];
-  state.analysisResult = null;
-  renderAnalysisImages();
-  $('analysisResults').innerHTML = '';
-  $('analyzeBtn').disabled = true;
-  
-  toast(`Attached to ${p.name}!`);
+  saveCloud(); renderPatients(); closeModal('patientModal'); toast('Saved!');
 };
 
 // Import
 window.openImport = function() {
-  state.importImage = null;
-  state.importPatients = [];
+  state.importImage = null; state.importPatients = [];
   $('importUpload').style.display = 'block';
   $('importPreview').style.display = 'none';
   $('importLoading').style.display = 'none';
   $('importResults').style.display = 'none';
   $('importError').style.display = 'none';
   $('importConfirmBtn').disabled = true;
-  $('importFile').value = '';
   openModal('importModal');
 };
 
 window.resetImport = function() {
-  state.importImage = null;
-  state.importPatients = [];
+  state.importImage = null; state.importPatients = [];
   $('importUpload').style.display = 'block';
   $('importPreview').style.display = 'none';
   $('importLoading').style.display = 'none';
@@ -1744,15 +1814,6 @@ window.resetImport = function() {
   $('importError').style.display = 'none';
   $('importConfirmBtn').disabled = true;
 };
-
-function handleImportFile(file) {
-  compress(file, CONFIG.MAX_IMAGE_SIZE, url => {
-    state.importImage = url;
-    $('importImg').src = url;
-    $('importUpload').style.display = 'none';
-    $('importPreview').style.display = 'block';
-  });
-}
 
 window.extractPatients = async function() {
   if (!state.importImage) return;
@@ -1761,89 +1822,50 @@ window.extractPatients = async function() {
   
   try {
     const res = await fetch(state.settings.apiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
+      method: 'POST', headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify({ action: 'extractPatients', image: state.importImage })
     });
     const d = await res.json();
     $('importLoading').style.display = 'none';
     
-    if (!d.success || d.error) {
+    if (!d.success || !d.patients?.length) {
       $('importError').style.display = 'block';
-      $('importErrorMsg').textContent = d.error || 'Failed';
-      return;
-    }
-    
-    if (!d.patients?.length) {
-      $('importError').style.display = 'block';
-      $('importErrorMsg').textContent = 'No patients found';
+      $('importErrorMsg').textContent = d.error || 'No patients found';
       return;
     }
     
     state.importPatients = d.patients.map((p, i) => ({
-      id: Date.now() + i,
-      name: p.name,
-      ward: smartWard(p.ward),
-      room: p.room || '—',
-      diagnosis: p.diagnosis || 'Pending',
-      doctor: p.doctor || state.currentUser?.name || 'Unassigned',
+      id: Date.now() + i, name: p.name, ward: smartWard(p.ward), room: p.room || '—',
+      diagnosis: p.diagnosis || 'Pending', doctor: p.doctor || state.currentUser?.name || 'Unassigned',
       status: p.status === 'chronic' ? 'chronic' : 'active',
-      labs: [], imaging: [], ecg: [], fluids: [], plans: [], history: '', examination: '', vitals: {}
+      labs: [], labData: { dates: [], parameters: [] }, imaging: [], fluids: [], plans: [], history: '', examination: '', vitals: {}
     }));
     
-    showImportResults();
+    $('importResults').style.display = 'block';
+    $('importCount').textContent = state.importPatients.length;
+    $('importList').innerHTML = state.importPatients.map(p => `
+      <div class="import-item ${p.status}">
+        <div style="flex:1"><b>${esc(p.name)}</b><div style="font-size:0.75rem;color:var(--text-muted)">${esc(p.room)}</div></div>
+        <select class="import-ward-select" onchange="state.importPatients.find(x=>x.id===${p.id}).ward=this.value">
+          ${CONFIG.VALID_WARDS.map(w => `<option value="${w}" ${w === p.ward ? 'selected' : ''}>${w}</option>`).join('')}
+        </select>
+      </div>
+    `).join('');
+    $('importConfirmBtn').disabled = false;
   } catch (e) {
     $('importLoading').style.display = 'none';
     $('importError').style.display = 'block';
-    $('importErrorMsg').textContent = 'Connection failed';
+    $('importErrorMsg').textContent = 'Failed';
   }
 };
-
-window.changeImportWard = function(id, ward) {
-  const p = state.importPatients.find(x => x.id === id);
-  if (p) { p.ward = ward; showImportResults(); }
-};
-
-function showImportResults() {
-  $('importResults').style.display = 'block';
-  $('importCount').textContent = state.importPatients.length;
-  
-  const wards = {};
-  state.importPatients.forEach(p => { if (!wards[p.ward]) wards[p.ward] = []; wards[p.ward].push(p); });
-  
-  let html = '';
-  const order = ['Ward 14', 'Ward 22', 'Ward 27', 'ICU', 'ER/Unassigned'];
-  Object.keys(wards).sort((a, b) => {
-    const ai = order.indexOf(a), bi = order.indexOf(b);
-    return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
-  }).forEach(ward => {
-    html += `<div style="margin-bottom:16px"><div style="font-size:0.8rem;font-weight:600;color:var(--gold);padding:10px 14px;background:var(--bg);border-radius:8px;border-left:3px solid var(--gold);margin-bottom:10px">📍 ${esc(ward)} (${wards[ward].length})</div>`;
-    wards[ward].forEach(p => {
-      html += `<div class="import-item ${p.status}">
-        <div style="width:36px;height:36px;background:linear-gradient(135deg,var(--gold),var(--teal));border-radius:10px;display:grid;place-items:center;font-weight:700;font-size:0.75rem;color:#000">${initials(p.name)}</div>
-        <div style="flex:1"><div style="font-weight:600;font-size:0.85rem">${esc(p.name)}</div><div style="font-size:0.7rem;color:var(--text-muted)">🛏️ ${esc(p.room)}</div></div>
-        <select class="import-ward-select" onchange="changeImportWard(${p.id},this.value)">${CONFIG.VALID_WARDS.map(w => `<option value="${w}" ${w === p.ward ? 'selected' : ''}>${w.replace('Ward ', 'W')}</option>`).join('')}</select>
-      </div>`;
-    });
-    html += '</div>';
-  });
-  
-  $('importList').innerHTML = html;
-  $('importConfirmBtn').disabled = false;
-  toast(`Found ${state.importPatients.length}!`);
-}
 
 window.confirmImport = function() {
   if (!state.importPatients.length) return;
   let added = 0;
   state.importPatients.forEach(p => {
-    const exists = state.patients.some(ep => ep.name.toLowerCase() === p.name.toLowerCase() && ep.ward === p.ward);
-    if (!exists) { state.patients.push(p); added++; }
+    if (!state.patients.some(ep => ep.name.toLowerCase() === p.name.toLowerCase())) { state.patients.push(p); added++; }
   });
-  saveCloud();
-  renderPatients();
-  closeModal('importModal');
-  toast(`Imported ${added}!`);
+  saveCloud(); renderPatients(); closeModal('importModal'); toast(`Imported ${added}!`);
 };
 
 // PDF Export
@@ -1868,13 +1890,10 @@ window.exportPDF = function() {
   doc.text(u.name + ' - Patient Report', 14, 12);
   doc.setFontSize(10);
   doc.text(formatDate(), 283, 12, 'right');
-  doc.setTextColor(80);
-  doc.setFontSize(9);
-  doc.text('Total: ' + filtered.length + ' patients | Generated by MedWard Pro', 14, 24);
   
-  let y = 32;
+  let y = 28;
   const cols = [22, 50, 90, 42, 28];
-  const hdrs = ['Room', 'Patient Name', 'Diagnosis', 'Doctor', 'Status'];
+  const hdrs = ['Room', 'Patient', 'Diagnosis', 'Doctor', 'Status'];
   
   function drawHdr(yy) {
     doc.setFillColor(30, 41, 59);
@@ -1887,60 +1906,33 @@ window.exportPDF = function() {
     return yy + 8;
   }
   
-  function drawWard(yy, name, cnt) {
-    doc.setFillColor(20, 184, 166);
-    doc.rect(14, yy, 269, 7, 'F');
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(255);
-    doc.text(name + ' (' + cnt + ' patients)', 16, yy + 5);
-    return yy + 7;
-  }
-  
   y = drawHdr(y);
   
-  const order = ['Ward 14', 'Ward 22', 'Ward 27', 'ICU', 'ER/Unassigned', 'Unassigned'];
-  Object.keys(wards).sort((a, b) => {
-    const ai = order.indexOf(a), bi = order.indexOf(b);
-    return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
-  }).forEach(ward => {
+  const order = ['Ward 14', 'Ward 22', 'Ward 27', 'ICU', 'ER/Unassigned'];
+  Object.keys(wards).sort((a, b) => (order.indexOf(a) === -1 ? 99 : order.indexOf(a)) - (order.indexOf(b) === -1 ? 99 : order.indexOf(b))).forEach(ward => {
     const ps = wards[ward];
     if (y > 185) { doc.addPage(); y = 15; y = drawHdr(y); }
-    y = drawWard(y, ward, ps.length);
+    
+    doc.setFillColor(20, 184, 166);
+    doc.rect(14, y, 269, 7, 'F');
+    doc.setFontSize(8);
+    doc.setTextColor(255);
+    doc.text(ward + ' (' + ps.length + ')', 16, y + 5);
+    y += 7;
     
     ps.forEach((p, idx) => {
       if (y > 190) { doc.addPage(); y = 15; y = drawHdr(y); }
       
-      if (p.status === 'chronic') doc.setFillColor(237, 233, 254);
-      else if (p.status === 'new') doc.setFillColor(220, 252, 231);
-      else if (p.status === 'critical') doc.setFillColor(254, 226, 226);
-      else doc.setFillColor(idx % 2 ? 248 : 255, idx % 2 ? 250 : 255, idx % 2 ? 252 : 255);
+      doc.setFillColor(idx % 2 ? 248 : 255, idx % 2 ? 250 : 255, idx % 2 ? 252 : 255);
       doc.rect(14, y, 269, 7, 'F');
-      
-      doc.setDrawColor(226, 232, 240);
-      let x = 14;
-      cols.forEach(w => { doc.rect(x, y, w, 7); x += w; });
-      
       doc.setFontSize(7);
-      doc.setFont('helvetica', 'normal');
       doc.setTextColor(30);
-      x = 14;
       
-      const row = [p.room || '—', p.name, p.diagnosis || '', p.doctor || '', p.status.charAt(0).toUpperCase() + p.status.slice(1)];
-      row.forEach((cell, i) => {
+      let x = 14;
+      [p.room || '—', p.name, p.diagnosis || '', p.doctor || '', p.status].forEach((cell, i) => {
         let txt = String(cell);
-        const mw = cols[i] - 4;
-        while (doc.getTextWidth(txt) > mw && txt.length > 3) txt = txt.slice(0, -4) + '...';
-        if (i === 4) {
-          if (p.status === 'chronic') doc.setTextColor(139, 92, 246);
-          else if (p.status === 'new') doc.setTextColor(16, 185, 129);
-          else if (p.status === 'critical') doc.setTextColor(239, 68, 68);
-          else doc.setTextColor(20, 184, 166);
-          doc.setFont('helvetica', 'bold');
-        }
+        while (doc.getTextWidth(txt) > cols[i] - 4) txt = txt.slice(0, -4) + '...';
         doc.text(txt, x + 2, y + 5);
-        doc.setTextColor(30);
-        doc.setFont('helvetica', 'normal');
         x += cols[i];
       });
       y += 7;
@@ -1948,20 +1940,11 @@ window.exportPDF = function() {
     y += 3;
   });
   
-  const pc = doc.internal.getNumberOfPages();
-  for (let i = 1; i <= pc; i++) {
-    doc.setPage(i);
-    doc.setFontSize(7);
-    doc.setTextColor(150);
-    doc.text('MedWard Pro - Clinical Management System', 14, 205);
-    doc.text('Page ' + i + '/' + pc, 283, 205, 'right');
-  }
-  
-  doc.save(u.name.replace(/\s+/g, '_') + '_Report_' + new Date().toISOString().split('T')[0] + '.pdf');
+  doc.save(u.name.replace(/\s+/g, '_') + '_Report.pdf');
   toast('PDF exported!');
 };
 
-// Initialize
+// Init
 async function init() {
   loadLocal();
   renderUnits();
@@ -1985,7 +1968,7 @@ async function init() {
     Array.from(this.files).forEach(f => {
       if (f.type.startsWith('image/')) {
         compress(f, CONFIG.MAX_IMAGE_SIZE, url => {
-          state.analysisImages.push({ id: Date.now(), data: url });
+          state.analysisImages = [{ id: Date.now(), data: url }];
           renderAnalysisImages();
           $('analyzeBtn').disabled = false;
         });
@@ -2003,7 +1986,16 @@ async function init() {
     }
   };
   
-  $('importFile').onchange = function() { if (this.files[0]) handleImportFile(this.files[0]); };
+  $('importFile').onchange = function() {
+    if (this.files[0]) {
+      compress(this.files[0], CONFIG.MAX_IMAGE_SIZE, url => {
+        state.importImage = url;
+        $('importImg').src = url;
+        $('importUpload').style.display = 'none';
+        $('importPreview').style.display = 'block';
+      });
+    }
+  };
   
   $$('.modal').forEach(m => m.onclick = e => { if (e.target === m) m.classList.remove('active'); });
   
