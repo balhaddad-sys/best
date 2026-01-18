@@ -34,35 +34,12 @@
   --font:'Outfit',system-ui,sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:auto;-webkit-overflow-scrolling:touch}
-body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6}
+html{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;height:100%;overflow:hidden}
 ::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:3px}
 .mono{font-family:'JetBrains Mono',monospace}
-
-
-
-/* ═══════════════════════════════════════════════════════════════════
-   UX + PERFORMANCE ENHANCEMENTS (NON-BREAKING)
-   - Better focus visibility for keyboard users
-   - Respect prefers-reduced-motion
-   - Reduce rendering work for long lists (content-visibility)
-   - Improve tap responsiveness on mobile
-   ═══════════════════════════════════════════════════════════════════ */
-
-:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-button, a, input, select, textarea{touch-action:manipulation}
-
-/* Reduce layout/render cost for long lists (supported browsers only) */
-#patientsList, #unitsGrid{content-visibility:auto;contain-intrinsic-size:800px 600px}
-.patient-card, .unit-card, .ref-card{content-visibility:auto;contain-intrinsic-size:140px 360px}
-
-/* Respect user accessibility preferences */
-@media (prefers-reduced-motion: reduce){
-  *, *::before, *::after{animation-duration:0.001ms !important;animation-iteration-count:1 !important;transition-duration:0.001ms !important;scroll-behavior:auto !important}
-  .landing-bg::before{animation:none !important}
-}
 
 /* ═══════════════════════════════════════════════════════════════════
    SOPHISTICATED LANDING PAGE
@@ -78,7 +55,10 @@ button, a, input, select, textarea{touch-action:manipulation}
 
 .landing-scroll-container{
   flex:1;
-  overflow:visible;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
 }
 
 /* Animated Background */
@@ -1367,9 +1347,18 @@ button, a, input, select, textarea{touch-action:manipulation}
   .icon-selector{grid-template-columns:repeat(6,1fr)}
 }
 
-/* === MOBILE TOUCH FIX === */
-body {
-  touch-action: pan-y;
+/* === FIX: prevent decorative layers from intercepting touch/click === */
+.grid-overlay,
+.floating-orb {
+  pointer-events: none !important;
+}
+
+/* Safety: ensure main interactive layers are above decorations */
+.landing-main,
+.landing-header,
+.landing-scroll-container {
+  position: relative;
+  z-index: 10;
 }
 
 </style>
@@ -2083,65 +2072,11 @@ const smartWard = w => { const wl = (w || '').toLowerCase(); for (const vw of CO
 const getUnit = id => state.units.find(u => u.id === id);
 const getPrimaryEndpoint = () => state.settings.apiEndpoints?.find(e => e.isPrimary)?.url || state.settings.apiUrl;
 
-// ═══════════════════════════════════════════════════════════════════
-// UX/PERF UTILITIES (NON-BREAKING)
-// ═══════════════════════════════════════════════════════════════════
-const dom = Object.create(null);
-let toastTimer = null;
-
-function cacheDom() {
-  // Cache hot elements to avoid repeated query overhead
-  dom.toast = dom.toast || $('toast');
-  dom.unitsGrid = dom.unitsGrid || $('unitsGrid');
-  dom.patientsList = dom.patientsList || $('patientsList');
-  dom.syncFab = dom.syncFab || $('syncFab');
-}
-
-const rafThrottle = (fn) => {
-  let locked = false;
-  return (...args) => {
-    if (locked) return;
-    locked = true
-  };
-};
-
-    requestAnimationFrame(() => {
-      locked = false;
-      fn(...args);
-    });
-  };
-};
-
-const debounce = (fn, wait = 250) => {
-  let t;
-  return (...args) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...args), wait);
-  };
-};
-
-async function safeFetch(url, options = {}, timeoutMs = 12000) {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    return await fetch(url, { ...options, signal: controller.signal });
-  } finally {
-    clearTimeout(id);
-  }
-}
-
-
 function toast(msg, isError = false) {
-  const t = dom.toast || $('toast');
-  if (!t) return;
+  const t = $('toast');
   t.textContent = msg;
-  // Avoid stacking timeouts when toasts fire rapidly
-  if (toastTimer) clearTimeout(toastTimer);
-  // Use rAF to coalesce style updates
-  requestAnimationFrame(() => {
-    t.className = 'toast show' + (isError ? ' error' : '');
-  });
-  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+  t.className = 'toast show' + (isError ? ' error' : '');
+  setTimeout(() => t.classList.remove('show'), 3000);
 }
 
 function openModal(id) { $(id).classList.add('active'); }
@@ -2186,7 +2121,7 @@ async function saveCloud() {
   const endpoint = getPrimaryEndpoint();
   if (!endpoint || endpoint === 'YOUR_API_URL_HERE') return;
   try {
-    await safeFetch(endpoint, {
+    await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify({
@@ -2203,7 +2138,7 @@ async function syncCloud() {
   const endpoint = getPrimaryEndpoint();
   if (!endpoint || endpoint === 'YOUR_API_URL_HERE') return;
   try {
-    const res = await safeFetch(endpoint, {
+    const res = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify({ action: 'load' })
@@ -2798,7 +2733,7 @@ window.submitUnitRequest = async function() {
   const endpoint = getPrimaryEndpoint();
   if (endpoint && endpoint !== 'YOUR_API_URL_HERE') {
     try {
-      await safeFetch(endpoint, {
+      await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({ action: 'submitUnitRequest', request })
@@ -2825,7 +2760,7 @@ async function loadUnitRequests() {
   const endpoint = getPrimaryEndpoint();
   if (endpoint && endpoint !== 'YOUR_API_URL_HERE') {
     try {
-      const res = await safeFetch(endpoint, {
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({ action: 'getUnitRequests' })
@@ -2975,7 +2910,7 @@ window.approveRequest = async function() {
   const endpoint = getPrimaryEndpoint();
   if (endpoint && endpoint !== 'YOUR_API_URL_HERE') {
     try {
-      await safeFetch(endpoint, {
+      await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({ action: 'updateUnitRequest', request: req })
@@ -3007,7 +2942,7 @@ window.rejectRequest = async function() {
   const endpoint = getPrimaryEndpoint();
   if (endpoint && endpoint !== 'YOUR_API_URL_HERE') {
     try {
-      await safeFetch(endpoint, {
+      await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({ action: 'updateUnitRequest', request: req })
@@ -3033,7 +2968,7 @@ window.quickRejectRequest = async function(requestId) {
   const endpoint = getPrimaryEndpoint();
   if (endpoint && endpoint !== 'YOUR_API_URL_HERE') {
     try {
-      await safeFetch(endpoint, {
+      await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({ action: 'updateUnitRequest', request: req })
@@ -3271,48 +3206,21 @@ function renderLabResults(p) {
 
 function compress(file, maxSize, callback) {
   const reader = new FileReader();
-  reader.onload = async e => {
-    try {
-      const dataUrl = e.target.result;
-
-      // Faster decode path when supported
-      if ('createImageBitmap' in window) {
-        const blob = await (await fetch(dataUrl)).blob();
-        const bmp = await createImageBitmap(blob);
-        let w = bmp.width, h = bmp.height;
-        if (w > maxSize || h > maxSize) {
-          if (w > h) { h = Math.round(h * (maxSize / w)); w = maxSize; }
-          else { w = Math.round(w * (maxSize / h)); h = maxSize; }
-        }
-        const canvas = document.createElement('canvas');
-        canvas.width = w;
-        canvas.height = h;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(bmp, 0, 0, w, h);
-        callback(canvas.toDataURL('image/jpeg', 0.8));
-        return;
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let w = img.width, h = img.height;
+      if (w > maxSize || h > maxSize) {
+        if (w > h) { h *= maxSize / w; w = maxSize; }
+        else { w *= maxSize / h; h = maxSize; }
       }
-
-      // Fallback path
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        let w = img.width, h = img.height;
-        if (w > maxSize || h > maxSize) {
-          if (w > h) { h *= maxSize / w; w = maxSize; }
-          else { w *= maxSize / h; h = maxSize; }
-        }
-        canvas.width = w;
-        canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        callback(canvas.toDataURL('image/jpeg', 0.8));
-      };
-      img.src = dataUrl;
-    } catch (err) {
-      console.error('Compress error:', err);
-      // Best-effort fallback: return original
-      callback(String(e.target.result || ''));
-    }
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      callback(canvas.toDataURL('image/jpeg', 0.8));
+    };
+    img.src = e.target.result;
   };
   reader.readAsDataURL(file);
 }
@@ -3480,7 +3388,7 @@ Extract every patient visible. If a field is not visible, omit it or use reasona
 }
 
 async function extractWithGAS(imageBase64, endpoint) {
-  const res = await safeFetch(endpoint, {
+  const res = await fetch(endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain' },
     body: JSON.stringify({ action: 'extractPatients', image: imageBase64 })
@@ -3559,7 +3467,6 @@ window.exportPDF = function() {
 
 async function init() {
   loadLocal();
-  cacheDom();
   renderUnits();
   
   $('syncFab').onclick = async () => { 
@@ -3596,76 +3503,5 @@ else init();
 
 })();
 </script>
-
-<!-- === NON-BREAKING DEFENSIVE PATCH (AUTO-ADDED) === -->
-<style>
-/* Interaction safety */
-.landing-bg,
-.grid-overlay,
-.floating-orb,
-.landing-bg::before,
-.landing-bg::after {
-  pointer-events: none !important;
-}
-button, .btn, .unit-card, .request-unit-card, .fab {
-  pointer-events: auto !important;
-  position: relative;
-  z-index: 20;
-}
-
-/* === MOBILE TOUCH FIX === */
-body {
-  touch-action: pan-y;
-}
-
-</style>
-
-<script>
-// Safe DOM helpers
-const $ = (id) => document.getElementById(id);
-function safe$(id, required=false){
-  const el = document.getElementById(id);
-  if(!el && required){ console.warn('[MedicalWards] Missing element:', id); }
-  return el;
-}
-
-// Runtime error visibility
-window.addEventListener('error', e => {
-  console.error('[MedicalWards] Runtime error:', e.message, e.filename, e.lineno);
-});
-
-// Centralized safe init wrapper
-(function(){
-  const _init = window.init;
-  window.init = function(){
-    try{
-      console.log('[MedicalWards] Safe init start');
-      if(typeof _init === 'function'){ _init(); }
-      bindGlobalEvents();
-      console.log('[MedicalWards] Safe init done');
-    }catch(err){
-      console.error('[MedicalWards] Init failed:', err);
-    }
-  };
-
-  function bindGlobalEvents(){
-    const syncFab = safe$('syncFab');
-    if(syncFab){ syncFab.addEventListener('click', () => window.syncNow && window.syncNow()); }
-
-    document.querySelectorAll('.tab').forEach(t=>{
-      t.addEventListener('click', ()=> window.switchTab && window.switchTab(t.dataset.tab));
-    });
-
-    document.querySelectorAll('.stat-card').forEach(c=>{
-      c.addEventListener('click', ()=> window.filterPatients && window.filterPatients(c.dataset.filter));
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', ()=>{
-    if(typeof window.init === 'function'){ window.init(); }
-  });
-})();
-</script>
-
 </body>
 </html>
