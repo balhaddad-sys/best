@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <meta name="theme-color" content="#030712">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>MedWard Pro</title>
+<title>MedWard Pro v12</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -75,6 +75,36 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .sync-fab{bottom:24px;left:24px}
 .sync-fab.syncing{animation:rotate 1s linear infinite;border-color:var(--gold);color:var(--gold)}
 @keyframes rotate{to{transform:rotate(360deg)}}
+/* Sync Status Indicator */
+.sync-status{position:fixed;top:12px;right:12px;display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--glass);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:100px;font-size:0.75rem;font-weight:600;z-index:1000;transition:all 0.3s;opacity:0;transform:translateY(-10px);pointer-events:none}
+.sync-status.visible{opacity:1;transform:translateY(0);pointer-events:auto}
+.sync-status.syncing{border-color:var(--gold);color:var(--gold)}
+.sync-status.synced{border-color:var(--emerald);color:var(--emerald)}
+.sync-status.error{border-color:var(--rose);color:var(--rose)}
+.sync-status.pending{border-color:var(--orange);color:var(--orange)}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+.sync-status.syncing .sync-dot{animation:pulse 1s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+/* Lab Extraction Confidence */
+.extraction-confidence{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg);border-radius:var(--radius-sm);margin-bottom:12px;font-size:0.8rem}
+.confidence-bar{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.confidence-fill{height:100%;border-radius:3px;transition:width 0.5s ease}
+.confidence-fill.high{background:var(--emerald)}
+.confidence-fill.medium{background:var(--gold)}
+.confidence-fill.low{background:var(--rose)}
+.confidence-label{font-weight:600;min-width:40px;text-align:right}
+/* Lab Extraction Preview */
+.extraction-preview{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin:16px 0}
+.extraction-preview-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.extraction-preview-title{font-weight:600;font-size:0.9rem}
+.extraction-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)}
+.extraction-item:last-child{border-bottom:none}
+.extraction-name{color:var(--text-secondary)}
+.extraction-value{font-family:'JetBrains Mono',monospace;font-weight:600}
+.extraction-value.critical{color:var(--rose)}
+.extraction-value.high{color:var(--orange)}
+.extraction-value.low{color:var(--blue)}
+.extraction-value.normal{color:var(--emerald)}
 .code-inputs{display:flex;gap:14px;justify-content:center;margin-bottom:20px}
 .code-digit{width:56px;height:68px;background:var(--bg);border:2px solid var(--border);border-radius:var(--radius-sm);font-family:'JetBrains Mono',monospace;font-size:1.75rem;font-weight:700;text-align:center;color:var(--text);transition:all 0.2s}
 .code-digit:focus{outline:none;border-color:var(--gold)}
@@ -309,10 +339,16 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 <body>
 <!-- LANDING PAGE -->
 <div class="page active" id="landing">
+
+<!-- Sync Status Indicator -->
+<div class="sync-status" id="syncStatus">
+  <div class="sync-dot"></div>
+  <span id="syncStatusText">Synced</span>
+</div>
 <div class="landing-logo"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
 <h1 class="landing-title">MedWard Pro</h1>
 <p class="landing-subtitle">Neural Clinical Management System</p>
-<p class="landing-version">🧠 AI-Powered • Learning Enabled • v11.0</p>
+<p class="landing-version">🧠 AI-Powered • Auto-Sync • Enhanced Lab OCR • v12.0</p>
 <div class="units-grid" id="unitsGrid"></div>
 <button class="request-unit-btn" onclick="openRequestUnit()">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M12 5v14M5 12h14"/></svg>
@@ -725,6 +761,24 @@ Request New Unit Access
 </div>
 </div>
 
+<!-- Lab Extraction Preview Modal -->
+<div class="modal" id="labPreviewModal">
+  <div class="modal-box wide">
+    <div class="modal-header">
+      <div class="modal-title">🧪 Lab Extraction Preview</div>
+      <button class="btn btn-ghost" onclick="closeModal('labPreviewModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="labExtractionConfidence"></div>
+      <div id="labExtractionPreview"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('labPreviewModal'); resetLabExtraction()">Cancel</button>
+      <button class="btn btn-primary" id="confirmLabBtn" onclick="confirmLabExtraction()">✓ Confirm & Save</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 <input type="file" id="labFileInput" accept="image/*" style="display:none">
 <input type="file" id="imagingFileInput" accept="image/*" style="display:none">
@@ -733,20 +787,22 @@ Request New Unit Access
 'use strict';
 
 const CONFIG = {
-  STORAGE_KEY: 'medward_pro_v11',
+  STORAGE_KEY: 'medward_pro_v12',
   ADMIN_PASSWORD: 'admin123',
   API_URL: 'YOUR_API_URL_HERE',
-  MAX_IMAGE_SIZE: 1200000,
-  IMAGE_QUALITY: 0.75,
-  MAX_DIM: 1600,
+  MAX_IMAGE_SIZE: 1500000,
+  IMAGE_QUALITY: 0.85,
+  MAX_DIM: 2000,
+  SYNC_DEBOUNCE_MS: 1500,
   VALID_WARDS: ['Ward 14', 'Ward 22', 'Ward 27', 'ICU', 'ER/Unassigned'],
   LAB_CATEGORIES: {
+    'Cardiac Markers': { icon: '❤️', terms: ['Troponin', 'BNP', 'proBNP', 'NT-proBNP', 'CK-MB', 'Myoglobin'] },
     'Renal Function': { icon: '🫘', terms: ['Urea', 'Creatinine', 'Creat', 'eGFR', 'BUN'] },
     'Electrolytes': { icon: '⚡', terms: ['Na', 'Sodium', 'K', 'Potassium', 'Cl', 'Chloride', 'CO2', 'Bicarbonate', 'Mg', 'Magnesium', 'Ca', 'Calcium', 'Phosphate', 'Phos'] },
     'Glucose & Metabolic': { icon: '🍬', terms: ['Glucose', 'Gluc', 'FBG', 'RBG', 'HbA1c', 'Lactate'] },
     'Liver Function': { icon: '🫀', terms: ['ALT', 'AST', 'ALP', 'GGT', 'Bilirubin', 'Albumin', 'Total Protein'] },
     'Complete Blood Count': { icon: '🩸', terms: ['Hgb', 'Hemoglobin', 'WBC', 'Platelets', 'RBC', 'MCV', 'Hct'] },
-    'Other': { icon: '🔬', terms: ['Urate', 'Uric Acid', 'Anion Gap', 'Osmolality', 'CRP', 'ESR', 'Procalcitonin', 'Troponin'] }
+    'Other': { icon: '🔬', terms: ['Urate', 'Uric Acid', 'Anion Gap', 'Osmolality', 'CRP', 'ESR', 'Procalcitonin'] }
   },
   REFS: [
     { title: '🚨 Critical Labs', content: '<b>K:</b> <2.5 or >6.5<br><b>Na:</b> <120 or >160<br><b>Glucose:</b> <40 or >500' },
@@ -762,11 +818,21 @@ const state = {
   units: [], settings: {}, patients: [], currentUnit: null, currentUser: null, currentPatient: null,
   selectedUnitId: null, editingUnitId: null, importImage: null, importPatients: [], currentFilter: 'all',
   fluidChart: null, trendChart: null, addDataType: null, isAnalyzingLab: false, isAnalyzingImaging: false,
-  currentInteractionId: null, sessionId: null, unitRequests: [], selectedRequestId: null, selectedIcon: '🏥'
+  currentInteractionId: null, sessionId: null, unitRequests: [], selectedRequestId: null, selectedIcon: '🏥',
+  pendingLabData: null, labExtractionConfidence: 0
 };
 
 // Generate session ID
 state.sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+
+// Sync state tracking for reactive auto-sync
+let syncState = {
+  status: 'synced',
+  lastSyncTime: null,
+  pendingChanges: false,
+  syncTimeout: null,
+  errorCount: 0
+};
 
 const $ = id => document.getElementById(id);
 const $$ = sel => document.querySelectorAll(sel);
@@ -878,38 +944,145 @@ function saveLocal() {
 }
 
 async function syncCloud() {
-  if (isSyncing || !state.settings.apiUrl || state.settings.apiUrl === 'YOUR_API_URL_HERE') return;
-  isSyncing = true;
+  // Redirect to new system
+  await syncFromCloud();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// REACTIVE AUTO-SYNC SYSTEM
+// ═══════════════════════════════════════════════════════════════════
+
+function updateSyncStatus(status, message) {
+  syncState.status = status;
+  const el = $('syncStatus');
+  const textEl = $('syncStatusText');
+  
+  if (!el || !textEl) return;
+  
+  el.className = 'sync-status visible ' + status;
+  textEl.textContent = message || {
+    synced: 'Synced',
+    pending: 'Saving...',
+    syncing: 'Syncing...',
+    error: 'Sync failed'
+  }[status];
+  
+  if (status === 'synced') {
+    setTimeout(() => {
+      if (syncState.status === 'synced') {
+        el.classList.remove('visible');
+      }
+    }, 2000);
+  }
+}
+
+function markDirty() {
+  syncState.pendingChanges = true;
+  updateSyncStatus('pending', 'Saving...');
+  
+  if (syncState.syncTimeout) {
+    clearTimeout(syncState.syncTimeout);
+  }
+  
+  syncState.syncTimeout = setTimeout(() => {
+    performSync();
+  }, CONFIG.SYNC_DEBOUNCE_MS);
+}
+
+async function performSync() {
+  if (!syncState.pendingChanges) return;
+  
+  // Always save locally first
+  saveLocal();
+  
+  if (!state.settings.apiUrl || state.settings.apiUrl === 'YOUR_API_URL_HERE') {
+    syncState.pendingChanges = false;
+    updateSyncStatus('synced', 'Saved locally');
+    return;
+  }
+  
+  updateSyncStatus('syncing', 'Syncing to cloud...');
+  
   try {
     const res = await fetch(state.settings.apiUrl, {
-      method: 'POST', headers: { 'Content-Type': 'text/plain' },
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({
+        action: 'saveData',
+        payload: { 
+          units: state.units, 
+          settings: { adminPassword: state.settings.adminPassword }, 
+          patients: state.patients,
+          unitRequests: state.unitRequests
+        }
+      })
+    });
+    
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    
+    syncState.pendingChanges = false;
+    syncState.lastSyncTime = Date.now();
+    syncState.errorCount = 0;
+    updateSyncStatus('synced', 'Synced');
+    
+  } catch (e) {
+    console.error('Sync error:', e);
+    syncState.errorCount++;
+    
+    if (syncState.errorCount >= 3) {
+      updateSyncStatus('error', 'Sync failed - check connection');
+    } else {
+      setTimeout(() => performSync(), 5000);
+      updateSyncStatus('pending', 'Retrying...');
+    }
+  }
+}
+
+async function saveCloud() {
+  markDirty();
+}
+
+async function manualSync() {
+  const syncFab = $('syncFab');
+  syncFab.classList.add('syncing');
+  updateSyncStatus('syncing', 'Syncing...');
+  
+  try {
+    await syncFromCloud();
+    syncState.pendingChanges = true;
+    await performSync();
+    toast('Synced successfully!');
+  } catch (e) {
+    toast('Sync failed', true);
+  }
+  
+  syncFab.classList.remove('syncing');
+}
+
+async function syncFromCloud() {
+  if (!state.settings.apiUrl || state.settings.apiUrl === 'YOUR_API_URL_HERE') return;
+  
+  try {
+    const res = await fetch(state.settings.apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify({ action: 'loadData' })
     });
+    
     const data = await res.json();
+    
     if (data.success && data.data) {
       if (data.data.units?.length) state.units = data.data.units;
       if (data.data.settings) state.settings = { ...state.settings, ...data.data.settings };
       if (data.data.patients) state.patients = data.data.patients;
+      if (data.data.unitRequests) state.unitRequests = data.data.unitRequests;
       saveLocal();
       if (state.currentUnit) renderPatients();
       else renderUnits();
     }
-  } catch (e) {}
-  isSyncing = false;
-}
-
-async function saveCloud() {
-  saveLocal();
-  if (!state.settings.apiUrl || state.settings.apiUrl === 'YOUR_API_URL_HERE') return;
-  try {
-    await fetch(state.settings.apiUrl, {
-      method: 'POST', headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({
-        action: 'saveData',
-        payload: { units: state.units, settings: { adminPassword: state.settings.adminPassword }, patients: state.patients }
-      })
-    });
-  } catch (e) {}
+  } catch (e) {
+    console.error('Load from cloud failed:', e);
+  }
 }
 
 function getUnit(id) { return state.units.find(u => u.id === id); }
@@ -1132,7 +1305,7 @@ function renderProfileLabs() {
           ` : `
             <div class="lab-upload-icon">📷</div>
             <div class="lab-upload-title">Upload Lab Report</div>
-            <div class="lab-upload-subtitle">Take photo or upload • AI auto-extracts & interprets</div>
+            <div class="lab-upload-subtitle">Smart OCR • Kuwait MOH format supported • Historical data extraction</div>
           `}
         </div>
   `;
@@ -1338,85 +1511,272 @@ window.triggerLabUpload = function() {
   $('labFileInput').click();
 };
 
+// ═══════════════════════════════════════════════════════════════════
+// ENHANCED LAB EXTRACTION (Kuwait MOH Format Support)
+// ═══════════════════════════════════════════════════════════════════
+
+const LAB_EXTRACTION_PROMPT = `You are a medical laboratory report extraction system. Analyze this lab report image with extreme precision.
+
+CRITICAL INSTRUCTIONS:
+1. Extract ALL visible lab values, dates, and reference ranges
+2. Pay special attention to:
+   - Date format: Look for DD/MM/YYYY or MM/DD/YYYY patterns
+   - Cumulative/historical data tables showing multiple dates
+   - Age-specific reference ranges (e.g., "<50 years: >450 pg/ml")
+   - Units (pg/ml, mmol/L, mg/dL, etc.)
+   - Patient demographics if visible
+
+3. For each parameter found, extract:
+   - Parameter name (standardized: e.g., "NT-proBNP" not "NT pro BNP")
+   - Value (numeric only)
+   - Unit
+   - Reference range (min-max or descriptive)
+   - Date of test (convert to ISO format YYYY-MM-DD)
+   - Status: "critical", "high", "low", or "normal" based on reference ranges
+
+4. IMPORTANT FOR KUWAIT MOH FORMAT:
+   - Look for "PATIENT CUMULATIVE REPORT" section with historical values
+   - Parse the table showing multiple dates and sample numbers
+   - Extract ALL historical values, not just the latest
+   - Note the "Special Range" section for age-specific cutoffs
+   - Handle formats like "16/01/2026 04:32:56" for dates
+
+5. NT-proBNP Specific (ICON Criteria for Acute HF):
+   - Rule IN HF for <50 years: >450 pg/ml
+   - Rule IN HF for 50-75 years: >900 pg/ml  
+   - Rule IN HF for >75 years: >1800 pg/ml
+   - Rule OUT HF (all ages): <300 pg/ml
+   - Chronic HF (ESC): >125 pg/ml
+
+6. Common Lab Mappings:
+   - "NT proBNP" / "NT-proBNP" / "ProBNP" → standardize to "NT-proBNP"
+   - Apply age-based reference interpretation for cardiac markers
+
+Return a JSON object with this exact structure:
+{
+  "confidence": 0.0-1.0,
+  "patientInfo": {
+    "name": "string or null",
+    "hospitalId": "string or null", 
+    "dateOfBirth": "YYYY-MM-DD or null",
+    "gender": "Male/Female or null",
+    "location": "string or null"
+  },
+  "labData": {
+    "dates": ["YYYY-MM-DD", ...],
+    "parameters": [
+      {
+        "name": "Standard Parameter Name",
+        "abbrev": "Abbreviation",
+        "unit": "unit string",
+        "refMin": number or null,
+        "refMax": number or null,
+        "refDescription": "Age-specific or contextual reference info",
+        "values": [
+          {
+            "date": "YYYY-MM-DD",
+            "value": number,
+            "status": "critical|high|low|normal"
+          }
+        ]
+      }
+    ],
+    "interpretation": {
+      "summary": "Brief clinical interpretation",
+      "clinicalCorrelation": "Clinical context",
+      "trends": ["Notable trends"],
+      "recommendations": ["Actionable recommendations"]
+    }
+  }
+}
+
+RESPOND ONLY WITH VALID JSON. No markdown, no explanation.`;
+
 async function handleLabUpload(file) {
   state.isAnalyzingLab = true;
   renderProfileLabs();
   
-  // Build context for RAG
-  const p = state.currentPatient;
-  const patientContext = {
-    previousLabs: (p.labData?.dates || []).slice(0, 3).map(d => ({
-      date: d,
-      summary: `${p.labData.parameters.filter(param => param.values?.some(v => v.date === d)).length} parameters`
-    }))
-  };
-  
   compress(file, CONFIG.MAX_IMAGE_SIZE, async (imageData) => {
     try {
+      console.log('🔬 Starting enhanced lab extraction...');
+      console.log('📡 API:', state.settings.apiUrl.substring(0, 50) + '...');
+      console.log('🖼️ Image size:', Math.round(imageData.length / 1024), 'KB');
+      
       const res = await fetch(state.settings.apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({ 
-          action: 'analyzeLabs', 
+          action: 'analyzeLabsEnhanced', 
           image: imageData,
-          patientContext
+          extractionPrompt: LAB_EXTRACTION_PROMPT,
+          patientContext: {
+            existingLabs: state.currentPatient?.labData?.parameters?.map(p => ({
+              name: p.name,
+              latestValue: p.values?.[0]?.value,
+              latestDate: p.values?.[0]?.date
+            })) || []
+          }
         })
       });
+      
+      console.log('📥 Response status:', res.status);
+      
       const data = await res.json();
+      console.log('📦 Extraction result:', data);
       
       state.isAnalyzingLab = false;
       
       if (data.error || !data.labData) {
-        toast(data.error || 'Analysis failed', true);
+        console.error('❌ Extraction error:', data.error);
+        toast(data.error || 'Extraction failed', true);
         renderProfileLabs();
         return;
       }
       
-      // Store interaction ID for feedback
-      if (data.meta?.interactionId) {
-        state.currentInteractionId = data.meta.interactionId;
-      }
+      // Store for preview before confirmation
+      state.pendingLabData = data.labData;
+      state.labExtractionConfidence = data.confidence || 0.8;
+      state.currentInteractionId = data.meta?.interactionId;
       
-      // Merge lab data
-      const ld = data.labData;
+      console.log('✅ Extraction successful, showing preview...');
+      console.log('📊 Parameters found:', data.labData.parameters?.length || 0);
+      console.log('📅 Dates found:', data.labData.dates?.length || 0);
       
-      (ld.dates || []).forEach(d => {
-        if (!p.labData.dates.includes(d)) p.labData.dates.push(d);
-      });
-      p.labData.dates.sort((a, b) => new Date(b) - new Date(a));
+      // Show preview modal for user verification
+      showLabExtractionPreview(data);
       
-      (ld.parameters || []).forEach(newParam => {
-        let existing = p.labData.parameters.find(ep => 
-          ep.name.toLowerCase() === newParam.name.toLowerCase() ||
-          (ep.abbrev && newParam.abbrev && ep.abbrev.toLowerCase() === newParam.abbrev.toLowerCase())
-        );
-        
-        if (existing) {
-          (newParam.values || []).forEach(nv => {
-            const ev = existing.values.find(x => x.date === nv.date);
-            if (ev) { ev.value = nv.value; ev.status = nv.status; }
-            else existing.values.push(nv);
-          });
-          if (newParam.refMin !== undefined) existing.refMin = newParam.refMin;
-          if (newParam.refMax !== undefined) existing.refMax = newParam.refMax;
-          if (newParam.unit) existing.unit = newParam.unit;
-        } else {
-          p.labData.parameters.push(newParam);
-        }
-      });
-      
-      if (ld.interpretation) p.labData.interpretation = ld.interpretation;
-      
-      saveCloud();
-      renderProfileLabs();
-      toast('Lab results analyzed!');
     } catch (e) {
+      console.error('❌ Lab extraction error:', e);
       state.isAnalyzingLab = false;
-      toast('Analysis failed', true);
+      toast('Extraction failed - check connection', true);
       renderProfileLabs();
     }
   });
 }
+
+function showLabExtractionPreview(data) {
+  const ld = data.labData;
+  const confidence = data.confidence || 0.8;
+  const confPercent = Math.round(confidence * 100);
+  const confClass = confidence >= 0.8 ? 'high' : confidence >= 0.5 ? 'medium' : 'low';
+  
+  // Build confidence indicator
+  $('labExtractionConfidence').innerHTML = `
+    <div class="extraction-confidence">
+      <span>Extraction Confidence:</span>
+      <div class="confidence-bar">
+        <div class="confidence-fill ${confClass}" style="width:${confPercent}%"></div>
+      </div>
+      <span class="confidence-label">${confPercent}%</span>
+    </div>
+    ${confidence < 0.7 ? '<p style="color:var(--orange);font-size:0.8rem;margin-bottom:12px">⚠️ Low confidence - please verify values manually</p>' : ''}
+  `;
+  
+  // Build preview table
+  let previewHtml = '<div class="extraction-preview">';
+  previewHtml += `<div class="extraction-preview-header">
+    <span class="extraction-preview-title">Extracted Values</span>
+    ${ld.dates?.length ? `<span style="font-size:0.75rem;color:var(--text-muted)">${ld.dates.length} date(s) found</span>` : ''}
+  </div>`;
+  
+  (ld.parameters || []).forEach(param => {
+    const latestVal = param.values?.[0];
+    if (!latestVal) return;
+    
+    const statusClass = latestVal.status || 'normal';
+    previewHtml += `
+      <div class="extraction-item">
+        <span class="extraction-name">${esc(param.name)} ${param.unit ? '(' + param.unit + ')' : ''}</span>
+        <span class="extraction-value ${statusClass}">
+          ${latestVal.value}
+          ${param.values.length > 1 ? '<span style="font-size:0.7rem;color:var(--text-muted)"> +' + (param.values.length-1) + ' historical</span>' : ''}
+        </span>
+      </div>
+    `;
+  });
+  
+  previewHtml += '</div>';
+  
+  // Add interpretation preview if available
+  if (ld.interpretation?.summary) {
+    previewHtml += `
+      <div style="margin-top:16px;padding:16px;background:rgba(139,92,246,0.1);border-radius:var(--radius-sm)">
+        <div style="font-weight:600;margin-bottom:8px">🤖 AI Interpretation</div>
+        <p style="font-size:0.85rem;color:var(--text-secondary)">${esc(ld.interpretation.summary)}</p>
+      </div>
+    `;
+  }
+  
+  $('labExtractionPreview').innerHTML = previewHtml;
+  openModal('labPreviewModal');
+}
+
+window.confirmLabExtraction = function() {
+  if (!state.pendingLabData || !state.currentPatient) return;
+  
+  const p = state.currentPatient;
+  const ld = state.pendingLabData;
+  
+  // Merge dates
+  (ld.dates || []).forEach(d => {
+    if (!p.labData.dates.includes(d)) p.labData.dates.push(d);
+  });
+  p.labData.dates.sort((a, b) => new Date(b) - new Date(a));
+  
+  // Merge parameters intelligently
+  (ld.parameters || []).forEach(newParam => {
+    let existing = p.labData.parameters.find(ep => 
+      ep.name.toLowerCase() === newParam.name.toLowerCase() ||
+      (ep.abbrev && newParam.abbrev && ep.abbrev.toLowerCase() === newParam.abbrev.toLowerCase())
+    );
+    
+    if (existing) {
+      // Merge values into existing parameter
+      (newParam.values || []).forEach(nv => {
+        const ev = existing.values.find(x => x.date === nv.date);
+        if (ev) { 
+          ev.value = nv.value; 
+          ev.status = nv.status; 
+        } else {
+          existing.values.push(nv);
+        }
+      });
+      // Sort values by date descending
+      existing.values.sort((a, b) => new Date(b.date) - new Date(a.date));
+      
+      // Update metadata
+      if (newParam.refMin !== undefined) existing.refMin = newParam.refMin;
+      if (newParam.refMax !== undefined) existing.refMax = newParam.refMax;
+      if (newParam.unit) existing.unit = newParam.unit;
+      if (newParam.refDescription) existing.refDescription = newParam.refDescription;
+    } else {
+      // Add as new parameter
+      if (newParam.values) {
+        newParam.values.sort((a, b) => new Date(b.date) - new Date(a.date));
+      }
+      p.labData.parameters.push(newParam);
+    }
+  });
+  
+  // Update interpretation
+  if (ld.interpretation) p.labData.interpretation = ld.interpretation;
+  
+  saveCloud();
+  renderProfileLabs();
+  closeModal('labPreviewModal');
+  toast('Lab results saved!');
+  
+  // Clear pending data
+  state.pendingLabData = null;
+  state.labExtractionConfidence = 0;
+};
+
+window.resetLabExtraction = function() {
+  state.pendingLabData = null;
+  state.labExtractionConfidence = 0;
+  state.isAnalyzingLab = false;
+  renderProfileLabs();
+};
 
 function renderProfileImaging() {
   const p = state.currentPatient;
@@ -2206,7 +2566,7 @@ async function init() {
   renderUnits();
   
   $('adminFab').onclick = openAdminLogin;
-  $('syncFab').onclick = async () => { $('syncFab').classList.add('syncing'); await syncCloud(); $('syncFab').classList.remove('syncing'); toast('Synced!'); };
+  $('syncFab').onclick = manualSync;
   $('adminPwd').onkeydown = e => { if (e.key === 'Enter') loginAdmin(); };
   $('userName').onkeydown = e => { if (e.key === 'Enter') enterUnit(); };
   $('mainTabs').onclick = e => { const t = e.target.closest('.tab'); if (t) showTab(t.dataset.tab); };
@@ -2219,8 +2579,15 @@ async function init() {
   
   $$('.modal').forEach(m => m.onclick = e => { if (e.target === m) m.classList.remove('active'); });
   
-  await syncCloud();
-  setInterval(() => syncCloud(), 30000);
+  // Initial cloud sync
+  await syncFromCloud();
+  
+  // Periodic background sync (every 60 seconds) - only if no pending changes
+  setInterval(() => {
+    if (!syncState.pendingChanges) {
+      syncFromCloud();
+    }
+  }, 60000);
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
